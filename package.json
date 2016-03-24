@@ -40,10 +40,6 @@
   "bin": {
     "trex-genstrings": "./lib/genstrings.js"
   },
-  "scripts": {
-    "trex-genstrings": "./lib/genstrings.js",
-    "test": "grunt test"
-  },
   "dependencies": {
     "ohm-js": "~0.9",
     "commander": "~2.9.0"
