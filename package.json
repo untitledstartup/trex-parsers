@@ -37,8 +37,11 @@
     "l10n",
     "tml"
   ],
+  "bin": {
+    "trex-genstrings": "./lib/genstrings.js"
+  },
   "scripts": {
-    "genstrings": "./lib/genstrings.js",
+    "trex-genstrings": "./lib/genstrings.js",
     "test": "grunt test"
   },
   "dependencies": {
