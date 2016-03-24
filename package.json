@@ -1,7 +1,7 @@
 {
   "name": "trex-parsers",
   "description": "Parsers for Translation Exchange CLI tools.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": {
     "name": "Pavel Skaldin",
     "email": "pashaisworking@gmail.com"
@@ -18,7 +18,6 @@
     "url": "https://github.com/translationexchange/trex-parsers.git"
   },
   "license": "MIT",
-  "main": "./lib/index",
   "directories": {
     "test": "test"
   },
