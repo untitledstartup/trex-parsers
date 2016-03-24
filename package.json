@@ -1,7 +1,7 @@
 {
   "name": "trex-parsers",
   "description": "Parsers for Translation Exchange CLI tools.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": {
     "name": "Pavel Skaldin",
     "email": "pashaisworking@gmail.com"
