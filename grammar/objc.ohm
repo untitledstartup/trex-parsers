@@ -17,7 +17,7 @@ Macro
 
 // TMLLocalized argument expression
 ArgsExp
-  = NullExp | LiteralExp | ObjectExp | MessageExp | ArrayAccessExp | DictAccessExp | VariableExp
+  = NullExp | LiteralExp | ObjectExp | MessageExp | CollectionAccessExp | VariableExp
 
 
 // Null Expression
@@ -25,11 +25,8 @@ NullExp
   = "nil"
   | "NULL"
 
-ArrayAccessExp
+CollectionAccessExp
   = VariableExp "[" ArgsExp "]"
-  
-DictAccessExp
-  = VariableExp "{" ArgsExp "]"
 
 VariableExp
   = #(validVarChar+)
