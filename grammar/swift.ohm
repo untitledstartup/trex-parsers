@@ -1,0 +1,84 @@
+TML {
+Exp
+  = ((~TMLExp any)* TMLExp+)+ ~TMLExp any*
+  
+
+// TMLLocalizedString* expression
+TMLExp
+  = Macro "(" StringExp ("," ListOf<ArgsExp, ",">)* ")"
+
+  
+Macro
+  = "TMLLocalizedString"
+  | "TMLLocalizedAttributedString"
+  | "TMLLocalizedDate"
+  | "TMLLocalizedAttributedDate"
+
+
+// TMLLocalized argument expression
+ArgsExp
+  = VariableExp ":" Arg
+
+Arg
+  = NullExp | LiteralExp | ObjectExp | CollectionAccessExp | VariableExp
+
+
+// Null Expression
+NullExp
+  = "nil"
+  | "NSNull()"
+
+CollectionAccessExp
+  = VariableExp "[" ArgsExp "]"
+
+VariableExp
+  = #(validVarChar+)
+  
+validVarChar
+  = ~("["|"]"|":"|","|")"|"("|space) any
+
+// Literal Objects
+LiteralExp
+  = NumberExp 
+  | StringExp
+  
+ObjectExp
+  = DictExp
+  | ArrayExp
+  
+
+// Numbers
+NumberExp
+  = digit+
+
+// Strings
+StringExp
+  = ("\"" stringCharsExp "\"")+
+
+stringCharsExp
+  = stringChar*
+
+stringChar
+  = "\\\""
+  | ~"\"" any
+
+// Dictionary
+DictExp
+  = "[" ":" "]"
+  | "[" ListOf<DictEntryExp, ","> "]"
+  
+DictEntryExp
+  = StringExp ":" DictValueExp
+  
+DictValueExp
+  = ArgsExp
+
+
+// Array
+ArrayExp
+  = "[" ListOf<ArrayEntryExp, ","> "]"
+
+ArrayEntryExp
+  = ArgsExp
+
+}
