@@ -1,16 +1,16 @@
 module.exports = {
-  "operations": {
+  "attributes": {
     "localizableStrings": {
       "ListOf_some": function(first, separator, iter) {
         var result = [];
-        var firstString = first.localizableStrings();
+        var firstString = first.localizableStrings;
         if (firstString) {
           result.push(firstString);
         }
         var children = iter.children;
         for (var i = 0; i < children.length; i++) {
           var child = children[i];
-          var childString = child.localizableStrings();
+          var childString = child.localizableStrings;
           if (childString) {
             result.push(childString);
           }
@@ -18,9 +18,8 @@ module.exports = {
         return result;
       },
       "Exp": function(_, parts, tail) {
-        var result = parts.localizableStrings();
+        var result = parts.localizableStrings;
         var newResult = [];
-        debugger;
         for (var i=0; i<result.length; i++) {
           var r = result[i];
           if (r instanceof Array) {
@@ -34,14 +33,14 @@ module.exports = {
       },
       "TMLExp": function(macro, open, label, sep, args, close, space, semicolon) {
         var results = [];
-        var labelString = label.localizableStrings();
+        var labelString = label.localizableStrings;
         if (labelString.length > 0) {
           results.push(labelString);
         }
         else {
           return null;
         }
-        var argResult = args.localizableStrings();
+        var argResult = args.localizableStrings;
         if (argResult && argResult.length > 0) {
           var argStr = argResult[0];
           if (argStr instanceof Array) {
@@ -62,7 +61,7 @@ module.exports = {
         return "";
       },
       "ArgsExp": function(e) {
-        return e.localizableStrings();
+        return e.localizableStrings;
       },
       "NullExp": function(e) {
         return "";
@@ -71,10 +70,10 @@ module.exports = {
         return "";
       },
       "LiteralExp": function(e) {
-        return e.localizableStrings();
+        return e.localizableStrings;
       },
       "ObjectExp": function(e) {
-        return e.localizableStrings();
+        return e.localizableStrings;
       },
       "NumberExp": function(parts) {
         return "";
@@ -83,9 +82,9 @@ module.exports = {
         return "";
       },
       "StringObjectExp": function(open, str, close, additionalLines) {
-        var result = str.localizableStrings();
+        var result = str.localizableStrings;
         if (additionalLines && additionalLines.interval.contents.length > 0) {
-          var additionalString = additionalLines.localizableStrings();
+          var additionalString = additionalLines.localizableStrings;
           if (additionalString) {
             result += "\n" + additionalString;
           }
@@ -93,18 +92,22 @@ module.exports = {
         return result;
       },
       "StringObjectAdditionalLinesExp": function(open, str, close) {
-        var result = str.localizableStrings();
+        var result = str.localizableStrings;
         if (result instanceof Array) {
           result = result.join("");
         }
         return result;
       },
       "StringExp": function(open, str, close) {
-        return str.localizableStrings();
+        return str.localizableStrings;
       },
       "stringCharsExp": function(parts) {
-        var str = parts.localizableStrings().join("");
-        return str;
+        var result = "";
+        var strings = (parts) ? parts.localizableStrings : null;
+        if (strings && strings.length > 0) {          
+          result = strings.join("");
+        }
+        return result;
       },
       "stringChar": function(char) {
         return this.interval.contents;
@@ -125,13 +128,13 @@ module.exports = {
         return "";
       },
       "DictValueExp": function(e) {
-        return e.localizableStrings();
+        return e.localizableStrings;
       },
       "ArrayExp": function(open, parts, close) {
         return "";
       },
       "ArrayEntryExp": function(e) {
-        return e.localizableStrings();
+        return e.localizableStrings;
       },
       "CollectionAccessExp": function(varname, open, arg, close) {
         return "";
