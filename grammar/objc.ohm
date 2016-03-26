@@ -64,10 +64,7 @@ NumberObjectExp
 
 // Strings
 StringObjectExp
-  = BeginStringQuote stringCharsExp EndStringQuote StringObjectAdditionalLinesExp?
-  
-StringObjectAdditionalLinesExp
-  =  (BeginSecondLineStringQuote stringCharsExp EndStringQuote)*
+  = "@" StringExp ("@"? StringExp)*
 
 StringExp
   = "\"" stringCharsExp "\""
@@ -78,16 +75,7 @@ stringCharsExp
 stringChar
   = "\\\""
   | ~"\"" any
-  
-BeginStringQuote
-  = "@\""
-  
-BeginSecondLineStringQuote
-  =  BeginStringQuote
-  | "\""
 
-EndStringQuote
-  = "\""
 
 // Dictionary
 DictExp

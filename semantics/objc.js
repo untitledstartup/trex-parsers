@@ -84,20 +84,13 @@ module.exports = {
       "NumberObjectExp": function(_, num) {
         return "";
       },
-      "StringObjectExp": function(open, str, close, additionalLines) {
+      "StringObjectExp": function(_, str, _, additionalLines) {
         var result = str.translationKeys;
         if (additionalLines && additionalLines.interval.contents.length > 0) {
           var additionalString = additionalLines.translationKeys;
           if (additionalString) {
             result += "\n" + additionalString;
           }
-        }
-        return result;
-      },
-      "StringObjectAdditionalLinesExp": function(open, str, close) {
-        var result = str.translationKeys;
-        if (result instanceof Array) {
-          result = result.join("");
         }
         return result;
       },
@@ -114,15 +107,6 @@ module.exports = {
       },
       "stringChar": function(char) {
         return this.interval.contents;
-      },
-      "BeginStringQuote": function(e) {
-        return "";
-      },
-      "BeginSecondLineStringQuote": function(e) {
-        return "";
-      },
-      "EndStringQuote": function(e) {
-        return "";
       },
       "DictExp": function(open, parts, close) {
         return "";
