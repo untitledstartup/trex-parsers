@@ -1,16 +1,16 @@
 module.exports = {
   "attributes": {
-    "localizableStrings": {
+    "translationKeys": {
       "ListOf_some": function(first, separator, iter) {
         var result = [];
-        var firstString = first.localizableStrings;
+        var firstString = first.translationKeys;
         if (firstString) {
           result.push(firstString);
         }
         var children = iter.children;
         for (var i = 0; i < children.length; i++) {
           var child = children[i];
-          var childString = child.localizableStrings;
+          var childString = child.translationKeys;
           if (childString) {
             result.push(childString);
           }
@@ -18,7 +18,7 @@ module.exports = {
         return result;
       },
       "Exp": function(_, parts, tail) {
-        var result = parts.localizableStrings;
+        var result = parts.translationKeys;
         var newResult = [];
         for (var i=0; i<result.length; i++) {
           var r = result[i];
@@ -33,14 +33,14 @@ module.exports = {
       },
       "TMLExp": function(macro, open, label, sep, args, close, space, semicolon) {
         var results = [];
-        var labelString = label.localizableStrings;
+        var labelString = label.translationKeys;
         if (labelString.length > 0) {
           results.push(labelString);
         }
         else {
           return null;
         }
-        var argResult = args.localizableStrings;
+        var argResult = args.translationKeys;
         if (argResult && argResult.length > 0) {
           var argStr = argResult[0];
           if (argStr instanceof Array) {
@@ -61,7 +61,7 @@ module.exports = {
         return "";
       },
       "ArgsExp": function(e) {
-        return e.localizableStrings;
+        return e.translationKeys;
       },
       "NullExp": function(e) {
         return "";
@@ -70,10 +70,10 @@ module.exports = {
         return "";
       },
       "LiteralExp": function(e) {
-        return e.localizableStrings;
+        return e.translationKeys;
       },
       "ObjectExp": function(e) {
-        return e.localizableStrings;
+        return e.translationKeys;
       },
       "NumberExp": function(parts) {
         return "";
@@ -82,9 +82,9 @@ module.exports = {
         return "";
       },
       "StringObjectExp": function(open, str, close, additionalLines) {
-        var result = str.localizableStrings;
+        var result = str.translationKeys;
         if (additionalLines && additionalLines.interval.contents.length > 0) {
-          var additionalString = additionalLines.localizableStrings;
+          var additionalString = additionalLines.translationKeys;
           if (additionalString) {
             result += "\n" + additionalString;
           }
@@ -92,18 +92,18 @@ module.exports = {
         return result;
       },
       "StringObjectAdditionalLinesExp": function(open, str, close) {
-        var result = str.localizableStrings;
+        var result = str.translationKeys;
         if (result instanceof Array) {
           result = result.join("");
         }
         return result;
       },
       "StringExp": function(open, str, close) {
-        return str.localizableStrings;
+        return str.translationKeys;
       },
       "stringCharsExp": function(parts) {
         var result = "";
-        var strings = (parts) ? parts.localizableStrings : null;
+        var strings = (parts) ? parts.translationKeys : null;
         if (strings && strings.length > 0) {          
           result = strings.join("");
         }
@@ -128,13 +128,13 @@ module.exports = {
         return "";
       },
       "DictValueExp": function(e) {
-        return e.localizableStrings;
+        return e.translationKeys;
       },
       "ArrayExp": function(open, parts, close) {
         return "";
       },
       "ArrayEntryExp": function(e) {
-        return e.localizableStrings;
+        return e.translationKeys;
       },
       "CollectionAccessExp": function(varname, open, arg, close) {
         return "";
