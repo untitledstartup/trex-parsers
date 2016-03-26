@@ -26,7 +26,8 @@ NullExp
   | "NULL"
 
 CollectionAccessExp
-  = VariableExp "[" ArgsExp "]"
+  = PropertyExp "[" ArgsExp "]"
+  | VariableExp "[" ArgsExp "]"
   
 PropertyExp
   = VariableExp ("." VariableExp)*
