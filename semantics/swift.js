@@ -53,7 +53,7 @@ module.exports = {
         }
         var info = {"label": results[0]};
         if (results.length > 1) {
-          info["comment"] = results[1];
+          info["description"] = results[1];
         }
         debugger;
         return info;
