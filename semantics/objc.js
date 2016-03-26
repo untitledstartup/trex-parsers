@@ -66,6 +66,9 @@ module.exports = {
       "NullExp": function(e) {
         return "";
       },
+      "PropertyExp": function(first, sep, seconds) {
+        return "";
+      },
       "VariableExp": function(parts) {
         return "";
       },

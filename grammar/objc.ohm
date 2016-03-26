@@ -17,7 +17,7 @@ Macro
 
 // TMLLocalized argument expression
 ArgsExp
-  = NullExp | LiteralExp | ObjectExp | MessageExp | CollectionAccessExp | VariableExp
+  = NullExp | LiteralExp | ObjectExp | MessageExp | CollectionAccessExp | PropertyExp | VariableExp
 
 
 // Null Expression
@@ -27,12 +27,15 @@ NullExp
 
 CollectionAccessExp
   = VariableExp "[" ArgsExp "]"
+  
+PropertyExp
+  = VariableExp ("." VariableExp)*
 
 VariableExp
   = #(validVarChar+)
   
 validVarChar
-  = ~("["|"]"|":"|","|")"|"("|space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
 
 // Literal Objects
 LiteralExp
