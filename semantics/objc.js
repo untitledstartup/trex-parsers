@@ -17,7 +17,7 @@ module.exports = {
         }
         return result;
       },
-      "Exp": function(_, parts, tail) {
+      "TMLLocalizedStrings": function(_, parts, tail) {
         var result = parts.translationKeys;
         var newResult = [];
         for (var i=0; i<result.length; i++) {
@@ -31,7 +31,7 @@ module.exports = {
         }
         return newResult;
       },
-      "TMLExp": function(macro, open, label, sep, args, close, space, semicolon) {
+      "TMLLocalizedString": function(macro, open, label, sep, args, close, space, semicolon) {
         var results = [];
         var labelString = label.translationKeys;
         if (labelString.length > 0) {
@@ -60,31 +60,31 @@ module.exports = {
       "Macro": function(e) {
         return "";
       },
-      "ArgsExp": function(e) {
+      "Args": function(e) {
         return e.translationKeys;
       },
-      "NullExp": function(e) {
+      "Null": function(e) {
         return "";
       },
-      "PropertyExp": function(first, sep, seconds) {
+      "Property": function(first, sep, seconds) {
         return "";
       },
-      "VariableExp": function(parts) {
+      "Variable": function(parts) {
         return "";
       },
-      "LiteralExp": function(e) {
+      "Literal": function(e) {
         return e.translationKeys;
       },
-      "ObjectExp": function(e) {
+      "Object": function(e) {
         return e.translationKeys;
       },
-      "NumberExp": function(parts) {
+      "NumberLiteral": function(parts) {
         return "";
       },
-      "NumberObjectExp": function(_, num) {
+      "NumberObject": function(_, num) {
         return "";
       },
-      "StringObjectExp": function(_, str, _, additionalLines) {
+      "StringObject": function(_, str, _, additionalLines) {
         var result = str.translationKeys;
         if (additionalLines && additionalLines.interval.contents.length > 0) {
           var additionalString = additionalLines.translationKeys;
@@ -94,10 +94,10 @@ module.exports = {
         }
         return result;
       },
-      "StringExp": function(open, str, close) {
+      "StringLiteral": function(open, str, close) {
         return str.translationKeys;
       },
-      "stringCharsExp": function(parts) {
+      "stringChars": function(parts) {
         var result = "";
         var strings = (parts) ? parts.translationKeys : null;
         if (strings && strings.length > 0) {          
@@ -108,32 +108,32 @@ module.exports = {
       "stringChar": function(char) {
         return this.interval.contents;
       },
-      "DictExp": function(open, parts, close) {
+      "Dict": function(open, parts, close) {
         return "";
       },
-      "DictEntryExp": function(key, _, val) {
+      "DictEntry": function(key, _, val) {
         return "";
       },
-      "DictValueExp": function(e) {
+      "DictValue": function(e) {
         return e.translationKeys;
       },
-      "ArrayExp": function(open, parts, close) {
+      "Array": function(open, parts, close) {
         return "";
       },
-      "ArrayEntryExp": function(e) {
+      "ArrayEntry": function(e) {
         return e.translationKeys;
       },
-      "CollectionAccessExp": function(varname, open, arg, close) {
+      "CollectionAccess": function(varname, open, arg, close) {
         return "";
       },
-      "MessageExp": function(msg) {
+      "MessageSend": function(msg) {
         return "";
       },
-      "NoArgumentMessageExp": function(ope, receiver, message, close) {
+      "NoArgumentMessageSend": function(_, receiver, messageName, _) {
         return "";
       },
-      "ArgumentMessageExp": function(open, receiver, messages, args, close) {
-        return "";
+      "ArgumentMessageSend": function(_, receiver, messageNames, args, _) {
+        return args.translationKeys;
       },
       "MessageComponent": function(parts) {
         return "";

@@ -1,11 +1,23 @@
 TML {
+
 Exp
-  = ((~TMLExp any)* TMLExp+)+ ~TMLExp any*
+  = TMLLocalizedStrings
+ 
+// Comments
+comment
+  = "//" (~"\n" any)* --single
+  | "/*" (~"*/" any)* "*/" --multiple
   
+space
+  += comment
+
+TMLLocalizedStrings
+  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
+
 
 // TMLLocalizedString* expression
-TMLExp
-  = Macro "(" StringObjectExp ("," ListOf<ArgsExp, ",">)* ")" space* ";"*
+TMLLocalizedString
+  = Macro "(" StringObject ("," ListOf<Args, ",">)* ")" space* ";"*
 
   
 Macro
@@ -16,60 +28,60 @@ Macro
 
 
 // TMLLocalized argument expression
-ArgsExp
-  = NullExp | LiteralExp | ObjectExp | MessageExp | CollectionAccessExp | PropertyExp | VariableExp
+Args
+  = Null | Literal | Object | MessageSend | CollectionAccess | Property | Variable
 
 
 // Null Expression
-NullExp
+Null
   = "nil"
   | "NULL"
 
-CollectionAccessExp
-  = PropertyExp "[" ArgsExp "]"
-  | VariableExp "[" ArgsExp "]"
+CollectionAccess
+  = Property "[" Args "]"
+  | Variable "[" Args "]"
   
-PropertyExp
-  = VariableExp ("." VariableExp)*
+Property
+  = Variable ("." Variable)*
 
-VariableExp
+Variable
   = #(validVarChar+)
   
 validVarChar
   = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
 
 // Literal Objects
-LiteralExp
-  = NumberExp 
-  | StringExp
+Literal
+  = NumberLiteral
+  | StringLiteral
   
-ObjectExp
-  = StringObjectExp
-  | NumberObjectExp
-  | DictExp
-  | ArrayExp
-  | LiteralWrapExp
+Object
+  = StringObject
+  | NumberObject
+  | Dict
+  | Array
+  | LiteralWrap
   
 // Literal Wrap @(WHATEVER)
-LiteralWrapExp
-  = "@(" VariableExp ")"
+LiteralWrap
+  = "@(" Variable ")"
   
 
 // Numbers
-NumberExp
+NumberLiteral
   = digit+
 
-NumberObjectExp
-  = "@" NumberExp
+NumberObject
+  = "@" NumberLiteral
 
 // Strings
-StringObjectExp
-  = "@" StringExp ("@"? StringExp)*
+StringObject
+  = "@" StringLiteral ("@"? StringLiteral)*
 
-StringExp
-  = "\"" stringCharsExp "\""
+StringLiteral
+  = "\"" stringChars "\""
 
-stringCharsExp
+stringChars
   = stringChar*
 
 stringChar
@@ -78,46 +90,46 @@ stringChar
 
 
 // Dictionary
-DictExp
-  = "@{" ListOf<DictEntryExp, ","> "}"
+Dict
+  = "@{" ListOf<DictEntry, ","> "}"
   
-DictEntryExp
-  = StringObjectExp ":" DictValueExp
+DictEntry
+  = StringObject ":" DictValue
   
-DictValueExp
-  = ArgsExp
+DictValue
+  = Args
 
 
 // Array
-ArrayExp
-  = "@[" ListOf<ArrayEntryExp, ","> "]"
+Array
+  = "@[" ListOf<ArrayEntry, ","> "]"
 
-ArrayEntryExp
-  = ArgsExp
+ArrayEntry
+  = Args
 
 
-// Message
-MessageExp
-  = NoArgumentMessageExp
-  | ArgumentMessageExp
+// Message Send
+MessageSend
+  = NoArgumentMessageSend
+  | ArgumentMessageSend
   
-Receiver
-  = #(messageComponentChar+)
-  
-NoArgumentMessage
-  = #(messageComponentChar+)
-  
-ArgumentMessage
-  = #(messageComponentChar+) ":"
-
-NoArgumentMessageExp
+NoArgumentMessageSend
   = "[" Receiver NoArgumentMessage "]"
 
-ArgumentMessageExp
-  = "[" Receiver (ArgumentMessage ArgsExp)+ "]"
+ArgumentMessageSend
+  = "[" Receiver (ArgumentMessage Args)+ "]"
+  
+Receiver
+  = MessageComponent
+  
+NoArgumentMessage
+  = MessageComponent
+  
+ArgumentMessage
+  = MessageComponent ":"
 
 MessageComponent
-  = messageComponentChar+
+  = #(messageComponentChar+)
 
 messageComponentChar
   = ~("["|"]"|":"|space) any
