@@ -1,11 +1,23 @@
 TML {
+
 Exp
-  = ((~TMLExp any)* TMLExp+)+ ~TMLExp any*
+  = TMLLocalizedStrings
+ 
+// Comments
+comment
+  = "//" (~"\n" any)* --single
+  | "/*" (~"*/" any)* "*/" --multiple
   
+space
+  += comment
+
+TMLLocalizedStrings
+  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
+
 
 // TMLLocalizedString* expression
-TMLExp
-  = Macro "(" StringExp ("," ListOf<ArgsExp, ",">)* ")"
+TMLLocalizedString
+  = Macro "(" StringLiteral ("," ListOf<Arg, ",">)* ")"
 
   
 Macro
@@ -16,46 +28,50 @@ Macro
 
 
 // TMLLocalized argument expression
-ArgsExp
-  = VariableExp ":" Arg
-
+NamedArg
+  = Variable ":" Arg
+  
 Arg
-  = NullExp | LiteralExp | ObjectExp | CollectionAccessExp | VariableExp
+  = Null | Literal | Object | CollectionAccess | Property | Variable
 
 
 // Null Expression
-NullExp
+Null
   = "nil"
   | "NSNull()"
 
-CollectionAccessExp
-  = VariableExp "[" ArgsExp "]"
+CollectionAccess
+  = Property "[" Arg "]"
+  | Variable "[" Arg "]"
+  
+Property
+  = Variable ("." Variable)*
 
-VariableExp
+Variable
   = #(validVarChar+)
   
 validVarChar
-  = ~("["|"]"|":"|","|")"|"("|space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
 
 // Literal Objects
-LiteralExp
-  = NumberExp 
-  | StringExp
+Literal
+  = NumberLiteral
+  | StringLiteral
   
-ObjectExp
-  = DictExp
-  | ArrayExp
+Object
+  = Dict
+  | Array
   
 
 // Numbers
-NumberExp
+NumberLiteral
   = digit+
 
 // Strings
-StringExp
-  = ("\"" stringCharsExp "\"")+
+StringLiteral
+  = ("\"" stringChars "\"")+
 
-stringCharsExp
+stringChars
   = stringChar*
 
 stringChar
@@ -63,22 +79,22 @@ stringChar
   | ~"\"" any
 
 // Dictionary
-DictExp
+Dict
   = "[" ":" "]"
-  | "[" ListOf<DictEntryExp, ","> "]"
+  | "[" ListOf<DictEntry, ","> "]"
   
-DictEntryExp
-  = StringExp ":" DictValueExp
+DictEntry
+  = StringLiteral ":" DictValue
   
-DictValueExp
-  = ArgsExp
+DictValue
+  = Arg
 
 
 // Array
-ArrayExp
-  = "[" ListOf<ArrayEntryExp, ","> "]"
+Array
+  = "[" ListOf<ArrayEntry, ","> "]"
 
-ArrayEntryExp
-  = ArgsExp
+ArrayEntry
+  = Arg
 
 }
