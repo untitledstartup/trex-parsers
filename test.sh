@@ -2,7 +2,14 @@
 
 autoload -U colors && colors
 
-for l in samples/*; do
+typeset -a langs
+langs=($@)
+
+if [[ ${#langs} -eq 0 ]]; then
+  langs=(samples/*)
+fi
+
+for l in ${langs[@]}; do
   echo "Testing ${l}"
   for i in samples/${l:t}/*.*(.); do
     found=$(./lib/genstrings.js -p $i | grep -E "^ *\"label\":" | wc -l | sed "s/[^0-9]//g" );
