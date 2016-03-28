@@ -685,22 +685,22 @@ self.my.array[(101)])
 
 TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,\
   with multiple lines, using \"escape\""
-    ,self.my.array[(101)], "\"Second\" 'argument' of two,\
-  with multiple lines, using \"escape\"",self.my.array[(101)])
+    ,self.my.array[101], "\"Second\" 'argument' of two,\
+  with multiple lines, using \"escape\"",self.my.array[101])
 TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,\
-  with multiple lines, using \"escape\"",self.my.array[(101)]
+  with multiple lines, using \"escape\"",self.my.array[101]
     , "\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"",
-self.my.array[(101)])
+self.my.array[101])
 TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, using ''"
-    ,self.my.array[(101)]
+    ,self.my.array[101]
       , "\"Second\" 'argument' of two,"
   "with multiple lines, using ''"
-      ,self.my.array[(101)])
+      ,self.my.array[101])
 TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using ''"
-    , self.my.array[(101)],
+    , self.my.array[101],
 "\"Second\" 'argument' of two,"
   "with multiple lines, not using ''",
-self.my.array[(101)])
+self.my.array[101])
