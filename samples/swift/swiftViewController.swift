@@ -34,7 +34,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = TMLLocalizedString(@"Some title");
+        self.title = TMLLocalizedString("Some title");
         // Do any additional setup after loading the view, typically from a nib.
     }
 
