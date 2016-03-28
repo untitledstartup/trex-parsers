@@ -1,0 +1,60 @@
+Base {
+
+// Invocation expression
+Exp
+  = TMLLocalizedStrings
+ 
+// Comments
+comment
+  = "//" (~"\n" any)* --single
+  | "/*" (~"*/" any)* "*/" --multiple
+  
+// Treat comments as space
+space
+  += comment
+
+// All localized strings, consuming entire input
+TMLLocalizedStrings
+  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
+  
+// Localized string (default treats any string as localized, sub-grammars must override)
+TMLLocalizedString
+  = StringLiteral
+  
+  
+// Literals
+Literal
+  = NumberLiteral
+  | StringLiteral
+  | BooleanLiteral
+  | NullLiteral
+
+NumberLiteral
+  = digit+
+  
+StringLiteral
+  = "\"" stringChars "\""
+  
+stringChars
+  = stringChar*
+
+stringChar
+  = "\\\""
+  | ~"\"" any
+
+BooleanLiteral
+  = "true"
+  | "false"
+  
+NullLiteral
+  = "null"
+  
+  
+// Variables
+Variable
+  = #(validVarChar+)
+  
+validVarChar
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
+
+}

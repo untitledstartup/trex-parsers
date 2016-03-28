@@ -1,37 +1,6 @@
 module.exports = {
   "attributes": {
     "translationKeys": {
-      "ListOf_some": function(first, separator, iter) {
-        var result = [];
-        var firstString = first.translationKeys;
-        if (firstString) {
-          result.push(firstString);
-        }
-        var children = iter.children;
-        for (var i = 0; i < children.length; i++) {
-          var child = children[i];
-          var childString = child.translationKeys;
-          if (childString) {
-            result.push(childString);
-          }
-        }
-        return result;
-      },
-      "TMLLocalizedStrings": function(_, parts, tail) {
-        var result = parts.translationKeys;
-        var newResult = [];
-        debugger;
-        for (var i=0; i<result.length; i++) {
-          var r = result[i];
-          if (r instanceof Array) {
-            newResult = newResult.concat(r);
-          }
-          else {
-            newResult.push(r);
-          }
-        }
-        return newResult;
-      },
       "TMLLocalizedString": function(macro, open, label, sep, args, close) {
         var results = [];
         var labelString = label.translationKeys;
@@ -67,27 +36,8 @@ module.exports = {
       "Arg": function(e) {
         return e.translationKeys;
       },
-      "Null": function(e) {
-        return "";
-      },
       "Property": function(first, sep, seconds) {
         return "";
-      },
-      "Variable": function(parts) {
-        return "";
-      },
-      "NumberLiteral": function(parts) {
-        return "";
-      },
-      "StringLiteral": function(open, str, close) {
-        return str.translationKeys;
-      },
-      "stringChars": function(parts) {
-        var str = parts.translationKeys.join("");
-        return str;
-      },
-      "stringChar": function(char) {
-        return this.interval.contents;
       },
       "Dict": function(open, parts, close) {
         return "";

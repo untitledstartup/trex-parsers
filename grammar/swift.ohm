@@ -1,24 +1,18 @@
-TML {
+Swift <: Base {
 
-Exp
-  = TMLLocalizedStrings
- 
-// Comments
-comment
-  = "//" (~"\n" any)* --single
-  | "/*" (~"*/" any)* "*/" --multiple
-  
-space
-  += comment
-
-TMLLocalizedStrings
-  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
-
-
-// TMLLocalizedString* expression
+// OVERRIDES
 TMLLocalizedString
-  = Macro "(" StringLiteral ("," ListOf<Arg, ",">)* ")"
+  := Macro "(" StringLiteral ("," ListOf<Arg, ",">)* ")"
+  
+// Null Expression
+Null
+  := "nil"
+  | "NSNull()"
+  
+StringLiteral
+  := ("\"" stringChars "\"")+
 
+// END OVERRIDES
   
 Macro
   = "TMLLocalizedString"
@@ -32,13 +26,7 @@ NamedArg
   = Variable ":" Arg
   
 Arg
-  = Null | Literal | Object | CollectionAccess | Property | Variable
-
-
-// Null Expression
-Null
-  = "nil"
-  | "NSNull()"
+  = Literal | Object | CollectionAccess | Property | Variable
 
 CollectionAccess
   = Property "[" Arg "]"
@@ -47,36 +35,11 @@ CollectionAccess
 Property
   = Variable ("." Variable)*
 
-Variable
-  = #(validVarChar+)
-  
-validVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
-
-// Literal Objects
-Literal
-  = NumberLiteral
-  | StringLiteral
-  
+// Objects
 Object
   = Dict
   | Array
   
-
-// Numbers
-NumberLiteral
-  = digit+
-
-// Strings
-StringLiteral
-  = ("\"" stringChars "\"")+
-
-stringChars
-  = stringChar*
-
-stringChar
-  = "\\\""
-  | ~"\"" any
 
 // Dictionary
 Dict

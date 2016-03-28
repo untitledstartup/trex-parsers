@@ -1,24 +1,14 @@
-TML {
+Objc <: Base {
 
-Exp
-  = TMLLocalizedStrings
- 
-// Comments
-comment
-  = "//" (~"\n" any)* --single
-  | "/*" (~"*/" any)* "*/" --multiple
-  
-space
-  += comment
-
-TMLLocalizedStrings
-  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
-
-
-// TMLLocalizedString* expression
+// OVERRIDES
 TMLLocalizedString
-  = Macro "(" StringObject ("," ListOf<Args, ",">)* ")" space* ";"*
+  := Macro "(" StringObject ("," ListOf<Args, ",">)* ")" ";"*
 
+NullLiteral
+  := "nil"
+  | "NULL"
+
+// END OF OVERRIDES
   
 Macro
   = "TMLLocalizedString"
@@ -29,13 +19,7 @@ Macro
 
 // TMLLocalized argument expression
 Args
-  = Null | Literal | Object | MessageSend | CollectionAccess | Property | Variable
-
-
-// Null Expression
-Null
-  = "nil"
-  | "NULL"
+  = Literal | Object | MessageSend | CollectionAccess | Property | Variable
 
 CollectionAccess
   = Property "[" Args "]"
@@ -44,17 +28,7 @@ CollectionAccess
 Property
   = Variable ("." Variable)*
 
-Variable
-  = #(validVarChar+)
-  
-validVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
-
-// Literal Objects
-Literal
-  = NumberLiteral
-  | StringLiteral
-  
+// Object  
 Object
   = StringObject
   | NumberObject
@@ -66,27 +40,13 @@ Object
 LiteralWrap
   = "@(" Variable ")"
   
-
-// Numbers
-NumberLiteral
-  = digit+
-
+// Number Object
 NumberObject
   = "@" NumberLiteral
 
-// Strings
+// String Object
 StringObject
   = "@" StringLiteral ("@"? StringLiteral)*
-
-StringLiteral
-  = "\"" stringChars "\""
-
-stringChars
-  = stringChar*
-
-stringChar
-  = "\\\""
-  | ~"\"" any
 
 
 // Dictionary
