@@ -2,7 +2,7 @@ Swift <: Base {
 
 // OVERRIDES
 TMLLocalizedString
-  := Macro "(" StringLiteral ("," ListOf<Arg, ",">)* ")"
+  := Macro "(" StringLiteral ("," ListOf<ArgExp, ",">)* ")"
   
 // Null Expression
 NullLiteral
@@ -23,14 +23,21 @@ Macro
 
 // TMLLocalized argument expression
 NamedArg
-  = Variable ":" Arg
+  = Variable ":" ArgExp
   
 Arg
   = Literal | Object | CollectionAccess | Property | Variable
+  
+ArgSep
+  = #(~( alnum | "(" | ")" | "[" | "]" ) any)
+  
+ArgExp
+  = Arg	--simple
+  | "(" ListOf<Arg, ArgSep> ")" --compound
 
 CollectionAccess
-  = Property "[" Arg "]"
-  | Variable "[" Arg "]"
+  = Property "[" ArgExp "]"
+  | Variable "[" ArgExp "]"
   
 Property
   = Variable ("." Variable)*
@@ -50,7 +57,7 @@ DictEntry
   = StringLiteral ":" DictValue
   
 DictValue
-  = Arg
+  = ArgExp
 
 
 // Array
@@ -58,6 +65,6 @@ Array
   = "[" ListOf<ArrayEntry, ","> "]"
 
 ArrayEntry
-  = Arg
+  = ArgExp
 
 }
