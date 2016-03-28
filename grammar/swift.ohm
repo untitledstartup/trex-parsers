@@ -5,7 +5,7 @@ TMLLocalizedString
   := Macro "(" StringLiteral ("," ListOf<Arg, ",">)* ")"
   
 // Null Expression
-Null
+NullLiteral
   := "nil"
   | "NSNull()"
   
