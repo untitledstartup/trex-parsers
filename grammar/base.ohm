@@ -30,7 +30,7 @@ Literal
   | NullLiteral
 
 NumberLiteral
-  = digit+
+  = digit+ ("." digit+)?
   
 StringLiteral
   = "\"" stringChars "\""
@@ -52,9 +52,41 @@ NullLiteral
   
 // Variables
 Variable
-  = #(validVarChar+)
+  = #(validFirstVarChar validVarChar*)
+
+validFirstVarChar
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | digit | space) any
   
 validVarChar
   = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
+  
+// Operators
+operator
+  = unaryOperator
+  | binaryOperator
+  | ternaryOperator
+
+unaryOperator
+  = ("!" | "+" | "-" | "*" | "&" | "~")+
+  
+binaryOperator
+  = ("&" | "|" | "^" | "<" | ">" | "+" | "-" | "/" | "%" | "*" | "=" | ",")+
+  | "and" | "or" | "xor"
+  
+ternaryOperator
+  = "?" | ":"
+  
+  
+// Arguments
+Arg
+  = Literal | Variable
+  
+ArgExp
+  = "(" ArgExp ")" --parens
+  | ArgExp ternaryOperator ArgExp ternaryOperator ArgExp --ternary
+  | ArgExp binaryOperator ArgExp --binary
+  | unaryOperator ArgExp --unary
+  | ArgExp unaryOperator --unaryAfter
+  | Arg
 
 }

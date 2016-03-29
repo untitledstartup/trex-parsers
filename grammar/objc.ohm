@@ -2,11 +2,22 @@ Objc <: Base {
 
 // OVERRIDES
 TMLLocalizedString
-  := Macro "(" StringObject ("," ListOf<Args, ",">)* ")" ";"*
+  := Macro "(" StringObject ("," ArgExp)* ")" ";"*
 
 NullLiteral
   := "nil"
   | "NULL"
+  
+BooleanLiteral
+  += "YES" | "NO"
+  
+Arg
+  := CollectionAccess
+  | Property
+  | Object
+  | MessageSend  
+  | Variable
+  | Literal
 
 // END OF OVERRIDES
   
@@ -16,17 +27,12 @@ Macro
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
 
-
-// TMLLocalized argument expression
-Args
-  = Literal | Object | MessageSend | CollectionAccess | Property | Variable
-
 CollectionAccess
-  = Property "[" Args "]"
-  | Variable "[" Args "]"
+  = Property "[" ArgExp "]"
+  | Variable "[" ArgExp "]"
   
 Property
-  = Variable ("." Variable)*
+  = ArgExp ("." Variable)*
 
 // Object  
 Object
@@ -38,7 +44,8 @@ Object
   
 // Literal Wrap @(WHATEVER)
 LiteralWrap
-  = "@(" Variable ")"
+  = "@(" Literal ")"
+  | "@(" Variable ")"
   
 // Number Object
 NumberObject
@@ -57,7 +64,7 @@ DictEntry
   = StringObject ":" DictValue
   
 DictValue
-  = Args
+  = ArgExp
 
 
 // Array
@@ -65,7 +72,7 @@ Array
   = "@[" ListOf<ArrayEntry, ","> "]"
 
 ArrayEntry
-  = Args
+  = ArgExp
 
 
 // Message Send
@@ -77,7 +84,7 @@ NoArgumentMessageSend
   = "[" Receiver NoArgumentMessage "]"
 
 ArgumentMessageSend
-  = "[" Receiver (ArgumentMessage Args)+ "]"
+  = "[" Receiver (ArgumentMessage ArgExp)+ "]"
   
 Receiver
   = MessageComponent

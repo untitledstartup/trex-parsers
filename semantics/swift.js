@@ -33,9 +33,6 @@ module.exports = {
       "NamedArg": function(varName, sep, arg) {
         return arg.translationKeys;
       },
-      "Arg": function(e) {
-        return e.translationKeys;
-      },
       "Property": function(first, sep, seconds) {
         return "";
       },

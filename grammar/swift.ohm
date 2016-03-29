@@ -11,6 +11,9 @@ NullLiteral
   
 StringLiteral
   := ("\"" stringChars "\"")+
+  
+Arg
+  := Literal | Object | CollectionAccess | Property | Variable
 
 // END OVERRIDES
   
@@ -25,16 +28,6 @@ Macro
 NamedArg
   = Variable ":" ArgExp
   
-Arg
-  = Literal | Object | CollectionAccess | Property | Variable
-  
-ArgSep
-  = #(~( alnum | "(" | ")" | "[" | "]" ) any)
-  
-ArgExp
-  = Arg	--simple
-  | "(" ListOf<Arg, ArgSep> ")" --compound
-
 CollectionAccess
   = Property "[" ArgExp "]"
   | Variable "[" ArgExp "]"

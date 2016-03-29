@@ -30,9 +30,6 @@ module.exports = {
       "Macro": function(e) {
         return "";
       },
-      "Args": function(e) {
-        return e.translationKeys;
-      },
       "Property": function(first, sep, seconds) {
         return "";
       },

@@ -39,13 +39,13 @@ module.exports = {
       "BooleanLiteral": function(parts) {
         return "";
       },
-      "Variable": function(parts) {
+      "Variable": function(first, rest) {
         return "";
       },
       "Literal": function(e) {
         return e.translationKeys;
       },
-      "NumberLiteral": function(parts) {
+      "NumberLiteral": function(integers, _, decimals) {
         return "";
       },
       "StringLiteral": function(open, str, close) {
@@ -61,6 +61,35 @@ module.exports = {
       },
       "stringChar": function(char) {
         return this.interval.contents;
+      },
+      "Arg": function(e) {
+        return e.translationKeys;
+      },
+      "ArgExp_parens": function(_, argExp, _) {
+        return argExp.translationKeys;
+      },
+      "ArgExp_ternary": function(first, _, second, _, third) {
+        var result = first.translationKeys;
+        if (second && second.interval.contents.length > 0) {
+          result = result.concat(second.translationKeys);
+        }
+        if (third && third.interval.contents.length > 0) {
+          result = result.concat(third.translationKeys);
+        }
+        return result;
+      },
+      "ArgExp_binary": function(first, _, second) {
+        var result = first.translationKeys;
+        if (second && second.interval.contents.length > 0) {
+          result = result.concat(second.translationKeys);
+        }
+        return result;
+      },
+      "ArgExp_unary": function(_, arg) {
+        return arg.translationKeys;
+      },
+      "ArgExp_unaryAfter": function(arg, _) {
+        return arg.translationKeys;
       }
     }
   }
