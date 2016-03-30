@@ -10,10 +10,10 @@ NullLiteral
   | "NSNull()"
   
 StringLiteral
-  := ("\"" stringChars "\"")+
+  := QuotedStringLiteral<"\"">+
   
 Arg
-  := Literal | Object | CollectionAccess | Property | Variable
+  := Literal | CollectionAccess | Method | Object | Property | Variable
 
 // END OVERRIDES
   
@@ -31,9 +31,6 @@ NamedArg
 CollectionAccess
   = Property "[" ArgExp "]"
   | Variable "[" ArgExp "]"
-  
-Property
-  = Variable ("." Variable)*
 
 // Objects
 Object

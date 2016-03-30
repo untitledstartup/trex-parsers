@@ -11,13 +11,16 @@ NullLiteral
 BooleanLiteral
   += "YES" | "NO"
   
+StringLiteral
+  := QuotedStringLiteral<"\"">
+  
 Arg
-  := CollectionAccess
-  | Property
+  := Literal 
+  | CollectionAccess
   | Object
   | MessageSend  
+  | Property
   | Variable
-  | Literal
 
 // END OF OVERRIDES
   
@@ -30,9 +33,6 @@ Macro
 CollectionAccess
   = Property "[" ArgExp "]"
   | Variable "[" ArgExp "]"
-  
-Property
-  = ArgExp ("." Variable)*
 
 // Object  
 Object

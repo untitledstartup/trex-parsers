@@ -33,14 +33,18 @@ NumberLiteral
   = digit+ ("." digit+)?
   
 StringLiteral
-  = "\"" stringChars "\""
+  = QuotedStringLiteral<"\"">
+  | QuotedStringLiteral<"'">
   
-stringChars
-  = stringChar*
-
-stringChar
-  = "\\\""
-  | ~"\"" any
+QuotedStringLiteral<quot>
+  = quot quotedStringChars<quot> quot
+  
+quotedStringChars<quot>
+  = #(quotedChar<quot>+)
+  
+quotedChar<quot>
+  = "\\" quot --escaped
+  | ~quot any
 
 BooleanLiteral
   = "true"
@@ -55,10 +59,10 @@ Variable
   = #(validFirstVarChar validVarChar*)
 
 validFirstVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | digit | space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | digit | space) any
   
 validVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | space) any
   
 // Operators
 operator
@@ -70,7 +74,7 @@ unaryOperator
   = ("!" | "+" | "-" | "*" | "&" | "~")+
   
 binaryOperator
-  = ("&" | "|" | "^" | "<" | ">" | "+" | "-" | "/" | "%" | "*" | "=" | ",")+
+  = ("&" | "|" | "^" | "<" | ">" | "+" | "-" | "/" | "%" | "*" | "=")+
   | "and" | "or" | "xor"
   
 ternaryOperator
@@ -79,7 +83,16 @@ ternaryOperator
   
 // Arguments
 Arg
-  = Literal | Variable
+  = Method | Property | Variable | Literal
+  
+Method
+  = MethodName "(" ListOf<ArgExp, ","> ")"
+  
+MethodName
+  = Variable
+  
+Property
+  = ArgExp ("." ArgExp)+
   
 ArgExp
   = "(" ArgExp ")" --parens
@@ -88,5 +101,37 @@ ArgExp
   | unaryOperator ArgExp --unary
   | ArgExp unaryOperator --unaryAfter
   | Arg
-
+  
+  
+// HTML
+HTMLAnyTag
+  = "<" HTMLTagName HTMLTagAttributeExp* "/"? ">"
+  
+HTMLCloseAnyTag
+  = "<" "/" HTMLTagName ">"
+  
+HTMLTag<tag>
+  = "<" tag HTMLTagAttributeExp* "/"? ">"
+  
+HTMLCloseTag<tag>
+  = "<" "/" tag ">"
+  
+HTMLTagWithAttribute<tag, attr>
+  = "<" tag HTMLTagAttributeExp* attr HTMLTagAttributeExp* "/"? ">"
+  
+HTMLTagAttributeExp
+  = HTMLTagAttributeName ("=" HTMLTagAttributeValue)?
+  
+HTMLTagName
+  = #(alnum+)
+  
+HTMLTagAttributeName
+  = #(htmlAttributeChar+)
+  
+HTMLTagAttributeValue
+  = StringLiteral
+  
+htmlAttributeChar
+  = ~( space | "\"" | "'" | ">" | "/" | "=" ) any
+  
 }

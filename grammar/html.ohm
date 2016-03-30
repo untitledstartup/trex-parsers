@@ -1,0 +1,54 @@
+HTML <: Base {
+
+// OVERRIDES
+comment
+  := startComment (~endComment any)* endComment
+  
+startComment
+  = "<" space * "!" space* "--" space*
+
+endComment
+  = "--" space* ">"
+  
+Arg
+  := Method | Object | Property | Variable | Literal
+  
+TMLLocalizedString
+  := HTMLTag<"tml-tr"> (~HTMLCloseTag<"tml-tr"> any)+ HTMLCloseTag<"tml-tr"> --tag
+  | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" "=" StringLiteral HTMLTagAttributeExp* "/"? ">" --tagAttr
+  | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" HTMLTagAttributeExp* ">" (~"<" any)+ HTMLCloseAnyTag --markedTag
+  | "<" HTMLTagName (~(HTMLTagAttributeName "=" QuotedTRLExp) any)* HTMLTagAttributeName "=" QuotedTRLExp HTMLTagAttributeExp* "/"? ">" --trlInAttr
+  | HTMLAnyTag TRLExp HTMLCloseAnyTag --trlInTag
+
+// END OF OVERRIDES
+
+QuotedTRLExp
+  = "\"" TRLExp "\""
+  | "'" TRLExp "'"
+
+TRLExp
+  = "{{" (TRLMethod | TRLFilter) "}}"
+  
+TRLMethod
+  = "trl" "(" StringLiteral ")"
+  
+TRLFilter
+  = StringLiteral "|" "trl" (":" ArgExp)? ( "|" FilterName)*
+ 
+FilterName
+  = Variable
+  
+Object
+  = Dict
+  | Array
+  
+Dict
+ = "{" ListOf<DictEntry, ","> "}"
+  
+DictEntry
+  = (StringLiteral | Variable) ":" ArgExp
+  
+Array
+  = "[" ListOf<ArgExp, ","> "]"
+
+}

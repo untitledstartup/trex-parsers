@@ -27,14 +27,18 @@ module.exports = {
         debugger;
         return info;
       },
+      "StringLiteral": function(strings) {
+        var result = strings.translationKeys;
+        if (result instanceof Array) {
+          result = result.join("\n");
+        }
+        return result;
+      },
       "Macro": function(e) {
         return "";
       },
       "NamedArg": function(varName, sep, arg) {
         return arg.translationKeys;
-      },
-      "Property": function(first, sep, seconds) {
-        return "";
       },
       "Dict": function(open, parts, close) {
         return "";

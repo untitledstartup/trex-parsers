@@ -1,48 +1,48 @@
-TMLLocalizedString("Simple String")
-TMLLocalizedString("Emoji String 😀")
+TMLLocalizedString("1 Simple String")
+TMLLocalizedString("2 Emoji String 😀")
 
-TMLLocalizedString("TMLLocalizedString \"single\" 'argument'")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two", "TMLLocalizedString \"second\" argument of two")
+TMLLocalizedString("3 TMLLocalizedString \"single\" 'argument'")
+TMLLocalizedString("4 TMLLocalizedString \"first\" 'argument' of two", "TMLLocalizedString \"second\" argument of two")
 
-TMLLocalizedString("TMLLocalizedString \"single\" 'argument',\
+TMLLocalizedString("5 TMLLocalizedString \"single\" 'argument',\
   with multiple lines, using escape")
-TMLLocalizedString("TMLLocalizedString \"single\" 'argument',"
+TMLLocalizedString("6 TMLLocalizedString \"single\" 'argument',"
   "with multiple lines, using ")
-TMLLocalizedString("TMLLocalizedString \"single\" 'argument',"
+TMLLocalizedString("7 TMLLocalizedString \"single\" 'argument',"
   "with multiple lines, not using ")
 
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,\
+TMLLocalizedString("8 TMLLocalizedString \"first\" 'argument' of two,\
   with multiple lines, using \"escape\"", "\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("9 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, using '@'", "\"Second\" 'argument' of two,"
   "with multiple lines, using '@'")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("10 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using '@'", "\"Second\" 'argument' of two,"
   "with multiple lines, not using '@'")
 
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,\
+TMLLocalizedString("11 TMLLocalizedString \"first\" 'argument' of two,\
   with multiple lines, using \"escape\"", 
 "\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("12 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, using '@'", 
 "\"Second\" 'argument' of two,"
   "with multiple lines, using '@'")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("13 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using '@'", 
 "\"Second\" 'argument' of two,"
   "with multiple lines, not using '@'")
 
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,\
+TMLLocalizedString("14 TMLLocalizedString \"first\" 'argument' of two,\
   with multiple lines, using \"escape\""
     , "\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("15 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, using '@'"
     , "\"Second\" 'argument' of two,"
   "with multiple lines, using '@'")
-TMLLocalizedString("TMLLocalizedString \"first\" 'argument' of two,"
+TMLLocalizedString("16 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using '@'"
     , "\"Second\" 'argument' of two,"
   "with multiple lines, not using '@'")

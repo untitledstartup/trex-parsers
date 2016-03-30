@@ -1,6 +1,9 @@
 module.exports = {
   "attributes": {
     "translationKeys": {
+      "ListOf_none": function() {
+        return "";
+      },
       "ListOf_some": function(first, separator, iter) {
         var result = [];
         var firstString = first.translationKeys;
@@ -48,18 +51,37 @@ module.exports = {
       "NumberLiteral": function(integers, _, decimals) {
         return "";
       },
-      "StringLiteral": function(open, str, close) {
-        return str.translationKeys;
+      "Property": function(first, _, rest) {
+        return "";
       },
-      "stringChars": function(parts) {
+      "Method": function(methodName, _, args, _) {
+        return args.translationKeys;
+      },
+      // "StringLiteral": function(open, str, close) {
+      //   var result = "";
+      //   var strings = (str) ? str.translationKeys : null;
+      //   debugger;
+      //   if (strings && strings.length > 0) {
+      //     result = strings.join("");
+      //   }
+      //   return result;
+      // },
+      "QuotedStringLiteral": function(_, str, _) {
+        var result = str.translationKeys;
+        debugger;
+        return result;
+      },
+      "quotedStringChars": function(chars) {
         var result = "";
-        var strings = (parts) ? parts.translationKeys : null;
+        var strings = (chars) ? chars.translationKeys : null;
         if (strings && strings.length > 0) {
           result = strings.join("");
         }
+        debugger;
         return result;
       },
-      "stringChar": function(char) {
+      "quotedChar_escaped": function(esc, char) {
+        debugger;
         return this.interval.contents;
       },
       "Arg": function(e) {
