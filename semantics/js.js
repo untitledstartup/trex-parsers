@@ -19,6 +19,15 @@
           }
           debugger;
           return key;
+        },
+        "Dict": function(_, entries, _) {
+          return entries.translationKeys;
+        },
+        "DictEntry": function(key, _, val) {
+          return val.translationKeys;
+        },
+        "Array": function(_, items, _) {
+          return items.translationKeys;
         }
       }
     }

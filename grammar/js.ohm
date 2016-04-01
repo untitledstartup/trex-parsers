@@ -3,4 +3,20 @@ Js <: Base {
 TMLLocalizedString
   := MethodNamed<Macro>
   
+Arg
+  := Method | Object | Property | Variable | Literal
+  
+Object
+  = Dict
+  | Array
+  
+Dict
+ = "{" ListOf<DictEntry, ","> "}"
+  
+DictEntry
+  = (StringLiteral | Variable) ":" ArgExp
+  
+Array
+  = "[" ListOf<ArgExp, ","> "]"
+  
 }
