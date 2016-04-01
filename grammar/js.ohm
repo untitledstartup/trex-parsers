@@ -1,6 +1,6 @@
-JS <: Base {
+Js <: Base {
 
 TMLLocalizedString
-  := MethodNamed<"tr">
+  := MethodNamed<Macro>
   
 }

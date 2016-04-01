@@ -3,6 +3,10 @@ Base {
 // Invocation expression
 Exp
   = TMLLocalizedStrings
+  
+// Defaults
+Macro
+  = "trl" | "trl" | "tr"
  
 // Comments
 comment
