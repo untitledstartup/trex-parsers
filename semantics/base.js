@@ -65,7 +65,7 @@
         "Property": function(first, _, rest) {
           return "";
         },
-        "Method": function(methodName, _, args, _) {
+        "MethodNamed": function(methodName, _, args, _) {
           return args.translationKeys;
         },
       

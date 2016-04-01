@@ -63,10 +63,10 @@ Variable
   = #(validFirstVarChar validVarChar*)
 
 validFirstVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | digit | space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | digit | space) any
   
 validVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | space) any
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
   
 // Operators
 operator
@@ -90,7 +90,10 @@ Arg
   = Method | Property | Variable | Literal
   
 Method
-  = MethodName "(" ListOf<ArgExp, ","> ")"
+  = MethodNamed<MethodName>
+  
+MethodNamed<methodName>
+  = methodName "(" ListOf<ArgExp, ","> ")"
   
 MethodName
   = Variable

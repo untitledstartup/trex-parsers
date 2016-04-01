@@ -1,0 +1,6 @@
+JS <: Base {
+
+TMLLocalizedString
+  := MethodNamed<"tr">
+  
+}
