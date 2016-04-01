@@ -12,7 +12,7 @@ BooleanLiteral
   += "YES" | "NO"
   
 StringLiteral
-  := QuotedStringLiteral<"\"">
+  := QuotedStringLiteral<"\"", stringNonLiteral>
   
 Arg
   := Literal 

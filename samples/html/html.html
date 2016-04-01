@@ -1,23 +1,31 @@
-<tml-tr>&lt;tml-tr&gt;: Welcome {user}</tml-tr>
+<tml-tr>1 Welcome {user}</tml-tr>
 
-<h3 tml-tr>&lt;h3 tml-tr&gt;: Welcome {user}</h3>
+<h3 tml-tr>2 &lt;h3 tml-tr&gt; Welcome {user}</h3>
 
-<h3 tml-tr="&amp;Attr: Welcome {user}"></h3>
+<h3 tml-tr="3 &amp;Attr: Welcome {user}"></h3>
 
-<h3 num='stats.visit_times' tml-tr>&lt;h3 .. tml-tr&gt;:: Welcome {user}, this is your {num} visit</h3>
+<h3 num='stats.visit_times' tml-tr>4 &lt;h3 .. tml-tr&gt; Welcome {user}, this is your {num} visit</h3>
 
 <h3 tml-tr values="{ user: userParams.name, age: userParams.age }">
-    &lt;h3 tml-tr&gt; .. : Hello {user}, you're {age} years old!
+    5 &lt;h3 tml-tr&gt; Hello {user}, you're {age} years old!
 </h3>
 
-<input type="text" placeholder="{{ trl('TRL_method: Your username') }}" />
+<input type="text" placeholder="{{ trl('6 Your username') }}" />
 
-<input placeholder="{{ 'TRL_filter: Your username' | trl }}" type="text" />
+<input placeholder="{{ '7 Your username' | trl }}" type="text" />
 
-<h3>{{ "TRL_tagContent: trl" | trl }}</h3>
+<h3>{{ "8 TRL_tagContent_trl" | trl }}</h3>
 
-<h3>{{ "TRL_tagContent: trl:this" | trl:this }}</h3>
+<h3>{{ "9 TRL_tagContent_trl_this" | trl:this }}</h3>
 
-<h3> {{ "TRL_tagContent: trl:this | toUpper " | trl:this | toUpper }} </h3>
+<h3> {{ "10 TRL_tagContent_trl_this_|_toUpper " | trl:this | toUpper }} </h3>
 
-<h3>{{ "TRL_tagContent: TRL with object: Hello {user}, this is your {num} visit" | trl:{ user: logged_in_user, num: visitCounter } }}</h3>
+<h3>{{ "11 TRL with object: Hello {user}, this is your {num} visit" | trl:{ user: logged_in_user, num: visitCounter } }}</h3>
+
+<div tml-tr>12 One <a>Two <b>Three</b> Four <c> Five </c></a> Six </div>
+
+<!-- Shouldn't pass -->
+
+<tml-tr bad>{{ myVar }}</tml-tr>
+
+<hr bad tml-tr="{{ myVar }}"/>

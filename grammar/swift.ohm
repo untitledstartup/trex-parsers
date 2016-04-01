@@ -2,7 +2,7 @@ Swift <: Base {
 
 // OVERRIDES
 TMLLocalizedString
-  := Macro "(" StringLiteral ("," ListOf<ArgExp, ",">)* ")"
+  := Macro "(" StringLiteral ("," ArgExp)* ")"
   
 // Null Expression
 NullLiteral
@@ -10,7 +10,7 @@ NullLiteral
   | "NSNull()"
   
 StringLiteral
-  := QuotedStringLiteral<"\"">+
+  := QuotedStringLiteral<"\"", stringNonLiteral>+
   
 Arg
   := Literal | CollectionAccess | Method | Object | Property | Variable

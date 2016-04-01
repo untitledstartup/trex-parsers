@@ -13,15 +13,42 @@ endComment
 Arg
   := Method | Object | Property | Variable | Literal
   
+stringNonLiteral
+  := "{{" | "}}"
+  
 TMLLocalizedString
-  := HTMLTag<"tml-tr"> (~HTMLCloseTag<"tml-tr"> any)+ HTMLCloseTag<"tml-tr"> --tag
-  | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" "=" StringLiteral HTMLTagAttributeExp* "/"? ">" --tagAttr
-  | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" HTMLTagAttributeExp* ">" (~"<" any)+ HTMLCloseAnyTag --markedTag
-  | "<" HTMLTagName (~(HTMLTagAttributeName "=" QuotedTRLExp) any)* HTMLTagAttributeName "=" QuotedTRLExp HTMLTagAttributeExp* "/"? ">" --trlInAttr
-  | HTMLAnyTag TRLExp HTMLCloseAnyTag --trlInTag
+  := HTMLTagWithContent<"tml-tr", TMLLocalizedTagContent> --tmlTag
+  | HTMLTagWithAttribute<HTMLTagName, TRLAttributeExp> --trlInAttr
+  | HTMLTagWithAttribute<HTMLTagName, TMLAttributeExp> --tmlInAttr
+  | HTMLTagWithAttributeAndContent<HTMLTagName, "tml-tr", TMLLocalizedTagContent> --markedTag
+  | HTMLTagWithContent<HTMLTagName, TRLExp> --trlInTag
 
 // END OF OVERRIDES
 
+TMLLocalizedTagContent
+  = TRLExp --trl
+  | (TagStringChar | NonTMLTag)+
+  
+TRLAttributeExp
+  = HTMLTagAttributeName "=" QuotedTRLExp
+  
+TMLAttributeExp
+  = "tml-tr" "=" (QuotedTRLExp | StringLiteral)
+  
+NonTMLAttribute
+  = ~"tml-tr" HTMLTagAttributeExp
+
+NonTMLTag
+  = "<" HTMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent HTMLCloseAnyTag
+  
+TagStringChar
+  = ~("<" | CodeMarkup) any
+  
+// Special Markup
+CodeMarkup
+  = "{{" (~"}}" any)* "}}"
+
+// TRL
 QuotedTRLExp
   = "\"" TRLExp "\""
   | "'" TRLExp "'"

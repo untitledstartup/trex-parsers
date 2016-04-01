@@ -7,57 +7,63 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // := HTMLTag<"tml-tr"> (~HTMLCloseTag<"tml-tr"> any)+ HTMLCloseTag<"tml-tr"> --tag
-        "TMLLocalizedString_tag": function(open, chars, close) {
-          var label = chars.interval.contents;
-          if (label) {
-            label = HTMLEntities.decode(label);
-          }
-          var key = utils.createTranslationKey(label);
+        // HTMLTagWithContent<"tml-tr", (NonTag | NonTMLTag)+> --tmlTag
+        "TMLLocalizedString_tmlTag": function(tag) {
+          var key = tag.translationKeys;
           return key;
         },
-        // | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" "=" StringLiteral HTMLTagAttributeExp* "/"? ">" --tagAttr
-        "TMLLocalizedString_tagAttr": function(open, tag, preAttrs, tmlAttr, _, str, postAttrs, _, close) {
-          var label = str.translationKeys;
-          if (label) {
-            label = XMLEntities.decode(label);
-          }
-          var key = utils.createTranslationKey(label);
+        // HTMLTagWithAttribute<HTMLTagName, TRLAttributeExp> --trlInAttr
+        "TMLLocalizedString_trlInAttr": function(tag) {
+          var key = tag.translationKeys;
           return key;
         },
-        // | "<" HTMLTagName (~"tml-tr" HTMLTagAttributeExp)* "tml-tr" HTMLTagAttributeExp* ">" (~"<" any)+ HTMLCloseAnyTag --markedTag
-        "TMLLocalizedString_markedTag": function(open, tag, preAttrs, tmlAttr, postAttrs, close, chars, closeTag) {
-          var label = chars.interval.contents;
-          if (label) {
-            label = HTMLEntities.decode(label);
-          }
-          var key = utils.createTranslationKey(label);
+        // HTMLTagWithAttribute<HTMLTagName, TMLAttributeExp> --tmlInAttr
+        "TMLLocalizedString_tmlInAttr": function(tag) {
+          var key = tag.translationKeys;
           return key;
         },
-        // | "<" HTMLTagName (~(HTMLTagAttributeName "=" QuotedTRLExp) any)* HTMLTagAttributeName "=" QuotedTRLExp HTMLTagAttributeExp* "/"? ">" --trlInAttr
-        "TMLLocalizedString_trlInAttr": function(open, tag, preAttrNames, attr, _, trl, postAttrs, _, close) {
-          var label = trl.translationKeys;
-          if (label) {
-            label = XMLEntities.decode(label);
-          }
-          var key = utils.createTranslationKey(label);
+        // HTMLTagWithAttributeAndContent<HTMLTagName, "tml-tr", (NonTag | NonTMLTag)+> --markedTag
+        "TMLLocalizedString_markedTag": function(tag) {
+          var key = tag.translationKeys;
           return key;
         },
-        // | HTMLAnyTag TRLExp HTMLCloseAnyTag --trlInTag
-        "TMLLocalizedString_trlInTag": function(open, trl, close) {
-          var label = trl.translationKeys;
-          if (label) {
-            label = HTMLEntities.decode(label);
-          }
-          var key = utils.createTranslationKey(label);
+        // | HTMLTagWithContent<HTMLTagName, TRLExp> --trlInTag
+        "TMLLocalizedString_trlInTag": function(tag) {
+          var key = tag.translationKeys;
           return key;
+        },
+        "TMLLocalizedTagContent": function(chars) {
+          var key = utils.createTranslationKey(chars.interval.contents);
+          if (key && key.label) {
+            key.label = HTMLEntities.decode(key.label);
+          }
+          return key;
+        },
+        "TMLLocalizedTagContent_trl": function(trl) {
+          return trl.translationKeys;
+        },
+        // "<" HTMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent HTMLCloseAnyTag
+        "NonTMLTag": function(_, tag, attrs, _, content, _) {
+          return content.translationKeys;
+        },
+        // "tml-tr" "=" (QuotedTRLExp | StringLiteral)"
+        "TMLAttributeExp": function(attr, _, arg) {
+          return arg.translationKeys;
         },
         "QuotedTRLExp": function(_, trl, _) {
           return trl.translationKeys;
         },
+        "TRLAttributeExp": function(attr, _, exp) {
+          var result = exp.translationKeys;
+          if (result && result.label) {
+            result.label = XMLEntities.decode(result.label);
+          }
+          return result;
+        },
         "TRLExp": function(_, trl, _) {
           return trl.translationKeys;
         },
+        // "trl" "(" StringLiteral ")"
         "TRLMethod": function(macro, _, str, _) {
           return str.translationKeys;
         },

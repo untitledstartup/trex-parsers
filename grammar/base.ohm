@@ -28,30 +28,34 @@ Literal
   | StringLiteral
   | BooleanLiteral
   | NullLiteral
+  
+NullLiteral
+  = "null"
+  
+BooleanLiteral
+  = "true"
+  | "false"
 
 NumberLiteral
   = digit+ ("." digit+)?
   
+stringNonLiteral
+(~"" nothing)
+  = ~""
+  
 StringLiteral
-  = QuotedStringLiteral<"\"">
-  | QuotedStringLiteral<"'">
+  = QuotedStringLiteral<"\"", stringNonLiteral>
+  | QuotedStringLiteral<"'", stringNonLiteral>
   
-QuotedStringLiteral<quot>
-  = quot quotedStringChars<quot> quot
+QuotedStringLiteral<quot, special>
+  = quot quotedStringChars<(quot | special)> quot
   
-quotedStringChars<quot>
-  = #(quotedChar<quot>+)
+quotedStringChars<special>
+  = quotedChar<special>+
   
-quotedChar<quot>
-  = "\\" quot --escaped
-  | ~quot any
-
-BooleanLiteral
-  = "true"
-  | "false"
-  
-NullLiteral
-  = "null"
+quotedChar<special>
+  = "\\" special --escaped
+  | ~special any
   
   
 // Variables
@@ -117,10 +121,16 @@ HTMLCloseTag<tag>
   = "<" "/" tag ">"
   
 HTMLTagWithAttribute<tag, attr>
-  = "<" tag HTMLTagAttributeExp* attr HTMLTagAttributeExp* "/"? ">"
+  = "<" tag (~(attr | ">") HTMLTagAttributeExp)* attr HTMLTagAttributeExp* "/"? ">"
   
 HTMLTagAttributeExp
   = HTMLTagAttributeName ("=" HTMLTagAttributeValue)?
+  
+HTMLTagWithContent<tag, content>
+  = HTMLTag<tag> content HTMLCloseTag<tag>
+  
+HTMLTagWithAttributeAndContent<tag, attr, content>
+  = HTMLTagWithAttribute<tag, attr> content HTMLCloseTag<tag>
   
 HTMLTagName
   = #(alnum+)

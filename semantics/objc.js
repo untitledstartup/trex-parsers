@@ -4,26 +4,30 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        "TMLLocalizedString": function(macro, open, label, sep, args, close, semicolon) {
-          var results = [];
-          var labelString = label.translationKeys;
-          if (labelString.length > 0) {
-            results.push(labelString);
+        // Macro "(" StringObject ("," ArgExp)* ")" ";"*
+        "TMLLocalizedString": function(macro, open, str, sep, args, close, semicolon) {
+          var label = null;
+          var labelKey = str.translationKeys;
+          if (labelKey && labelKey.label) {
+            label = labelKey.label;
           }
-          else {
+          
+          if (label == null) {
             return null;
           }
+          
           var argResult = args.translationKeys;
+          var description = null;
           if (argResult && argResult.length > 0) {
-            var argStr = argResult[0];
-            if (argStr instanceof Array) {
-              argStr = argStr[0];
+            var arg = argResult[0];
+            if (arg instanceof Array) {
+              arg = arg[0];
             }
-            if (argStr) {
-              results.push(argStr);
+            if (arg && arg.label) {
+              description = arg.label;
             }
           }
-          var key = utils.createTranslationKey(results[0], results[1]);
+          var key = utils.createTranslationKey(label, description);
           return key;
         },
         "Macro": function(e) {
@@ -40,10 +44,13 @@
         },
         "StringObject": function(_, str, _, additionalLines) {
           var result = str.translationKeys;
+          if (!result || !result.label) {
+            return null;
+          }
           if (additionalLines && additionalLines.interval.contents.length > 0) {
             var additionalString = additionalLines.translationKeys;
-            if (additionalString) {
-              result += "\n" + additionalString;
+            if (additionalString && additionalString.label) {
+              result.label += "\n" + additionalString.label;
             }
           }
           return result;

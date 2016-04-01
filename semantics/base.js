@@ -1,118 +1,152 @@
-module.exports = {
-  "attributes": {
-    "translationKeys": {
-      "ListOf_none": function() {
-        return "";
-      },
-      "ListOf_some": function(first, separator, iter) {
-        var result = [];
-        var firstString = first.translationKeys;
-        if (firstString) {
-          result.push(firstString);
-        }
-        var children = iter.children;
-        for (var i = 0; i < children.length; i++) {
-          var child = children[i];
-          var childString = child.translationKeys;
-          if (childString) {
-            result.push(childString);
+(function(){
+  
+  var utils = require('../lib/GenstringUtils');
+  
+  module.exports = {
+    "attributes": {
+      "translationKeys": {
+        // Basic support
+        "ListOf_none": function() {
+          return "";
+        },
+        "ListOf_some": function(first, separator, iter) {
+          var result = [];
+          var firstString = first.translationKeys;
+          if (firstString) {
+            result.push(firstString);
           }
-        }
-        return result;
-      },
-      "TMLLocalizedStrings": function(_, strings, _) {
-        var result = strings.translationKeys;
-        var newResult = [];
-        for (var i = 0; i < result.length; i++) {
-          var r = result[i];
-          if (r instanceof Array) {
-            newResult = newResult.concat(r);
-          } else {
-            newResult.push(r);
+          var children = iter.children;
+          for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            var childString = child.translationKeys;
+            if (childString) {
+              result.push(childString);
+            }
           }
+          return result;
+        },
+      
+        // TMLLocalizedStrings
+        "TMLLocalizedStrings": function(_, strings, _) {
+          var result = strings.translationKeys;
+          var newResult = [];
+          for (var i = 0; i < result.length; i++) {
+            var r = result[i];
+            if (r instanceof Array) {
+              newResult = newResult.concat(r);
+            } else {
+              newResult.push(r);
+            }
+          }
+          return newResult;
+        },
+        "TMLLocalizedString": function(str) {
+          return str.translationKeys;
+        },
+      
+        // Literals
+        "NullLiteral": function(e) {
+          return "";
+        },
+        "BooleanLiteral": function(parts) {
+          return "";
+        },
+        "Variable": function(first, rest) {
+          return "";
+        },
+        "Literal": function(e) {
+          return e.translationKeys;
+        },
+        "NumberLiteral": function(integers, _, decimals) {
+          return "";
+        },
+      
+        // Expressions
+        "Property": function(first, _, rest) {
+          return "";
+        },
+        "Method": function(methodName, _, args, _) {
+          return args.translationKeys;
+        },
+      
+        // Strings
+        "QuotedStringLiteral": function(_, str, _) {
+          var string = str.interval.contents;
+          var key = utils.createTranslationKey(string);
+          return key;
+        },
+        "quotedStringChars": function(chars) {
+          var string = chars.interval.contents;
+          var key = utils.createTranslationKey(string);
+          return key;
+        },
+        // "quotedChar_escaped": function(esc, char) {
+        //   return this.interval.contents;
+        // },
+      
+        // Arguments
+        "Arg": function(arg) {
+          return arg.translationKeys;
+        },
+        "ArgExp_parens": function(_, argExp, _) {
+          return argExp.translationKeys;
+        },
+        "ArgExp_ternary": function(first, _, second, _, third) {
+          var result = first.translationKeys;
+          if (second && second.interval.contents.length > 0) {
+            result = result.concat(second.translationKeys);
+          }
+          if (third && third.interval.contents.length > 0) {
+            result = result.concat(third.translationKeys);
+          }
+          return result;
+        },
+        "ArgExp_binary": function(first, _, second) {
+          var result = first.translationKeys;
+          if (second && second.interval.contents.length > 0) {
+            result = result.concat(second.translationKeys);
+          }
+          return result;
+        },
+        "ArgExp_unary": function(_, arg) {
+          return arg.translationKeys;
+        },
+        "ArgExp_unaryAfter": function(arg, _) {
+          return arg.translationKeys;
+        },
+      
+        // HTML
+        // "<" tag HTMLTagAttributeExp* "/"? ">"
+        "HTMLTag": function(open, tag, attrs, _, close) {
+          var key = attrs.translationKeys;
+          debugger;
+          return key;
+        },
+        // "<" tag (~(attr | ">") HTMLTagAttributeExp)* attr HTMLTagAttributeExp* "/"? ">"
+        "HTMLTagWithAttribute": function(open, tag, ignoreAttrs, attr, remainder, _, close) {
+          debugger;
+          return attr.translationKeys;
+        },
+        // HTMLTagAttributeName ("=" HTMLTagAttributeValue)?
+        "HTMLTagAttributeExp": function(attr, _, value) {
+          debugger;
+          if (value && value.interval.contents.length > 0) {
+            return value.translationKeys;
+          }
+          return "";
+        },
+        // HTMLTag<tag> content HTMLCloseTag<tag>
+        "HTMLTagWithContent": function(tag, tagContent, close) {
+          debugger;
+          return tagContent.translationKeys;
+        },
+        // HTMLTagWithAttribute<tag, attr> content HTMLCloseTag<tag>
+        "HTMLTagWithAttributeAndContent": function(tagWithAttr, content, close) {
+          debugger;
+          return content.translationKeys;
         }
-        return newResult;
-      },
-      "TMLLocalizedString": function(str) {
-        return str.translationKeys;
-      },
-      "NullLiteral": function(e) {
-        return "";
-      },
-      "BooleanLiteral": function(parts) {
-        return "";
-      },
-      "Variable": function(first, rest) {
-        return "";
-      },
-      "Literal": function(e) {
-        return e.translationKeys;
-      },
-      "NumberLiteral": function(integers, _, decimals) {
-        return "";
-      },
-      "Property": function(first, _, rest) {
-        return "";
-      },
-      "Method": function(methodName, _, args, _) {
-        return args.translationKeys;
-      },
-      // "StringLiteral": function(open, str, close) {
-      //   var result = "";
-      //   var strings = (str) ? str.translationKeys : null;
-      //   debugger;
-      //   if (strings && strings.length > 0) {
-      //     result = strings.join("");
-      //   }
-      //   return result;
-      // },
-      "QuotedStringLiteral": function(_, str, _) {
-        var result = str.translationKeys;
-        debugger;
-        return result;
-      },
-      "quotedStringChars": function(chars) {
-        var result = "";
-        var strings = (chars) ? chars.translationKeys : null;
-        if (strings && strings.length > 0) {
-          result = strings.join("");
-        }
-        debugger;
-        return result;
-      },
-      "quotedChar_escaped": function(esc, char) {
-        debugger;
-        return this.interval.contents;
-      },
-      "Arg": function(e) {
-        return e.translationKeys;
-      },
-      "ArgExp_parens": function(_, argExp, _) {
-        return argExp.translationKeys;
-      },
-      "ArgExp_ternary": function(first, _, second, _, third) {
-        var result = first.translationKeys;
-        if (second && second.interval.contents.length > 0) {
-          result = result.concat(second.translationKeys);
-        }
-        if (third && third.interval.contents.length > 0) {
-          result = result.concat(third.translationKeys);
-        }
-        return result;
-      },
-      "ArgExp_binary": function(first, _, second) {
-        var result = first.translationKeys;
-        if (second && second.interval.contents.length > 0) {
-          result = result.concat(second.translationKeys);
-        }
-        return result;
-      },
-      "ArgExp_unary": function(_, arg) {
-        return arg.translationKeys;
-      },
-      "ArgExp_unaryAfter": function(arg, _) {
-        return arg.translationKeys;
       }
     }
   }
-}
+
+})();

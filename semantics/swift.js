@@ -3,32 +3,47 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        "TMLLocalizedString": function(macro, open, label, sep, args, close) {
-          var results = [];
-          var labelString = label.translationKeys;
-          if (labelString.length > 0) {
-            results.push(labelString);
+        // Macro "(" StringLiteral ("," ArgExp)* ")"
+        "TMLLocalizedString": function(macro, open, str, sep, args, close) {
+          var label = null;
+          var labelKey = str.translationKeys;
+          if (labelKey && labelKey.label) {
+            label = labelKey.label;
           }
-          else {
+          
+          if (label == null) {
             return null;
           }
+          
           var argResult = args.translationKeys;
+          var description = null;
           if (argResult && argResult.length > 0) {
-            var argStr = argResult[0];
-            if (argStr instanceof Array) {
-              argStr = argStr[0];
+            var arg = argResult[0];
+            if (arg instanceof Array) {
+              arg = arg[0];
             }
-            if (argStr) {
-              results.push(argStr);
+            if (arg && arg.label) {
+              description = arg.label;
             }
           }
-          var key = utils.createTranslationKey(results[0], results[1]);
+          var key = utils.createTranslationKey(label, description);
           return key;
         },
         "StringLiteral": function(strings) {
           var result = strings.translationKeys;
+          debugger;
           if (result instanceof Array) {
-            result = result.join("\n");
+            var str = null;
+            for (var i=0; i<result.length; i++) {
+              var r = result[i];
+              if (i===0) {
+                str = r.label;
+              }
+              else {
+                str += "\n" + r.label;
+              }
+            }
+            result = utils.createTranslationKey(str);
           }
           return result;
         },
