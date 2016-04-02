@@ -102,8 +102,11 @@ MethodNamed<methodName>
 MethodName
   = Variable
   
+PropertySeparator
+  = "."
+  
 Property
-  = ArgExp ("." ArgExp)+
+  = ArgExp (PropertySeparator ArgExp)+
   
 ArgExp
   = "(" ArgExp ")" --parens

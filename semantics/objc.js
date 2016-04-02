@@ -30,12 +30,6 @@
           var key = utils.createTranslationKey(label, description);
           return key;
         },
-        "Macro": function(e) {
-          return "";
-        },
-        "Property": function(first, sep, seconds) {
-          return "";
-        },
         "Object": function(e) {
           return e.translationKeys;
         },

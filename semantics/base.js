@@ -62,6 +62,9 @@
         },
       
         // Expressions
+        "Macro": function(e) {
+          return "";
+        },
         "Property": function(first, _, rest) {
           return "";
         },
