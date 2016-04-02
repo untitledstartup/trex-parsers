@@ -114,41 +114,45 @@ ArgExp
   | Arg
   
   
-// HTML
-HTMLAnyTag
-  = "<" HTMLTagName HTMLTagAttributeExp* "/"? ">"
+// XML
+XMLAnyTag
+  = "<" XMLTagName XMLTagAttributeExp* "/"? ">"
   
-HTMLCloseAnyTag
-  = "<" "/" HTMLTagName ">"
+XMLCloseAnyTag
+  = "<" "/" XMLTagName ">"
   
-HTMLTag<tag>
-  = "<" tag HTMLTagAttributeExp* "/"? ">"
+XMLTag<tag>
+  = "<" tag XMLTagAttributeExp* "/"? ">"
   
-HTMLCloseTag<tag>
+XMLCloseTag<tag>
   = "<" "/" tag ">"
   
-HTMLTagWithAttribute<tag, attr>
-  = "<" tag (~(attr | ">") HTMLTagAttributeExp)* attr HTMLTagAttributeExp* "/"? ">"
+XMLTagWithAttribute<tag, attr>
+  = "<" tag (~(attr | ">") XMLTagAttributeExp)* attr XMLTagAttributeExp* "/"? ">"
   
-HTMLTagAttributeExp
-  = HTMLTagAttributeName ("=" HTMLTagAttributeValue)?
+XMLTagAttributeExp
+  = XMLTagAttributeName ("=" XMLTagAttributeValue)?
   
-HTMLTagWithContent<tag, content>
-  = HTMLTag<tag> content HTMLCloseTag<tag>
+XMLTagWithContent<tag, content>
+  = XMLTag<tag> content XMLCloseTag<tag>
   
-HTMLTagWithAttributeAndContent<tag, attr, content>
-  = HTMLTagWithAttribute<tag, attr> content HTMLCloseTag<tag>
+XMLTagWithAttributeAndContent<tag, attr, content>
+  = XMLTagWithAttribute<tag, attr> content XMLCloseTag<tag>
   
-HTMLTagName
-  = #(alnum+)
+xmlTagChar
+  = alnum
+  | ":" | "-"
   
-HTMLTagAttributeName
-  = #(htmlAttributeChar+)
+XMLTagName
+  = #(xmlTagChar+)
   
-HTMLTagAttributeValue
+XMLTagAttributeName
+  = #(xmlAttributeChar+)
+  
+XMLTagAttributeValue
   = StringLiteral
   
-htmlAttributeChar
+xmlAttributeChar
   = ~( space | "\"" | "'" | ">" | "/" | "=" ) any
   
 }

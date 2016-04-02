@@ -115,33 +115,33 @@
           return arg.translationKeys;
         },
       
-        // HTML
-        // "<" tag HTMLTagAttributeExp* "/"? ">"
-        "HTMLTag": function(open, tag, attrs, _, close) {
+        // XML
+        // "<" tag XMLTagAttributeExp* "/"? ">"
+        "XMLTag": function(open, tag, attrs, _, close) {
           var key = attrs.translationKeys;
           debugger;
           return key;
         },
-        // "<" tag (~(attr | ">") HTMLTagAttributeExp)* attr HTMLTagAttributeExp* "/"? ">"
-        "HTMLTagWithAttribute": function(open, tag, ignoreAttrs, attr, remainder, _, close) {
+        // "<" tag (~(attr | ">") XMLTagAttributeExp)* attr XMLTagAttributeExp* "/"? ">"
+        "XMLTagWithAttribute": function(open, tag, ignoreAttrs, attr, remainder, _, close) {
           debugger;
           return attr.translationKeys;
         },
-        // HTMLTagAttributeName ("=" HTMLTagAttributeValue)?
-        "HTMLTagAttributeExp": function(attr, _, value) {
+        // XMLTagAttributeName ("=" XMLTagAttributeValue)?
+        "XMLTagAttributeExp": function(attr, _, value) {
           debugger;
           if (value && value.interval.contents.length > 0) {
             return value.translationKeys;
           }
           return "";
         },
-        // HTMLTag<tag> content HTMLCloseTag<tag>
-        "HTMLTagWithContent": function(tag, tagContent, close) {
+        // XMLTag<tag> content XMLCloseTag<tag>
+        "XMLTagWithContent": function(tag, tagContent, close) {
           debugger;
           return tagContent.translationKeys;
         },
-        // HTMLTagWithAttribute<tag, attr> content HTMLCloseTag<tag>
-        "HTMLTagWithAttributeAndContent": function(tagWithAttr, content, close) {
+        // XMLTagWithAttribute<tag, attr> content XMLCloseTag<tag>
+        "XMLTagWithAttributeAndContent": function(tagWithAttr, content, close) {
           debugger;
           return content.translationKeys;
         }

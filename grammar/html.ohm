@@ -17,11 +17,11 @@ stringNonLiteral
   := "{{" | "}}"
   
 TMLLocalizedString
-  := HTMLTagWithContent<"tml-tr", TMLLocalizedTagContent> --tmlTag
-  | HTMLTagWithAttribute<HTMLTagName, TRLAttributeExp> --trlInAttr
-  | HTMLTagWithAttribute<HTMLTagName, TMLAttributeExp> --tmlInAttr
-  | HTMLTagWithAttributeAndContent<HTMLTagName, "tml-tr", TMLLocalizedTagContent> --markedTag
-  | HTMLTagWithContent<HTMLTagName, TRLExp> --trlInTag
+  := XMLTagWithContent<"tml-tr", TMLLocalizedTagContent> --tmlTag
+  | XMLTagWithAttribute<XMLTagName, TRLAttributeExp> --trlInAttr
+  | XMLTagWithAttribute<XMLTagName, TMLAttributeExp> --tmlInAttr
+  | XMLTagWithAttributeAndContent<XMLTagName, "tml-tr", TMLLocalizedTagContent> --markedTag
+  | XMLTagWithContent<XMLTagName, TRLExp> --trlInTag
 
 // END OF OVERRIDES
 
@@ -30,16 +30,16 @@ TMLLocalizedTagContent
   | (TagStringChar | NonTMLTag)+
   
 TRLAttributeExp
-  = HTMLTagAttributeName "=" QuotedTRLExp
+  = XMLTagAttributeName "=" QuotedTRLExp
   
 TMLAttributeExp
   = "tml-tr" "=" (QuotedTRLExp | StringLiteral)
   
 NonTMLAttribute
-  = ~"tml-tr" HTMLTagAttributeExp
+  = ~"tml-tr" XMLTagAttributeExp
 
 NonTMLTag
-  = "<" HTMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent HTMLCloseAnyTag
+  = "<" XMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent XMLCloseAnyTag
   
 TagStringChar
   = ~("<" | CodeMarkup) any

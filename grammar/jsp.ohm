@@ -1,0 +1,38 @@
+Jsp <: Base {
+
+// OVERRIDES
+comment
+  := startComment (~endComment any)* endComment
+  
+startComment
+  = "<" space * "!" space* "--" space*
+
+endComment
+  = "--" space* ">"
+  
+stringNonLiteral
+  := "${"
+  
+TMLLocalizedString
+  := XMLTagWithAttribute<TMLTagName, TMLAttributeExp> --tmlInAttribute 
+  | XMLTagWithContent<TMLTagName, TMLLocalizedTagContent> --tmlInTag
+
+// END OVERRIDES
+
+TMLTagName
+  = "tml:tr"
+  
+TMLAttributeExp
+  = "label" "=" StringLiteral
+  
+TMLLocalizedTagContent
+  = TagStringChar+
+  
+TagStringChar
+  = ~("<" | CodeMarkup) any
+  
+// Special Markup
+CodeMarkup
+  = "${" (~"}" any)* "}"
+
+}
