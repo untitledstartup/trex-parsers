@@ -95,7 +95,11 @@
           return argExp.translationKeys;
         },
         "ArgExp_ternary": function(first, _, second, _, third) {
-          var result = first.translationKeys;
+          var result = [];
+          var firstKey = first.translationKeys;
+          if (firstKey) {
+            result.push(firstKey);
+          }
           if (second && second.interval.contents.length > 0) {
             result = result.concat(second.translationKeys);
           }
@@ -105,7 +109,11 @@
           return result;
         },
         "ArgExp_binary": function(first, _, second) {
-          var result = first.translationKeys;
+          var result = [];
+          var firstKey = first.translationKeys;
+          if (firstKey) {
+            result.push(firstKey);
+          }
           if (second && second.interval.contents.length > 0) {
             result = result.concat(second.translationKeys);
           }
