@@ -4,35 +4,13 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // Macro "(" StringLiteral ("," ArgExp)* ")" ";"*
-        "TMLLocalizedString": function(macro, open, str, sep, args, close, semicolon) {
-          var label = null;
-          var labelKey = str.translationKeys;
-          if (labelKey && labelKey.label) {
-            label = labelKey.label;
-          }
-          
-          if (label == null) {
+        // quotedStringLiteral<"\"", stringNonLiteral> (space* "+" space* stringLiteral)*
+        "stringLiteral": function(str, _, _, _, additional) {
+          var keys = utils.collectTranslationKeysFromObjects(str.translationKeys);
+          if (!(keys instanceof Array && keys.length > 0)) {
             return null;
           }
-          
-          var argResult = args.translationKeys;
-          var description = null;
-          if (argResult && argResult.length > 0) {
-            var arg = argResult[0];
-            if (arg instanceof Array) {
-              arg = arg[0];
-            }
-            if (arg && arg.label) {
-              description = arg.label;
-            }
-          }
-          var key = utils.createTranslationKey(label, description);
-          return key;
-        },
-        // QuotedStringLiteral<"\"", stringNonLiteral> ("+" StringLiteral)*
-        "StringLiteral": function(str, _, additional) {
-          var key = str.translationKeys;
+          var key = keys[0];
           var label = (key && key.label) ? key.label : "";
           if (additional && additional.interval.contents.length > 0) {
             var children = additional.children;
@@ -42,23 +20,25 @@
               label += str;
             }
           }
-          return utils.createTranslationKey(label);
+          key = utils.createTranslationKey(label, key.description);
+          return [key];
         },
-        // #(validFirstVarChar validVarChar*) Generics?
-        "Variable": function(first, rest, generics) {
-          return "";
+        // validFirstVarChar validVarChar* space* generics?
+        "variable": function(first, rest, _, generics) {
+          return null;
         },
-        // "<" ListOf<(Property | Variable), ","> ">"
-        "Generics": function(_, props, _) {
-          return "";
+        // "<" space* listOf<(property | variable), argSep> space* ">"
+        "generics": function(open, _, props, _, close) {
+          return null;
         },
-        // "new" space+ MethodName Generics? "(" ListOf<ArgExp, ","> ")"
-        "NewObject":function(_, _, methodName, generics, open, args, close) {
+        // "new" space+ methodName space* generics? space* "(" space* ListOf<ArgExp, argSep> space* ")"
+        "newObject":function(keyword, _, methodName, _, generics, _, open, _, args, _, close) {
           return args.translationKeys;
         },
-        // ArgExp "[" ArgExp "]"
-        "CollectionAccess": function(variable, open, indexExp, close) {
-          return indexExp.translationKeys;
+        // argExp "[" space* argExp space* "]"
+        "collectionAccess": function(exp, open, _, indexExp, _, close) {
+          var keys = utils.collectTranslationKeysFromObjects(exp.translationKeys, indexExp.translationKeys);
+          return result;
         }
       }
     }

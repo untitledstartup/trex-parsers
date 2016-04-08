@@ -1,60 +1,57 @@
 Swift <: Base {
 
 // OVERRIDES
-TMLLocalizedString
-  := Macro "(" StringLiteral ("," ArgExp)* ")"
-  
 // Null Expression
-NullLiteral
+nullLiteral
   := "nil"
   | "NSNull()"
   
-StringLiteral
-  := QuotedStringLiteral<"\"", stringNonLiteral>+
+stringLiteral
+  := (quotedStringLiteral<"\"", stringNonLiteral> space*)+
   
-Arg
-  := Literal | CollectionAccess | Method | Object | Property | Variable
-
-// END OVERRIDES
+arg
+  := literal 
+  | collectionAccess 
+  | method 
+  | object 
+  | property 
+  | variable
   
-Macro
+macro
   := "TMLLocalizedString"
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
 
+// END OVERRIDES
 
 // TMLLocalized argument expression
-NamedArg
-  = Variable ":" ArgExp
-  
-CollectionAccess
-  = Property "[" ArgExp "]"
-  | Variable "[" ArgExp "]"
+collectionAccess
+  = argExp "[" space* argExp space* "]"
 
 // Objects
-Object
-  = Dict
-  | Array
+object
+  = dict
+  | array
   
 
 // Dictionary
-Dict
-  = "[" ":" "]"
-  | "[" ListOf<DictEntry, ","> "]"
+dict
+  = "[" space* ":" space* "]"
+  | "[" space* listOf<dictEntry, argSep> space* "]"
   
-DictEntry
-  = StringLiteral ":" DictValue
+dictEntry
+  = stringLiteral space* ":" space* dictValue
   
-DictValue
-  = ArgExp
+dictValue
+  = argExp
 
 
 // Array
-Array
-  = "[" ListOf<ArrayEntry, ","> "]"
+array
+  = "[" space* listOf<arrayEntry, argSep> space* "]"
 
-ArrayEntry
-  = ArgExp
+arrayEntry
+  = argExp
 
 }

@@ -1,104 +1,100 @@
 Objc <: Base {
 
 // OVERRIDES
-TMLLocalizedString
-  := Macro "(" StringObject ("," ArgExp)* ")" ";"*
-
-NullLiteral
+nullLiteral
   := "nil"
   | "NULL"
   
-BooleanLiteral
+booleanLiteral
   += "YES" | "NO"
   
-StringLiteral
-  := QuotedStringLiteral<"\"", stringNonLiteral>
+stringLiteral
+  := quotedStringLiteral<"\"", stringNonLiteral>
   
-Arg
-  := Literal 
-  | CollectionAccess
-  | Object
-  | MessageSend  
-  | Property
-  | Variable
-
-// END OF OVERRIDES
+arg
+  := property
+  | method
+  | collectionAccess
+  | messageSend
+  | object
+  | literal  
+  | variable
   
-Macro
+macro
   := "TMLLocalizedString"
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
 
-CollectionAccess
-  = Property "[" ArgExp "]"
-  | Variable "[" ArgExp "]"
+// END OF OVERRIDES
+
+collectionAccess
+  = argExp "[" space* argExp space* "]"
 
 // Object  
-Object
-  = StringObject
-  | NumberObject
-  | Dict
-  | Array
-  | LiteralWrap
+object
+  = stringObject
+  | numberObject
+  | dict
+  | array
+  | literalWrap
   
 // Literal Wrap @(WHATEVER)
-LiteralWrap
-  = "@(" Literal ")"
-  | "@(" Variable ")"
+literalWrap
+  = "@(" space* argExp space* ")"
   
 // Number Object
-NumberObject
-  = "@" NumberLiteral
+numberObject
+  = "@" numberLiteral
 
 // String Object
-StringObject
-  = "@" StringLiteral ("@"? StringLiteral)*
+stringObject
+  = "@" stringLiteral (space* "@"? stringLiteral)*
 
 
 // Dictionary
-Dict
-  = "@{" ListOf<DictEntry, ","> "}"
+dict
+  = "@{" space* listOf<dictEntry, argSep> space* "}"
   
-DictEntry
-  = StringObject ":" DictValue
+dictEntry
+  = stringObject space* ":" space* dictValue
   
-DictValue
-  = ArgExp
+dictValue
+  = argExp
 
 
 // Array
-Array
-  = "@[" ListOf<ArrayEntry, ","> "]"
+array
+  = "@[" space* listOf<arrayEntry, argSep> space* "]"
 
-ArrayEntry
-  = ArgExp
+arrayEntry
+  = argExp
 
 
 // Message Send
-MessageSend
-  = NoArgumentMessageSend
-  | ArgumentMessageSend
+messageSend
+  = noArgumentMessageSend
+  | argumentMessageSend
   
-NoArgumentMessageSend
-  = "[" Receiver NoArgumentMessage "]"
+noArgumentMessageSend
+  = "[" space* receiver space+ noArgumentMessage space* "]"
 
-ArgumentMessageSend
-  = "[" Receiver (ArgumentMessage ArgExp)+ "]"
+argumentMessageSend
+  = "[" space* receiver (space+ argumentMessage)+ space* "]"
   
-Receiver
-  = MessageComponent
+receiver
+  = messageComponent
   
-NoArgumentMessage
-  = MessageComponent
+noArgumentMessage
+  = messageComponent
   
-ArgumentMessage
-  = MessageComponent ":"
+argumentMessage
+  = messageComponent space* ":" space* listOf<argExp, argSep>
 
-MessageComponent
-  = #(messageComponentChar+)
+messageComponent
+  = messageComponentChar+
 
 messageComponentChar
-  = ~("["|"]"|":"|space) any
+  = ~( "[" | "]" | ":" | space ) any
 
 }

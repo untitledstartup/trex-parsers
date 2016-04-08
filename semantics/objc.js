@@ -4,83 +4,68 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // Macro "(" StringObject ("," ArgExp)* ")" ";"*
-        "TMLLocalizedString": function(macro, open, str, sep, args, close, semicolon) {
-          var label = null;
-          var labelKey = str.translationKeys;
-          if (labelKey && labelKey.label) {
-            label = labelKey.label;
-          }
-          
-          if (label == null) {
-            return null;
-          }
-          
-          var argResult = args.translationKeys;
-          var description = null;
-          if (argResult && argResult.length > 0) {
-            var arg = argResult[0];
-            if (arg instanceof Array) {
-              arg = arg[0];
-            }
-            if (arg && arg.label) {
-              description = arg.label;
-            }
-          }
-          var key = utils.createTranslationKey(label, description);
-          return key;
-        },
-        "Object": function(e) {
+        "object": function(e) {
           return e.translationKeys;
         },
-        "NumberObject": function(_, num) {
-          return "";
+        "numberObject": function(_, num) {
+          return null;
         },
-        "StringObject": function(_, str, _, additionalLines) {
-          var result = str.translationKeys;
-          if (!result || !result.label) {
+        // "@" stringLiteral (space* "@"? StringLiteral)*
+        "stringObject": function(_, str, _, _, additionalLines) {
+          var result = utils.collectTranslationKeysFromObjects(str.translationKeys);
+          debugger;
+          if (!(result instanceof Array && result.length > 0)) {
             return null;
           }
+          var key = result[0];
           if (additionalLines && additionalLines.interval.contents.length > 0) {
-            var additionalString = additionalLines.translationKeys;
-            if (additionalString && additionalString.label) {
-              result.label += "\n" + additionalString.label;
+            var additionalKeys = additionalLines.translationKeys;
+            if (additionalKeys instanceof Array && additionalKeys.length > 0) {
+              var label = key.label;
+              additionalKeys.forEach(function(aKey) {                
+                label += "\n" + aKey.label;
+              });
+              key = utils.createTranslationKey(label, key.description);
             }
           }
-          return result;
+          return [key];
         },
-        "Dict": function(open, parts, close) {
-          return "";
+        // "@{" space* ListOf<dictEntry, argSep> space* "}"
+        "dict": function(open, _, parts, _, close) {
+          return parts.translationKeys;
         },
-        "DictEntry": function(key, _, val) {
-          return "";
+        // stringObject space* ":" space* dictValue
+        "dictEntry": function(key, _, _, _, val) {
+          return val.translationKeys;
         },
-        "DictValue": function(e) {
+        "dictValue": function(e) {
           return e.translationKeys;
         },
-        "Array": function(open, parts, close) {
-          return "";
+        // "@[" space* ListOf<arrayEntry, argSep> space* "]"
+        "array": function(open, _, parts, _, close) {
+          return parts.translationKeys;
         },
-        "ArrayEntry": function(e) {
+        "arrayEntry": function(e) {
           return e.translationKeys;
         },
-        "CollectionAccess": function(varname, open, arg, close) {
-          return "";
+        // argExp "[" space* argExp space* "]"
+        "collectionAccess": function(varname, open, _, arg, _, close) {
+          return arg.translationKeys;
         },
-        "MessageSend": function(msg) {
-          return "";
+        "messageSend": function(msg) {
+          return msg.translationKeys;
         },
-        "NoArgumentMessageSend": function(_, receiver, messageName, _) {
-          return "";
+        // "[" space* receiver space+ noArgumentMessage space* "]"
+        "noArgumentMessageSend": function(open, _, receiver, _, messageName, _, close) {
+          return null;
         },
-        "ArgumentMessageSend": function(_, receiver, messageNames, args, _) {
-          return args.translationKeys;
+        // "[" space* receiver (space+ argumentMessage)+ space* "]"
+        "argumentMessageSend": function(open, _, receiver, _, argMessage, _, close) {
+          return argMessage.translationKeys;
         },
-        "MessageComponent": function(parts) {
-          return "";
-        },
-        "messageComponentChar": function(e) {
-          return "";
+        // messageComponent space* ":" space* argExp
+        "argumentMessage": function(message, _, _, _, arg) {
+          return arg.translationKeys;
         }
       }
     }

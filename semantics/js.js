@@ -5,28 +5,16 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // MethodNamed<"tr">
-        "TMLLocalizedString": function(meth) {
-          var key = null;
-          var result = meth.translationKeys;
-          if (result instanceof Array) {
-            var label = (result[0]) ? result[0].label : null;
-            var description = (result[1]) ? result[1].label : null;
-            key = utils.createTranslationKey(label, description);
-          }
-          else if (result && result.label) {
-            key = result;
-          }
-          debugger;
-          return key;
-        },
-        "Dict": function(_, entries, _) {
+        // "{" space* listOf<dictEntry, argSep> space* "}"
+        "dict": function(open, _, entries, _, close) {
           return entries.translationKeys;
         },
-        "DictEntry": function(key, _, val) {
+        // (stringLiteral | variable) space* ":" space* argExp
+        "dictEntry": function(key, _, _, _, val) {
           return val.translationKeys;
         },
-        "Array": function(_, items, _) {
+        // "[" space* listOf<argExp, argSep> space* "]"
+        "array": function(open, _, items, _, close) {
           return items.translationKeys;
         }
       }

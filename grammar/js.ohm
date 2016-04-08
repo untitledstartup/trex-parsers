@@ -1,22 +1,26 @@
 Js <: Base {
 
-TMLLocalizedString
-  := MethodNamed<Macro>
+// OVERRIDES  
+arg
+  := property 
+  | method 
+  | object 
+  | variable 
+  | literal
   
-Arg
-  := Method | Object | Property | Variable | Literal
+// END OVERRIDES
   
-Object
-  = Dict
-  | Array
+object
+  = dict
+  | array
   
-Dict
- = "{" ListOf<DictEntry, ","> "}"
+dict
+ = "{" space* listOf<dictEntry, argSep> space* "}"
   
-DictEntry
-  = (StringLiteral | Variable) ":" ArgExp
+dictEntry
+  = (stringLiteral | variable) space* ":" space* argExp
   
-Array
-  = "[" ListOf<ArgExp, ","> "]"
+array
+  = "[" space* listOf<argExp, argSep> space* "]"
   
 }

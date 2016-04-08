@@ -1,81 +1,85 @@
-HTML <: Base {
+Html <: Base {
 
 // OVERRIDES
 comment
   := startComment (~endComment any)* endComment
   
 startComment
-  = "<" space * "!" space* "--" space*
+  = "<" space* "!" space* "--" space*
 
 endComment
   = "--" space* ">"
   
-Arg
-  := Method | Object | Property | Variable | Literal
+arg
+  := property 
+  | method 
+  | object 
+  | variable 
+  | literal
   
 stringNonLiteral
   := "{{" | "}}"
   
-TMLLocalizedString
-  := XMLTagWithContent<"tml-tr", TMLLocalizedTagContent> --tmlTag
-  | XMLTagWithAttribute<XMLTagName, TRLAttributeExp> --trlInAttr
-  | XMLTagWithAttribute<XMLTagName, TMLAttributeExp> --tmlInAttr
-  | XMLTagWithAttributeAndContent<XMLTagName, "tml-tr", TMLLocalizedTagContent> --markedTag
-  | XMLTagWithContent<XMLTagName, TRLExp> --trlInTag
+tmlLocalizedString
+  := xmlTagWithContent<"tml-tr", tmlLocalizedTagContent> --tmlTag
+  | xmlTagWithAttribute<xmlTagName, trlAttributeExp> --trlInAttr
+  | xmlTagWithAttribute<xmlTagName, tmlAttributeExp> --tmlInAttr
+  | xmlTagWithAttributeAndContent<xmlTagName, "tml-tr", tmlLocalizedTagContent> --markedTag
+  | xmlTagWithContent<xmlTagName, trlExp> --trlInTag
 
 // END OF OVERRIDES
 
-TMLLocalizedTagContent
-  = TRLExp --trl
-  | (TagStringChar | NonTMLTag)+
+tmlLocalizedTagContent
+  = space* trlExp space* --trl
+  | (tagStringChar | nonTMLTag)+
   
-TRLAttributeExp
-  = XMLTagAttributeName "=" QuotedTRLExp
+trlAttributeExp
+  = xmlTagAttributeName "=" quotedTRLExp
   
-TMLAttributeExp
-  = "tml-tr" "=" (QuotedTRLExp | StringLiteral)
+tmlAttributeExp
+  = "tml-tr" "=" (quotedTRLExp | stringLiteral)
   
-NonTMLAttribute
-  = ~"tml-tr" XMLTagAttributeExp
+nonTMLAttribute
+  = ~"tml-tr" xmlTagAttributeExp
 
-NonTMLTag
-  = "<" XMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent XMLCloseAnyTag
+nonTMLTag
+  = "<" space* xmlTagName (space+ nonTMLAttribute)* space* ">" tmlLocalizedTagContent xmlCloseAnyTag
   
-TagStringChar
-  = ~("<" | CodeMarkup) any
+tagStringChar
+  = ~("<" | codeMarkup) any
   
 // Special Markup
-CodeMarkup
+codeMarkup
   = "{{" (~"}}" any)* "}}"
 
 // TRL
-QuotedTRLExp
-  = "\"" TRLExp "\""
-  | "'" TRLExp "'"
+quotedTRLExp
+  = "\"" trlExp "\""
+  | "'" trlExp "'"
 
-TRLExp
-  = "{{" (TRLMethod | TRLFilter) "}}"
+trlExp
+  = "{{" space* (trlMethod | trlFilter) space* "}}"
   
-TRLMethod
-  = "trl" "(" StringLiteral ")"
+trlMethod
+  = "trl" "(" space* stringLiteral space* ")"
   
-TRLFilter
-  = StringLiteral "|" "trl" (":" ArgExp)? ( "|" FilterName)*
+trlFilter
+  = stringLiteral space* "|" space* "trl" (space* ":" space* argExp)? (space* "|" space* filterName)*
  
-FilterName
-  = Variable
+filterName
+  = variable
   
-Object
-  = Dict
-  | Array
+object
+  = dict
+  | array
   
-Dict
- = "{" ListOf<DictEntry, ","> "}"
+dict
+ = "{" space* listOf<dictEntry, argSep> space* "}"
   
-DictEntry
-  = (StringLiteral | Variable) ":" ArgExp
+dictEntry
+  = (stringLiteral | variable) space* ":" space* argExp
   
-Array
-  = "[" ListOf<ArgExp, ","> "]"
+array
+  = "[" space* listOf<argExp, argSep> space* "]"
 
 }

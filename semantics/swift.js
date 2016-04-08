@@ -1,75 +1,49 @@
 (function(){
   var utils = require('../lib/GenstringUtils');
+  
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // Macro "(" StringLiteral ("," ArgExp)* ")"
-        "TMLLocalizedString": function(macro, open, str, sep, args, close) {
-          var label = null;
-          var labelKey = str.translationKeys;
-          if (labelKey && labelKey.label) {
-            label = labelKey.label;
-          }
-          
-          if (label == null) {
+        "stringLiteral": function(strings, _) {
+          var result = utils.collectTranslationKeysFromObjects(strings.translationKeys);
+          debugger;
+          if (!(result instanceof Array)) {
             return null;
           }
-          
-          var argResult = args.translationKeys;
-          var description = null;
-          if (argResult && argResult.length > 0) {
-            var arg = argResult[0];
-            if (arg instanceof Array) {
-              arg = arg[0];
-            }
-            if (arg && arg.label) {
-              description = arg.label;
-            }
+          var key = result[0];
+          var label = key.label;
+          for (var i=1; i<result.length; i++) {
+            var r = result[i];
+            label += "\n" + r.label;
           }
-          var key = utils.createTranslationKey(label, description);
-          return key;
+          result = utils.createTranslationKey(label, key.description);
+          return [result];
         },
-        "StringLiteral": function(strings) {
-          var result = strings.translationKeys;
-          debugger;
-          if (result instanceof Array) {
-            var str = null;
-            for (var i=0; i<result.length; i++) {
-              var r = result[i];
-              if (i===0) {
-                str = r.label;
-              }
-              else {
-                str += "\n" + r.label;
-              }
-            }
-            result = utils.createTranslationKey(str);
-          }
-          return result;
+        "macro": function(e) {
+          return null;
         },
-        "Macro": function(e) {
-          return "";
+        // "[" space* ":" space* "]"
+        // "[" space* listOf<dictEntry, argSep> space* "]"
+        "dict": function(open, _, parts, _, close) {
+          return null;
         },
-        "NamedArg": function(varName, sep, arg) {
+        // stringLiteral space* ":" space* dictValue
+        "dictEntry": function(key, _, _, _, val) {
+          return val.translationKeys;
+        },
+        "dictValue": function(e) {
+          return e.translationKeys;
+        },
+        // "[" space* listOf<arrayEntry, argSep> space* "]"
+        "array": function(open, _, parts, _, close) {
+          return parts.translationKeys;
+        },
+        "arrayEntry": function(e) {
+          return e.translationKeys;
+        },
+        // argExp "[" space* argExp space* "]"
+        "collectionAccess": function(varname, open, _, arg, _, close) {
           return arg.translationKeys;
-        },
-        "Dict": function(open, parts, close) {
-          return "";
-        },
-        "DictEntry": function(key, _, val) {
-          return "";
-        },
-        "DictValue": function(e) {
-          return e.translationKeys;
-        },
-        "Array": function(open, parts, close) {
-          return "";
-        },
-        "ArrayEntry": function(e) {
-          return e.translationKeys;
-        },
-        "CollectionAccess": function(varname, open, arg, close) {
-          return "";
         }
       }
     }

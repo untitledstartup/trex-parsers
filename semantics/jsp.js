@@ -7,29 +7,27 @@
   module.exports = {
     "attributes": {
       "translationKeys": {
-        // XMLTagWithAttribute<TMLTagName, TMLTagLabelAttribute> 
-        "TMLLocalizedString_tmlInAttribute": function(tag) {
-          debugger;
+        // xmlTagWithAttribute<tmlTagName, tmlTagLabelAttribute> 
+        "tmlLocalizedString_tmlInAttribute": function(tag) {
           return tag.translationKeys;
         },
-        // XMLTagWithContent<TMLTagName, TMLLocalizedTagContent>
-        "TMLLocalizedString_tmlInTag": function(tag) {
-          debugger;
+        // xmlTagWithContent<tmlTagName, tmlLocalizedTagContent>
+        "tmlLocalizedString_tmlInTag": function(tag) {
           return tag.translationKeys;
         },
-        "TMLAttributeExp": function(attr, _, val) {
-          debugger;
-          var key = val.translationKeys;
-          if (key && key.label) {
-            key.label = XMLEntities.decode(key.label);
+        "tmlAttributeExp": function(attr, _, val) {
+          var keys = utils.collectTranslationKeysFromObjects(val.translationKeys);
+          if (keys instanceof Array && keys.length > 0) {
+            keys.forEach(function(key) {              
+              key.label = XMLEntities.decode(key.label);
+            });
           }
-          return key;
+          return keys;
         },
-        "TMLLocalizedTagContent": function(chars) {
-          debugger;
+        "tmlLocalizedTagContent": function(chars) {
           var str = XMLEntities.decode(chars.interval.contents);
           var key = utils.createTranslationKey(str);
-          return key;
+          return [key];
         }
       }
     }

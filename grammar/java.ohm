@@ -1,38 +1,35 @@
 Java <: Base {
 
 // OVERRIDES
-TMLLocalizedString
-  := Macro "(" StringLiteral ("," ArgExp)* ")" ";"*
-  
-Macro
+macro
   := "Tml.translate"
   
-Arg
-  := Literal 
-  | NewObject
-  | Method
-  | CollectionAccess
-  | Property
-  | Variable
+arg
+  := property
+  | method
+  | collectionAccess
+  | newObject
+  | variable
+  | literal
   
-StringLiteral
-  := QuotedStringLiteral<"\"", stringNonLiteral> ("+" StringLiteral)*
+stringLiteral
+  := quotedStringLiteral<"\"", stringNonLiteral> (space* "+" space* stringLiteral)*
   
-Variable
-  := #(validFirstVarChar validVarChar*) Generics?
+variable
+  := validFirstVarChar validVarChar* space* generics?
   
-PropertySeparator
+propertySeparator
   := "." | "::"
   
 // END OVERRIDES
 
-Generics
-  = "<" ListOf<(Property | Variable), ","> ">"
+generics
+  = "<" space* listOf<(property | variable), argSep> space* ">"
 
-NewObject
-  = "new" space+ MethodName Generics? "(" ListOf<ArgExp, ","> ")"
+newObject
+  = "new" space+ methodNameExp space* generics? space* "(" space* listOf<argExp, argSep> space* ")"
 
-CollectionAccess
-  = ArgExp "[" ArgExp "]"
+collectionAccess
+  = argExp "[" space* argExp space* "]"
 
 }

@@ -13,26 +13,26 @@ endComment
 stringNonLiteral
   := "${"
   
-TMLLocalizedString
-  := XMLTagWithAttribute<TMLTagName, TMLAttributeExp> --tmlInAttribute 
-  | XMLTagWithContent<TMLTagName, TMLLocalizedTagContent> --tmlInTag
+tmlLocalizedString
+  := xmlTagWithAttribute<tmlTagName, tmlAttributeExp> --tmlInAttribute 
+  | xmlTagWithContent<tmlTagName, tmlLocalizedTagContent> --tmlInTag
 
 // END OVERRIDES
 
-TMLTagName
+tmlTagName
   = "tml:tr"
   
-TMLAttributeExp
-  = "label" "=" StringLiteral
+tmlAttributeExp
+  = "label" "=" stringLiteral
   
-TMLLocalizedTagContent
-  = TagStringChar+
+tmlLocalizedTagContent
+  = tagStringChar+
   
-TagStringChar
-  = ~("<" | CodeMarkup) any
+tagStringChar
+  = ~("<" | codeMarkup) any
   
 // Special Markup
-CodeMarkup
+codeMarkup
   = "${" (~"}" any)* "}"
 
 }

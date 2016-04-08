@@ -8,79 +8,87 @@
     "attributes": {
       "translationKeys": {
         // HTMLTagWithContent<"tml-tr", (NonTag | NonTMLTag)+> --tmlTag
-        "TMLLocalizedString_tmlTag": function(tag) {
-          var key = tag.translationKeys;
-          return key;
+        "tmlLocalizedString_tmlTag": function(tag) {
+          var keys = tag.translationKeys;
+          debugger;
+          return keys;
         },
         // HTMLTagWithAttribute<HTMLTagName, TRLAttributeExp> --trlInAttr
-        "TMLLocalizedString_trlInAttr": function(tag) {
-          var key = tag.translationKeys;
-          return key;
+        "tmlLocalizedString_trlInAttr": function(tag) {
+          var keys = tag.translationKeys;
+          return keys;
         },
         // HTMLTagWithAttribute<HTMLTagName, TMLAttributeExp> --tmlInAttr
-        "TMLLocalizedString_tmlInAttr": function(tag) {
-          var key = tag.translationKeys;
-          return key;
+        "tmlLocalizedString_tmlInAttr": function(tag) {
+          var keys = tag.translationKeys;
+          return keys;
         },
         // HTMLTagWithAttributeAndContent<HTMLTagName, "tml-tr", (NonTag | NonTMLTag)+> --markedTag
-        "TMLLocalizedString_markedTag": function(tag) {
-          var key = tag.translationKeys;
-          return key;
+        "tmlLocalizedString_markedTag": function(tag) {
+          var keys = tag.translationKeys;
+          return keys;
         },
         // | HTMLTagWithContent<HTMLTagName, TRLExp> --trlInTag
-        "TMLLocalizedString_trlInTag": function(tag) {
-          var key = tag.translationKeys;
-          return key;
+        "tmlLocalizedString_trlInTag": function(tag) {
+          var keys = tag.translationKeys;
+          return keys;
         },
-        "TMLLocalizedTagContent": function(chars) {
+        "tmlLocalizedTagContent": function(chars) {
           var key = utils.createTranslationKey(chars.interval.contents);
           if (key && key.label) {
             key.label = HTMLEntities.decode(key.label);
           }
-          return key;
+          return [key];
         },
-        "TMLLocalizedTagContent_trl": function(trl) {
+        // space* trlExp space*
+        "tmlLocalizedTagContent_trl": function(_, trl, _) {
           return trl.translationKeys;
         },
-        // "<" HTMLTagName NonTMLAttribute* ">" TMLLocalizedTagContent HTMLCloseAnyTag
-        "NonTMLTag": function(_, tag, attrs, _, content, _) {
+        // "<" space* xmlTagName (space+ nonTMLAttribute)* space* ">" tmlLocalizedTagContent xmlCloseAnyTag
+        "nonTMLTag": function(open, _, tag, _, attrs, _, close, content, closeTag) {
           return content.translationKeys;
         },
         // "tml-tr" "=" (QuotedTRLExp | StringLiteral)"
-        "TMLAttributeExp": function(attr, _, arg) {
+        "tmlAttributeExp": function(attr, _, arg) {
           return arg.translationKeys;
         },
-        "QuotedTRLExp": function(_, trl, _) {
+        "quotedTRLExp": function(_, trl, _) {
           return trl.translationKeys;
         },
-        "TRLAttributeExp": function(attr, _, exp) {
-          var result = exp.translationKeys;
-          if (result && result.label) {
-            result.label = XMLEntities.decode(result.label);
+        "trlAttributeExp": function(attr, _, exp) {
+          var keys = utils.collectTranslationKeysFromObjects(exp.translationKeys);
+          if (keys instanceof Array && keys.length > 0) {
+            keys.forEach(function(key) {
+              key.label = XMLEntities.decode(key.label);
+            });
           }
-          return result;
+          return keys;
         },
-        "TRLExp": function(_, trl, _) {
+        // "{{" space* (trlMethod | trlFilter) space* "}}"
+        "trlExp": function(open, _, trl, _, close) {
           return trl.translationKeys;
         },
-        // "trl" "(" StringLiteral ")"
-        "TRLMethod": function(macro, _, str, _) {
+        // "trl" "(" space* stringLiteral space* ")"
+        "trlMethod": function(macro, open, _, str, _, close) {
           return str.translationKeys;
         },
-        //StringLiteral "|" "trl" ":" (Variable | Object) ( "|" FilterName)*
-        "TRLFilter": function(str, pipe, macro, argSep, arg, pipe, filters) {
+        // stringLiteral space* "|" space* "trl" (space* ":" space* argExp)? (space* "|" space* filterName)*
+        "trlFilter": function(str, _, pipe, _, macro, _, argSep, _, arg, _, pipe, _, filters) {
           return str.translationKeys;
         },
-        "FilterName": function(str) {
-          return "";
+        "filterName": function(str) {
+          return null;
         },
-        "Dict": function(_, entries, _) {
+        // "{" space* listOf<dictEntry, argSep> space* "}"
+        "dict": function(open, _, entries, _, close) {
           return entries.translationKeys;
         },
-        "DictEntry": function(key, _, val) {
+        // (stringLiteral | variable) space* ":" space* argExp
+        "dictEntry": function(key, _, sep, _, val) {
           return val.translationKeys;
         },
-        "Array": function(_, items, _) {
+        // "[" space* listOf<argExp, argSep> space* "]"
+        "array": function(open, _, items, _, close) {
           return items.translationKeys;
         }
       }

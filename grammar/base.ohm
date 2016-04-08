@@ -1,12 +1,12 @@
 Base {
 
 // Invocation expression
-Exp
-  = TMLLocalizedStrings
+exp
+  = tmlLocalizedStrings
   
 // Defaults
-Macro
-  = "trl" | "trl" | "tr"
+macro
+  = "trl" | "tr"
  
 // Comments
 comment
@@ -18,40 +18,49 @@ space
   += comment
 
 // All localized strings, consuming entire input
-TMLLocalizedStrings
-  = ((~TMLLocalizedString any)* TMLLocalizedString)+ (~TMLLocalizedString any)*
+
+statementSep
+  = ";" | space | "}" | "{" | "=" | ")" | "(" | "[" | "]" | "."
+  
+nonTMLLocalizedStringStatement
+	= (~(statementSep|tmlLocalizedString) any)+ tmlLocalizedString nonTMLLocalizedStringStatement* --one
+    | (~(statementSep|tmlLocalizedString) any)+ nonTMLLocalizedStringStatement* --two
+    | statementSep+ --three
+
+tmlLocalizedStrings
+  = nonTMLLocalizedStringStatement* listOf<tmlLocalizedString, nonTMLLocalizedStringStatement+> nonTMLLocalizedStringStatement*
   
 // Localized string (default treats any string as localized, sub-grammars must override)
-TMLLocalizedString
-  = StringLiteral
+tmlLocalizedString
+  = methodNamed<macro>
   
   
 // Literals
-Literal
-  = NumberLiteral
-  | StringLiteral
-  | BooleanLiteral
-  | NullLiteral
+literal
+  = numberLiteral
+  | stringLiteral
+  | booleanLiteral
+  | nullLiteral
   
-NullLiteral
+nullLiteral
   = "null"
   
-BooleanLiteral
+booleanLiteral
   = "true"
   | "false"
 
-NumberLiteral
+numberLiteral
   = digit+ ("." digit+)?
   
 stringNonLiteral
 (~"" nothing)
   = ~""
   
-StringLiteral
-  = QuotedStringLiteral<"\"", stringNonLiteral>
-  | QuotedStringLiteral<"'", stringNonLiteral>
+stringLiteral
+  = quotedStringLiteral<"\"", stringNonLiteral>
+  | quotedStringLiteral<"'", stringNonLiteral>
   
-QuotedStringLiteral<quot, special>
+quotedStringLiteral<quot, special>
   = quot quotedStringChars<(quot | special)> quot
   
 quotedStringChars<special>
@@ -63,7 +72,7 @@ quotedChar<special>
   
   
 // Variables
-Variable
+variable
   = #(validFirstVarChar validVarChar*)
 
 validFirstVarChar
@@ -90,70 +99,79 @@ ternaryOperator
   
   
 // Arguments
-Arg
-  = Method | Property | Variable | Literal
+arg
+  = method | property | variable | literal
   
-Method
-  = MethodNamed<MethodName>
+argSep
+  = space* "," space*
   
-MethodNamed<methodName>
-  = methodName "(" ListOf<ArgExp, ","> ")"
+method
+  = methodNamed<methodNameExp>
+  | methodNamed<argExp>
   
-MethodName
-  = Variable
+methodNamed<aMethodName>
+  = aMethodName "(" space* listOf<argExp, argSep > space* ")"
   
-PropertySeparator
+methodNameExp
+  = validMethodChar+
+  
+validMethodChar
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
+  
+propertySeparator
   = "."
   
-Property
-  = ArgExp (PropertySeparator ArgExp)+
+property
+  = argExp (propertySeparator argExp)+
   
-ArgExp
-  = "(" ArgExp ")" --parens
-  | ArgExp ternaryOperator ArgExp ternaryOperator ArgExp --ternary
-  | ArgExp binaryOperator ArgExp --binary
-  | unaryOperator ArgExp --unary
-  | ArgExp unaryOperator --unaryAfter
-  | Arg
+argExp
+  = "(" space* argExp space* ")" --parens
+  | argExp space* ternaryOperator space* argExp space* ternaryOperator space* argExp --ternary
+  | argExp space* binaryOperator space* argExp --binary
+  | unaryOperator space* argExp --unary
+  | argExp space* unaryOperator --unaryAfter
+  | arg
   
   
 // XML
-XMLAnyTag
-  = "<" XMLTagName XMLTagAttributeExp* "/"? ">"
+xmlAnyTag
+  = "<" space* xmlTagName space+ listOf<xmlTagAttributeExp, space+> space* "/"? space* ">" --withAttrs
+  | "<" space* xmlTagName space* "/" space* ">" --noAttrs
   
-XMLCloseAnyTag
-  = "<" "/" XMLTagName ">"
+xmlCloseAnyTag
+  = "<" space* "/" space* xmlTagName space* ">"
   
-XMLTag<tag>
-  = "<" tag XMLTagAttributeExp* "/"? ">"
+xmlTag<tag>
+  = "<" space* tag space* listOf<xmlTagAttributeExp, space+> space* "/"? space* ">"
   
-XMLCloseTag<tag>
-  = "<" "/" tag ">"
+xmlCloseTag<tag>
+  = "<" space* "/" space* tag space* ">"
   
-XMLTagWithAttribute<tag, attr>
-  = "<" tag (~(attr | ">") XMLTagAttributeExp)* attr XMLTagAttributeExp* "/"? ">"
+xmlTagWithAttribute<tag, attr>
+  = "<" space* tag (space+ ~(attr | ">") xmlTagAttributeExp)* space+ attr (space+ xmlTagAttributeExp)* space* "/"? space* ">"
   
-XMLTagAttributeExp
-  = XMLTagAttributeName ("=" XMLTagAttributeValue)?
+xmlTagAttributeExp
+  = xmlTagAttributeName ("=" xmlTagAttributeValue)?
   
-XMLTagWithContent<tag, content>
-  = XMLTag<tag> content XMLCloseTag<tag>
+xmlTagWithContent<tag, content>
+  = xmlTag<tag> content xmlCloseTag<tag>
   
-XMLTagWithAttributeAndContent<tag, attr, content>
-  = XMLTagWithAttribute<tag, attr> content XMLCloseTag<tag>
+xmlTagWithAttributeAndContent<tag, attr, content>
+  = xmlTagWithAttribute<tag, attr> content xmlCloseTag<tag>
   
 xmlTagChar
   = alnum
-  | ":" | "-"
+  | ":" 
+  | "-"
   
-XMLTagName
-  = #(xmlTagChar+)
+xmlTagName
+  = xmlTagChar+
   
-XMLTagAttributeName
-  = #(xmlAttributeChar+)
+xmlTagAttributeName
+  = xmlAttributeChar+
   
-XMLTagAttributeValue
-  = StringLiteral
+xmlTagAttributeValue
+  = stringLiteral
   
 xmlAttributeChar
   = ~( space | "\"" | "'" | ">" | "/" | "=" ) any

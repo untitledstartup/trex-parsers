@@ -1,10 +1,3 @@
-int main(int argc, char * argv[])
-{
-    @autoreleasepool {
-
-
-      // With Array Arguments
-
       TMLLocalizedString(@"Simple String", @[
       @"foo", @3, [NSNull null], @{@"foo": @"Foo"}, [self some:@"Like" it:@"Hot"], @[@"Nested", @"Array"]
       ]);

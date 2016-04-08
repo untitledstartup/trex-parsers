@@ -7,154 +7,166 @@
       "translationKeys": {
         // Basic support
         "ListOf_none": function() {
-          return "";
+          return null;
         },
         "ListOf_some": function(first, separator, iter) {
           var result = [];
-          var firstString = first.translationKeys;
-          if (firstString) {
-            result.push(firstString);
+          var firstString = utils.collectTranslationKeysFromObjects(first.translationKeys);
+          debugger;
+          if (firstString instanceof Array && firstString.length > 0) {
+            result = result.concat(firstString);
           }
           var children = iter.children;
           for (var i = 0; i < children.length; i++) {
             var child = children[i];
-            var childString = child.translationKeys;
+            var childString = util.collectTranslationKeysFromObjects(child.translationKeys);
             if (childString) {
               result.push(childString);
             }
           }
           return result;
         },
-      
-        // TMLLocalizedStrings
-        "TMLLocalizedStrings": function(_, strings, _) {
-          var result = strings.translationKeys;
-          var newResult = [];
-          for (var i = 0; i < result.length; i++) {
-            var r = result[i];
-            if (r instanceof Array) {
-              newResult = newResult.concat(r);
-            } else {
-              newResult.push(r);
+        "listOf_none": function() {
+          return null;
+        },
+        "listOf_some": function(first, separator, iter) {
+          var result = [];
+          var firstKey = utils.collectTranslationKeysFromObjects(first.translationKeys);
+          debugger;
+          if (firstKey instanceof Array && firstKey.length > 0) {
+            result = result.concat(firstKey);
+          }
+          var children = iter.children;
+          for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            var childKey = utils.collectTranslationKeysFromObjects(child.translationKeys);
+            if (childKey instanceof Array && childKey.length > 0) {
+              result = result.concat(childKey);
             }
           }
-          return newResult;
+          return result;
         },
-        "TMLLocalizedString": function(str) {
-          return str.translationKeys;
+      
+        // nonTMLLocalizedStringStatement* listOf<tmlLocalizedString, nonTMLLocalizedStringStatement+> nonTMLLocalizedStringStatement*
+        "tmlLocalizedStrings": function(_, strings, tail) {
+          var keys = utils.collectTranslationKeysFromObjects(strings.translationKeys);
+          debugger;
+          return keys;
+        },
+        // methodNamed<macro>
+        "tmlLocalizedString": function(meth) {
+          var results = utils.collectTranslationKeysFromObjects(meth.translationKeys);
+          debugger;
+          var key = results[0];
+          var second = (results.length > 1) ? results[1] : null;
+          if (second) {
+            key = utils.createTranslationKey(key.label, second.label);
+          }
+          return [key];
         },
       
         // Literals
-        "NullLiteral": function(e) {
-          return "";
+        "nullLiteral": function(e) {
+          return null;
         },
-        "BooleanLiteral": function(parts) {
-          return "";
+        "booleanLiteral": function(parts) {
+          return null;
         },
-        "Variable": function(first, rest) {
-          return "";
+        "variable": function(first, rest) {
+          return null;
         },
-        "Literal": function(e) {
+        "literal": function(e) {
           return e.translationKeys;
         },
-        "NumberLiteral": function(integers, _, decimals) {
-          return "";
+        "numberLiteral": function(integers, _, decimals) {
+          return null;
         },
       
         // Expressions
-        "Macro": function(e) {
-          return "";
+        "macro": function(e) {
+          return null;
         },
-        "Property": function(first, _, rest) {
-          return "";
+        "property": function(first, _, rest) {
+          return null;
         },
-        "MethodNamed": function(methodName, _, args, _) {
+        // aMethodName "(" space* listOf<argExp, argSep > space* ")"
+        "methodNamed": function(methodName, _, _, args, _, _) {
           return args.translationKeys;
         },
       
         // Strings
-        "QuotedStringLiteral": function(_, str, _) {
+        "quotedStringLiteral": function(_, str, _) {
           var string = str.interval.contents;
           var key = utils.createTranslationKey(string);
-          return key;
+          return [key];
         },
         "quotedStringChars": function(chars) {
           var string = chars.interval.contents;
           var key = utils.createTranslationKey(string);
-          return key;
+          return [key];
         },
         // "quotedChar_escaped": function(esc, char) {
         //   return this.interval.contents;
         // },
       
         // Arguments
-        "Arg": function(arg) {
+        "arg": function(arg) {
           return arg.translationKeys;
         },
-        "ArgExp_parens": function(_, argExp, _) {
+        // "(" space* argExp space* ")"
+        "argExp_parens": function(_, _, argExp, _, _) {
           return argExp.translationKeys;
         },
-        "ArgExp_ternary": function(first, _, second, _, third) {
-          var result = [];
-          var firstKey = first.translationKeys;
-          if (firstKey) {
-            result.push(firstKey);
-          }
-          if (second && second.interval.contents.length > 0) {
-            result = result.concat(second.translationKeys);
-          }
-          if (third && third.interval.contents.length > 0) {
-            result = result.concat(third.translationKeys);
-          }
+        // argExp space* ternaryOperator space* argExp space* ternaryOperator space* argExp
+        "argExp_ternary": function(first, _, op, _, second, _, op, _, third) {
+          var result = utils.collectTranslationKeysFromObjects(first.translationKeys, second.translationKeys, third.translationKeys);
           return result;
         },
-        "ArgExp_binary": function(first, _, second) {
-          var result = [];
-          var firstKey = first.translationKeys;
-          if (firstKey) {
-            result.push(firstKey);
-          }
-          if (second && second.interval.contents.length > 0) {
-            result = result.concat(second.translationKeys);
-          }
+        // argExp space* binaryOperator space* argExp
+        "argExp_binary": function(first, _, op, _, second) {
+          var result = utils.collectTranslationKeysFromObjects(first.translationKeys, second.translationKeys);
           return result;
         },
-        "ArgExp_unary": function(_, arg) {
+        // unaryOperator space* argExp
+        "argExp_unary": function(op, _, arg) {
           return arg.translationKeys;
         },
-        "ArgExp_unaryAfter": function(arg, _) {
+        // argExp space* unaryOperator 
+        "argExp_unaryAfter": function(arg, _, op) {
           return arg.translationKeys;
         },
       
         // XML
-        // "<" tag XMLTagAttributeExp* "/"? ">"
-        "XMLTag": function(open, tag, attrs, _, close) {
-          var key = attrs.translationKeys;
-          debugger;
-          return key;
+        // "<" space* tag space* listOf<xmlTagAttributeExp, space+> space* "/"? space* ">"
+        "xmlTag": function(open, _, tag, _, attrs, _, _, _, close) {
+          var keys = attrs.translationKeys;
+          return keys;
         },
-        // "<" tag (~(attr | ">") XMLTagAttributeExp)* attr XMLTagAttributeExp* "/"? ">"
-        "XMLTagWithAttribute": function(open, tag, ignoreAttrs, attr, remainder, _, close) {
+        // "<" space* tag (space+ ~(attr | ">") xmlTagAttributeExp)* space+ attr (space+ xmlTagAttributeExp)* space* "/"? space* ">"
+        "xmlTagWithAttribute": function(open, _, tag, _, ignoreAttrs, _, attr, _, remainder, _, slash, _, close) {
+          var keys = attr.translationKeys;
           debugger;
-          return attr.translationKeys;
+          return keys;
         },
-        // XMLTagAttributeName ("=" XMLTagAttributeValue)?
-        "XMLTagAttributeExp": function(attr, _, value) {
+        // xmlTagAttributeName ("=" xmlTagAttributeValue)?
+        "xmlTagAttributeExp": function(attr, _, value) {
           debugger;
           if (value && value.interval.contents.length > 0) {
             return value.translationKeys;
           }
-          return "";
+          return null;
         },
         // XMLTag<tag> content XMLCloseTag<tag>
-        "XMLTagWithContent": function(tag, tagContent, close) {
+        "xmlTagWithContent": function(tag, tagContent, close) {
+          var keys = tagContent.translationKeys;
           debugger;
-          return tagContent.translationKeys;
+          return keys;
         },
         // XMLTagWithAttribute<tag, attr> content XMLCloseTag<tag>
-        "XMLTagWithAttributeAndContent": function(tagWithAttr, content, close) {
+        "xmlTagWithAttributeAndContent": function(tagWithAttr, content, close) {
+          var keys = content.translationKeys;
           debugger;
-          return content.translationKeys;
+          return keys;
         }
       }
     }

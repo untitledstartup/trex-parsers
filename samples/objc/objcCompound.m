@@ -67,25 +67,25 @@ TMLLocalizedString(@"20 TMLLocalizedString \"first\" 'argument' of two,"
 
 TMLLocalizedString(@"21 TMLLocalizedString \"first\" 'argument' of two,\
   with multiple lines, using \"escape\""
-    ,(2 + (3 - [NSNumber numberWithString:@"4"].intValues)), @"\"Second\" 'argument' of two,\
-  with multiple lines, using \"escape\"",(2 + (3 - [NSNumber numberWithString:@"4"].intValues)));
+    ,(2 + (3 - [NSNumber numberWithString:@"4"].intValue)), @"\"Second\" 'argument' of two,\
+  with multiple lines, using \"escape\"",(2 + (3 - [NSNumber numberWithString:@"4"].intValue)));
 TMLLocalizedString(@"22 TMLLocalizedString \"first\" 'argument' of two,\
-  with multiple lines, using \"escape\"",(2 + (3 - [NSNumber numberWithString:@"4"].intValues))
+  with multiple lines, using \"escape\"",(2 + (3 - [NSNumber numberWithString:@"4"].intValue))
     , @"\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"",
-(2 + (3 - [NSNumber numberWithString:@"4"].intValues)));
+(2 + (3 - [NSNumber numberWithString:@"4"].intValue)));
 TMLLocalizedString(@"23 TMLLocalizedString \"first\" 'argument' of two,"
   @"with multiple lines, using '@'"
-    ,(2 + (3 - [NSNumber numberWithString:@"4"].intValues))
+    ,(2 + (3 - [NSNumber numberWithString:@"4"].intValue))
       , @"\"Second\" 'argument' of two,"
   @"with multiple lines, using '@'"
-      ,(2 + (3 - [NSNumber numberWithString:@"4"].intValues)));
+      ,(2 + (3 - [NSNumber numberWithString:@"4"].intValue)));
 TMLLocalizedString(@"24 TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using '@'"
-    , (2 + (3 - [NSNumber numberWithString:@"4"].intValues)),
+    , (2 + (3 - [NSNumber numberWithString:@"4"].intValue)),
 @"\"Second\" 'argument' of two,"
   "with multiple lines, not using '@'",
-(2 + (3 - [NSNumber numberWithString:@"4"].intValues)));
+(2 + (3 - [NSNumber numberWithString:@"4"].intValue)));
 
 
     }
