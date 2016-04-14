@@ -56,6 +56,9 @@
             return null;
           }
           var keys = utils.collectTranslationKeysFromObjects(result);
+          if (!keys) {
+            return null;
+          }
           result = utils.createResult("tmlLocalizedStrings", keys);
           debugger;
           return result;
