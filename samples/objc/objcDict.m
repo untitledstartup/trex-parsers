@@ -5,7 +5,7 @@ int main(int argc, char * argv[])
 
       // With Dict Arguments
 
-      TMLLocalizedString(@"Simple String", @{
+      TMLLocalizedString(@"1 Simple String", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
       @"variable": myVariable,
@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"Emoji String 😀", @{
+      TMLLocalizedString(@"2 Emoji String 😀", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
       @"variable": myVariable,
@@ -30,7 +30,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       });
 
-      TMLLocalizedString(@"TMLLocalizedString \"single\" 'argument'", @{
+      TMLLocalizedString(@"3 TMLLocalizedString \"single\" 'argument'", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
       @"variable": myVariable,
@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two", @"TMLLocalizedString \"second\" argument of two", @{
+      TMLLocalizedString(@"4 TMLLocalizedString \"first\" 'argument' of two", @"TMLLocalizedString \"second\" argument of two", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
       @"variable": myVariable,
@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two", @{
+      TMLLocalizedString(@"5 TMLLocalizedString \"first\" 'argument' of two", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
       @"variable": myVariable,
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       }, @"TMLLocalizedString \"second\" argument of two");
 
-      TMLLocalizedString(@"TMLLocalizedString \"single\" 'argument',\
+      TMLLocalizedString(@"6 TMLLocalizedString \"single\" 'argument',\
         with multiple lines, using escape", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -80,7 +80,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"single\" 'argument',"
+      TMLLocalizedString(@"7 TMLLocalizedString \"single\" 'argument',"
         @"with multiple lines, using @", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"single\" 'argument',"
+      TMLLocalizedString(@"8 TMLLocalizedString \"single\" 'argument',"
         "with multiple lines, not using @", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -107,7 +107,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       });
 
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"9 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\"", @"\"Second\" 'argument' of two,\
         with multiple lines, using \"escape\"", @{
       @"foo": @"Foo",  @"num": @3,
@@ -121,7 +121,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"10 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\"", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -135,7 +135,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       }, @"\"Second\" 'argument' of two,\
         with multiple lines, using \"escape\"");
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"11 TMLLocalizedString \"first\" 'argument' of two,"
         @"with multiple lines, using '@'", @"\"Second\" 'argument' of two,"
         @"with multiple lines, using '@'", @{
       @"foo": @"Foo",  @"num": @3,
@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"12 TMLLocalizedString \"first\" 'argument' of two,"
         @"with multiple lines, using '@'", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -163,7 +163,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       }, @"\"Second\" 'argument' of two,"
         @"with multiple lines, using '@'");
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"13 TMLLocalizedString \"first\" 'argument' of two,"
         "with multiple lines, not using '@'", @"\"Second\" 'argument' of two,"
         "with multiple lines, not using '@'", @{
       @"foo": @"Foo",  @"num": @3,
@@ -177,7 +177,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"14 TMLLocalizedString \"first\" 'argument' of two,"
         "with multiple lines, not using '@'", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -192,7 +192,7 @@ int main(int argc, char * argv[])
       }, @"\"Second\" 'argument' of two,"
         "with multiple lines, not using '@'");
 
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"15 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\"", 
       @"\"Second\" 'argument' of two,\
         with multiple lines, using \"escape\"", @{
@@ -207,7 +207,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"16 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\"", 
       @{
       @"foo": @"Foo",  @"num": @3,
@@ -223,7 +223,7 @@ int main(int argc, char * argv[])
       },
       @"\"Second\" 'argument' of two,\
         with multiple lines, using \"escape\"");
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"17 TMLLocalizedString \"first\" 'argument' of two,"
         @"with multiple lines, using '@'", 
       @"\"Second\" 'argument' of two,"
         @"with multiple lines, using '@'", 
@@ -239,7 +239,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"18 TMLLocalizedString \"first\" 'argument' of two,"
         @"with multiple lines, using '@'", @{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -254,7 +254,7 @@ int main(int argc, char * argv[])
       },
       @"\"Second\" 'argument' of two,"
         @"with multiple lines, using '@'");
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"19 TMLLocalizedString \"first\" 'argument' of two,"
         "with multiple lines, not using '@'", 
       @{
       @"foo": @"Foo",  @"num": @3,
@@ -270,7 +270,7 @@ int main(int argc, char * argv[])
       },
       @"\"Second\" 'argument' of two,"
         "with multiple lines, not using '@'");
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"20 TMLLocalizedString \"first\" 'argument' of two,"
         "with multiple lines, not using '@'", 
       @"\"Second\" 'argument' of two,"
         "with multiple lines, not using '@'",
@@ -287,7 +287,7 @@ int main(int argc, char * argv[])
       @"NSNull": [NSNull null]
       });
 
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"21 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\""
           ,@{
       @"foo": @"Foo",  @"num": @3,
@@ -313,7 +313,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
+      TMLLocalizedString(@"22 TMLLocalizedString \"first\" 'argument' of two,\
         with multiple lines, using \"escape\"",@{
       @"foo": @"Foo",  @"num": @3,
       @"bool": @(YES),
@@ -340,7 +340,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"23 TMLLocalizedString \"first\" 'argument' of two,"
         @"with multiple lines, using '@'"
           ,@{
       @"foo": @"Foo",  @"num": @3,
@@ -368,7 +368,7 @@ int main(int argc, char * argv[])
       @"longerMessage": [self get:@"foo" with:nil with:[self arg]],
       @"NSNull": [NSNull null]
       });
-      TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
+      TMLLocalizedString(@"24 TMLLocalizedString \"first\" 'argument' of two,"
         "with multiple lines, not using '@'"
           , @{
       @"foo": @"Foo",  @"num": @3,
