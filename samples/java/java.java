@@ -16,14 +16,14 @@ Tml.translate("8 Hello {user}", Utils.buildMap("user", Utils.buildMap(
   "object", Utils.buildMap(
     "name", "Michael",
     "gender", "male"
-  )));
+  ))));
 
 Tml.translate("9 Hello {user}", new User("Michael", "male"));
 
 Tml.translate("10 {user| He, She}", Utils.buildMap("user", Utils.buildMap(
 "name", "Michael",
 "gender", "male"
-));
+)));
 
 
 
@@ -46,14 +46,14 @@ Tml.translate("18 Hello {user}", "A description", Utils.buildMap("user", Utils.b
   "object", Utils.buildMap(
     "name", "Michael",
     "gender", "male"
-  )));
+  ))));
 
 Tml.translate("19 Hello {user}", "A description", new User("Michael", "male"));
 
 Tml.translate("20 {user| He, She}", "A description", Utils.buildMap("user", Utils.buildMap(
 "name", "Michael",
 "gender", "male"
-));
+)));
 
 
 // String concatenated
@@ -75,11 +75,11 @@ Tml.translate("28 Hello {user}" + " Part 2", "A description" + " Part 2", Utils.
   "object", Utils.buildMap(
     "name", "Michael",
     "gender", "male"
-  )));
+  ))));
 
 Tml.translate("29 Hello {user}" + " Part 2", "A description" + " Part 2", new User("Michael", "male"));
 
 Tml.translate("30 {user| He, She}" + " Part 2", "A description" + " Part 2", Utils.buildMap("user", Utils.buildMap(
 "name", "Michael",
 "gender", "male"
-));
+)));
