@@ -129,10 +129,25 @@
           debugger;
           result.flatten();
           var keys = result.results;
-          if (keys.length >= 2 && keys[0] && keys[1]) {
-            var label = keys[0].label;
-            var description = keys[1].label;
-            var newKey = utils.createTranslationKey(label, description);
+          if (keys.length >= 2) {
+            var label = null;
+            var desc = null;
+            for (var i=0; i<keys.length; i++) {
+              var key = keys[i];
+              if (!key) {
+                continue;
+              }
+              if (!label) {
+                label = key.label;
+              }
+              else if (!desc) {
+                desc = key.label;
+              }
+              if (label && desc) {
+                break;
+              }
+            }
+            var newKey = utils.createTranslationKey(label, desc);
             result.results = [newKey];
           }
           result = utils.createResult("methodNamed", result);
