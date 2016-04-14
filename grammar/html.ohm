@@ -11,7 +11,8 @@ endComment
   = "--" space* ">"
   
 arg
-  := property 
+  := tmlLocalizedString 
+  | property 
   | method 
   | object 
   | variable 
@@ -20,12 +21,15 @@ arg
 stringNonLiteral
   := "{{" | "}}"
   
+macro
+  := "tml-tr"
+  
 tmlLocalizedString
-  := xmlTagWithContent<"tml-tr", tmlLocalizedTagContent> --tmlTag
-  | xmlTagWithAttribute<xmlTagName, trlAttributeExp> --trlInAttr
-  | xmlTagWithAttribute<xmlTagName, tmlAttributeExp> --tmlInAttr
-  | xmlTagWithAttributeAndContent<xmlTagName, "tml-tr", tmlLocalizedTagContent> --markedTag
-  | xmlTagWithContent<xmlTagName, trlExp> --trlInTag
+  := xmlTagWithContent<macro, tmlLocalizedTagContent> --tmlTag
+  | xmlTagWithAttribute<xmlTagNameExp, trlAttributeExp> --trlInAttr
+  | xmlTagWithAttribute<xmlTagNameExp, tmlAttributeExp> --tmlInAttr
+  | xmlTagWithAttributeAndContent<xmlTagNameExp, macro, tmlLocalizedTagContent> --markedTag
+  | xmlTagWithContent<xmlTagNameExp, trlExp> --trlInTag
 
 // END OF OVERRIDES
 
@@ -37,13 +41,13 @@ trlAttributeExp
   = xmlTagAttributeName "=" quotedTRLExp
   
 tmlAttributeExp
-  = "tml-tr" "=" (quotedTRLExp | stringLiteral)
+  = macro "=" (quotedTRLExp | stringLiteral)
   
 nonTMLAttribute
-  = ~"tml-tr" xmlTagAttributeExp
+  = ~macro xmlTagAttributeExp
 
 nonTMLTag
-  = "<" space* xmlTagName (space+ nonTMLAttribute)* space* ">" tmlLocalizedTagContent xmlCloseAnyTag
+  = "<" space* xmlTagNameExp (space+ nonTMLAttribute)* space* ">" tmlLocalizedTagContent xmlCloseAnyTag
   
 tagStringChar
   = ~("<" | codeMarkup) any

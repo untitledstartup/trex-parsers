@@ -140,11 +140,11 @@ argExp
   
 // XML
 xmlAnyTag
-  = "<" space* xmlTagName space+ listOf<xmlTagAttributeExp, space+> space* "/"? space* ">" --withAttrs
-  | "<" space* xmlTagName space* "/" space* ">" --noAttrs
+  = "<" space* xmlTagNameExp space+ listOf<xmlTagAttributeExp, space+> space* "/"? space* ">" --withAttrs
+  | "<" space* xmlTagNameExp space* "/" space* ">" --noAttrs
   
 xmlCloseAnyTag
-  = "<" space* "/" space* xmlTagName space* ">"
+  = "<" space* "/" space* xmlTagNameExp space* ">"
   
 xmlTag<tag>
   = "<" space* tag space* listOf<xmlTagAttributeExp, space+> space* "/"? space* ">"
@@ -169,7 +169,7 @@ xmlTagChar
   | ":" 
   | "-"
   
-xmlTagName
+xmlTagNameExp
   = xmlTagChar+
   
 xmlTagAttributeName
