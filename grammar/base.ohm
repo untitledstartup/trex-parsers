@@ -20,7 +20,7 @@ space
 // All localized strings, consuming entire input
 
 statementSep
-  = ";" | "=" | space | "{" | "}"
+  = ";" | "=" | space | "{" | "}" | ")" | "("
 
 tmlStatement
   = tmlLocalizedString
