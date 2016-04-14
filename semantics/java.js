@@ -21,7 +21,8 @@
             }
           }
           key = utils.createTranslationKey(label, key.description);
-          return [key];
+          var result = utils.createResult("stringLiteral", key);
+          return result;
         },
         // validFirstVarChar validVarChar* space* generics?
         "variable": function(first, rest, _, generics) {
@@ -33,11 +34,24 @@
         },
         // "new" space+ methodName space* generics? space* "(" space* ListOf<ArgExp, argSep> space* ")"
         "newObject":function(keyword, _, methodName, _, generics, _, open, _, args, _, close) {
-          return args.translationKeys;
+          var result = args.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("newObject", result);
+          result.flatten();
+          result.results = null;
+          return result;
         },
         // argExp "[" space* argExp space* "]"
         "collectionAccess": function(exp, open, _, indexExp, _, close) {
-          var keys = utils.collectTranslationKeysFromObjects(exp.translationKeys, indexExp.translationKeys);
+          var result = utils.collectTranslationKeysFromObjects(exp.translationKeys, indexExp.translationKeys);
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("collectionAccess", result);
+          result.flatten();
+          result.results = null;
           return result;
         }
       }
