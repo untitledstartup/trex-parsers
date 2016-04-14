@@ -158,8 +158,15 @@
         },
       
         // Strings
-        "quotedStringLiteral": function(_, str, _) {
+        "quotedStringLiteral": function(quoteChar, str, _) {
           var string = str.interval.contents;
+          if (!string) {
+            return null;
+          }
+          var quoteStr = quoteChar.interval.contents;
+          var re = new RegExp("\\\\" + quoteStr, "g");
+          debugger;
+          string = string.replace(re, quoteStr);
           var key = utils.createTranslationKey(string);
           var result = utils.createResult("quotedStringLiteral", key);
           debugger;
