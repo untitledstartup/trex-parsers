@@ -10,12 +10,13 @@ stringLiteral
   := (quotedStringLiteral<"\"", stringNonLiteral> space*)+
   
 arg
-  := literal 
-  | collectionAccess 
-  | method 
-  | object 
+  := tmlLocalizedString
   | property 
+  | collectionAccess 
+  | object 
+  | method 
   | variable
+  | literal 
   
 macro
   := "TMLLocalizedString"
