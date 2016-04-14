@@ -5,7 +5,8 @@ macro
   := "Tml.translate"
   
 arg
-  := property
+  := tmlLocalizedString 
+  | property
   | method
   | collectionAccess
   | newObject
