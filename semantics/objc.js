@@ -18,7 +18,6 @@
         // "@" stringLiteral (space* "@"? StringLiteral)*
         "stringObject": function(_, str, _, _, additionalLines) {
           var result = utils.collectTranslationKeysFromObjects(str.translationKeys, additionalLines.translationKeys);
-          debugger;
           if (!result || result.length === 0) {
             return null;
           }
@@ -45,9 +44,9 @@
           if (!result) {
             return null;
           }
+          result = utils.createResult("dict", result);
           result.flatten();
           result.results = null;
-          result = utils.createResult("dict", result);
           return result;
         },
         // stringObject space* ":" space* dictValue
@@ -74,6 +73,8 @@
             return null;
           }
           result = utils.createResult("array", result);
+          result.flatten();
+          result.results = null;
           return result;
         },
         "arrayEntry": function(e) {
@@ -90,6 +91,8 @@
           if (!result) {
             return null;
           }
+          result.flatten();
+          result.results = null;
           result = utils.createResult("collectionAccess", result);
           return result;
         },
@@ -98,6 +101,8 @@
           if (!result) {
             return null;
           }
+          result.flatten();
+          result.results = null;
           result = utils.createResult("messageSend", result);
           return result;
         },
@@ -106,12 +111,14 @@
           return null;
         },
         // "[" space* receiver (space+ argumentMessage)+ space* "]"
-        "argumentMessageSend": function(open, _, receiver, _, argMessage, _, close) {
-          var result = argMessage.translationKeys;
+        "argumentMessageSend": function(open, _, receiver, _, argMessages, _, close) {
+          var result = argMessages.translationKeys;
           if (!result) {
             return null;
           }
           result = utils.createResult("argumentMessageSend", result);
+          result.flatten();
+          result.results = null;
           return result;
         },
         // messageComponent space* ":" space* argExp
