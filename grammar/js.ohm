@@ -2,7 +2,8 @@ Js <: Base {
 
 // OVERRIDES  
 arg
-  := property 
+  := tmlLocalizedString 
+  | property 
   | method 
   | object 
   | variable 

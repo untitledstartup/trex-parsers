@@ -20,15 +20,16 @@ space
 // All localized strings, consuming entire input
 
 statementSep
-  = ";" | space | "}" | "{" | "=" | ")" | "(" | "[" | "]" | "."
-  
-nonTMLLocalizedStringStatement
-	= (~(statementSep|tmlLocalizedString) any)+ tmlLocalizedString nonTMLLocalizedStringStatement* --one
-    | (~(statementSep|tmlLocalizedString) any)+ nonTMLLocalizedStringStatement* --two
-    | statementSep+ --three
+  = ";" | "=" | space | "{" | "}"
+
+tmlStatement
+  = tmlLocalizedString
+
+nonTMLStatement
+  = ~tmlLocalizedString (~statementSep any)+
 
 tmlLocalizedStrings
-  = nonTMLLocalizedStringStatement* listOf<tmlLocalizedString, nonTMLLocalizedStringStatement+> nonTMLLocalizedStringStatement*
+  = space* listOf<(tmlStatement|nonTMLStatement), statementSep+> (statementSep|space)*
   
 // Localized string (default treats any string as localized, sub-grammars must override)
 tmlLocalizedString
@@ -100,7 +101,11 @@ ternaryOperator
   
 // Arguments
 arg
-  = method | property | variable | literal
+  = tmlLocalizedString 
+  | property 
+  | method 
+  | variable 
+  | literal
   
 argSep
   = space* "," space*

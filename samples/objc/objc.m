@@ -26,15 +26,15 @@ TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
   "with multiple lines, not using '@'");
 
 TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,\
-  with multiple lines, using \"escape\"", 
+  with multiple lines, using \"escape\"",
 @"\"Second\" 'argument' of two,\
   with multiple lines, using \"escape\"");
 TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
-  @"with multiple lines, using '@'", 
+  @"with multiple lines, using '@'",
 @"\"Second\" 'argument' of two,"
   @"with multiple lines, using '@'");
 TMLLocalizedString(@"TMLLocalizedString \"first\" 'argument' of two,"
-  "with multiple lines, not using '@'", 
+  "with multiple lines, not using '@'",
 @"\"Second\" 'argument' of two,"
   "with multiple lines, not using '@'");
 

@@ -5,55 +5,101 @@
     "attributes": {
       "translationKeys": {
         "object": function(e) {
-          return e.translationKeys;
+          var result = e.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("object", result);
+          return result;
         },
         "numberObject": function(_, num) {
           return null;
         },
         // "@" stringLiteral (space* "@"? StringLiteral)*
         "stringObject": function(_, str, _, _, additionalLines) {
-          var result = utils.collectTranslationKeysFromObjects(str.translationKeys);
+          var result = utils.collectTranslationKeysFromObjects(str.translationKeys, additionalLines.translationKeys);
           debugger;
-          if (!(result instanceof Array && result.length > 0)) {
+          if (!result || result.length === 0) {
             return null;
           }
-          var key = result[0];
-          if (additionalLines && additionalLines.interval.contents.length > 0) {
-            var additionalKeys = additionalLines.translationKeys;
-            if (additionalKeys instanceof Array && additionalKeys.length > 0) {
-              var label = key.label;
-              additionalKeys.forEach(function(aKey) {                
-                label += "\n" + aKey.label;
-              });
-              key = utils.createTranslationKey(label, key.description);
-            }
+          var key = null;
+          if (result.length == 1) {
+            key = result[0];
           }
-          return [key];
+          else if (result.length > 1) {
+            var label = "";
+            for (var i=0; i<result.length; i++) {
+              label += result[i].label;
+            }
+            key = utils.createTranslationKey(label);
+          }
+          if (key == null) {
+            return null;
+          }
+          result = utils.createResult("stringObject", key);
+          return result;
         },
         // "@{" space* ListOf<dictEntry, argSep> space* "}"
         "dict": function(open, _, parts, _, close) {
-          return parts.translationKeys;
+          var result = parts.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result.flatten();
+          result.results = null;
+          result = utils.createResult("dict", result);
+          return result;
         },
         // stringObject space* ":" space* dictValue
         "dictEntry": function(key, _, _, _, val) {
-          return val.translationKeys;
+          var result = val.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("dictEntry", result);
+          return result;
         },
         "dictValue": function(e) {
-          return e.translationKeys;
+          var result = e.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("dictValue", result);
+          return result;
         },
         // "@[" space* ListOf<arrayEntry, argSep> space* "]"
         "array": function(open, _, parts, _, close) {
-          return parts.translationKeys;
+          var result = parts.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("array", result);
+          return result;
         },
         "arrayEntry": function(e) {
-          return e.translationKeys;
+          var result = e.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("arrayEntry", result);
+          return result;
         },
         // argExp "[" space* argExp space* "]"
         "collectionAccess": function(varname, open, _, arg, _, close) {
-          return arg.translationKeys;
+          var result = arg.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("collectionAccess", result);
+          return result;
         },
         "messageSend": function(msg) {
-          return msg.translationKeys;
+          var result = msg.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("messageSend", result);
+          return result;
         },
         // "[" space* receiver space+ noArgumentMessage space* "]"
         "noArgumentMessageSend": function(open, _, receiver, _, messageName, _, close) {
@@ -61,11 +107,21 @@
         },
         // "[" space* receiver (space+ argumentMessage)+ space* "]"
         "argumentMessageSend": function(open, _, receiver, _, argMessage, _, close) {
-          return argMessage.translationKeys;
+          var result = argMessage.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("argumentMessageSend", result);
+          return result;
         },
         // messageComponent space* ":" space* argExp
         "argumentMessage": function(message, _, _, _, arg) {
-          return arg.translationKeys;
+          var result = arg.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("argumentMessage", result);
+          return result;
         }
       }
     }
