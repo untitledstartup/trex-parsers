@@ -34,13 +34,13 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = TMLLocalizedString("Some title");
+        self.title = TMLLocalizedString("1 Some title");
         // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        self.showWarning(TMLLocalizedString("Warning title", nil, "It's a description"));
+        self.showWarning(TMLLocalizedString("2 Warning title", nil, "It's a description"));
         // Dispose of any resources that can be recreated.
     }
 
