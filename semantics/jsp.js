@@ -9,25 +9,48 @@
       "translationKeys": {
         // xmlTagWithAttribute<tmlTagName, tmlTagLabelAttribute> 
         "tmlLocalizedString_tmlInAttribute": function(tag) {
-          return tag.translationKeys;
+          var result = tag.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("tmlLocalizedString_tmlInAttribute", result);
+          return result;
         },
         // xmlTagWithContent<tmlTagName, tmlLocalizedTagContent>
         "tmlLocalizedString_tmlInTag": function(tag) {
-          return tag.translationKeys;
+          var result = tag.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("tmlLocalizedString_tmlInTag", result);
+          return result;
         },
         "tmlAttributeExp": function(attr, _, val) {
-          var keys = utils.collectTranslationKeysFromObjects(val.translationKeys);
+          var result = val.translationKeys;
+          if (!result) {
+            return null;
+          }
+          var keys = utils.collectTranslationKeysFromObjects(result);
+          if (!keys) {
+            return null;
+          }
           if (keys instanceof Array && keys.length > 0) {
             keys.forEach(function(key) {              
               key.label = XMLEntities.decode(key.label);
             });
           }
-          return keys;
+          result = utils.createResult("tmlAttributeExp", result);
+          return result;
         },
         "tmlLocalizedTagContent": function(chars) {
-          var str = XMLEntities.decode(chars.interval.contents);
+          var str = chars.interval.contents;
+          if (!str || str.trim().length === 0) {
+            return null;
+          }
+          var str = XMLEntities.decode(str);
           var key = utils.createTranslationKey(str);
-          return [key];
+          var result = utils.createResult("tmlLocalizedTagContent", key);
+          return result;
         }
       }
     }

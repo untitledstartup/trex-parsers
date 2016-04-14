@@ -1,6 +1,9 @@
 Jsp <: Base {
 
 // OVERRIDES
+macro
+  := "tml:tr"
+  
 comment
   := startComment (~endComment any)* endComment
   
@@ -14,13 +17,10 @@ stringNonLiteral
   := "${"
   
 tmlLocalizedString
-  := xmlTagWithAttribute<tmlTagName, tmlAttributeExp> --tmlInAttribute 
-  | xmlTagWithContent<tmlTagName, tmlLocalizedTagContent> --tmlInTag
+  := xmlTagWithAttribute<macro, tmlAttributeExp> --tmlInAttribute 
+  | xmlTagWithContent<macro, tmlLocalizedTagContent> --tmlInTag
 
 // END OVERRIDES
-
-tmlTagName
-  = "tml:tr"
   
 tmlAttributeExp
   = "label" "=" stringLiteral
