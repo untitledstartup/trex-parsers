@@ -24,7 +24,7 @@
             }
           }
           result = utils.createResult("ListOf_some", result);
-          debugger;
+          // debugger;
           return result;
         },
         "listOf_none": function() {
@@ -45,7 +45,7 @@
             }
           }
           result = utils.createResult("listOf_some", result);
-          debugger;
+          // debugger;
           return result;
         },
       
@@ -60,19 +60,19 @@
             return null;
           }
           result = utils.createResult("tmlLocalizedStrings", keys);
-          debugger;
+          // debugger;
           return result;
         },
         // methodNamed<macro>
         "tmlLocalizedString": function(meth) {
           var result = meth.translationKeys;
-          debugger;
+          // debugger;
           if (!result) {
             return null;
           }
           result = utils.createResult("tmlLocalizedString", result);
           result.flatten();
-          debugger;
+          // debugger;
           return result;
         },
         // ~tmlLocalizedString (~statementSep any)+
@@ -86,7 +86,7 @@
             return null;
           }
           var result = utils.createResult("tmlStatement", result);
-          debugger;
+          // debugger;
           return result;
         },
       
@@ -106,7 +106,7 @@
             return null;
           }
           result = utils.createResult("literal", result);
-          debugger;
+          // debugger;
           return result;
         },
         "numberLiteral": function(integers, _, decimals) {
@@ -129,7 +129,7 @@
           }
           
           var result = args.translationKeys;
-          debugger;
+          // debugger;
           result.flatten();
           var keys = result.results;
           if (keys.length >= 2) {
@@ -165,18 +165,18 @@
           }
           var quoteStr = quoteChar.interval.contents;
           var re = new RegExp("\\\\" + quoteStr, "g");
-          debugger;
+          // debugger;
           string = string.replace(re, quoteStr);
           var key = utils.createTranslationKey(string);
           var result = utils.createResult("quotedStringLiteral", key);
-          debugger;
+          // debugger;
           return result;
         },
         "quotedStringChars": function(chars) {
           var string = chars.interval.contents;
           var key = utils.createTranslationKey(string);
           var result = utils.createResult("quotedStringChars", key);
-          debugger;
+          // debugger;
           return result;
         },
       
@@ -187,7 +187,7 @@
             return null;
           }
           result = utils.createResult("arg", result);
-          debugger;
+          // debugger;
           return result;
         },
         // "(" space* argExp space* ")"
@@ -197,7 +197,7 @@
             return null;
           }
           result = utils.createResult("argExp_parens", result);
-          debugger;
+          // debugger;
           return result;
         },
         // argExp space* ternaryOperator space* argExp space* ternaryOperator space* argExp
@@ -216,7 +216,7 @@
             result.push(thirdKeys);
           }
           result = utils.createResult("argExp_ternary", result);
-          debugger;
+          // debugger;
           return result;
         },
         // argExp space* binaryOperator space* argExp
@@ -226,7 +226,7 @@
             return null;
           }
           result = utils.createResult("argExp_binary", result);
-          debugger;
+          // debugger;
           return result;
         },
         // unaryOperator space* argExp
@@ -236,7 +236,7 @@
             return null;
           }
           result = utils.createResult("argExp_unaryAfter", result);
-          debugger;
+          // debugger;
           return result;
         },
         // argExp space* unaryOperator 
@@ -246,7 +246,7 @@
             return null;
           }
           result = utils.createResult("argExp_unaryAfter", result);
-          debugger;
+          // debugger;
           return result;
         },
       

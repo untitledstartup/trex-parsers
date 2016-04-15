@@ -14,7 +14,7 @@
           result.flatten();
           result.results = null;
           result = utils.createResult("dict", result);
-          debugger;
+          // debugger;
           return result;
         },
         // (stringLiteral | variable) space* ":" space* argExp
@@ -24,7 +24,7 @@
             return null;
           }
           result = utils.createResult("dictEntry", result);
-          debugger;
+          // debugger;
           return result;
         },
         // "[" space* listOf<argExp, argSep> space* "]"
@@ -34,7 +34,7 @@
             return null;
           }
           result = utils.createResult("array", null, result);
-          debugger;
+          // debugger;
           return result;
         }
       }
