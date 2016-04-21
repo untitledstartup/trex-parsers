@@ -73,7 +73,7 @@ if (opts.accessToken) {
 var fs = require('fs');
 var path = require('path');
 var ohm = require('ohm-js');
-var utils = require('../lib/genstringUtils.js');
+var utils = require('./lib/genstringUtils.js');
 
 /**
  * Logging
@@ -132,7 +132,7 @@ function languageForFileAtPath(filePath) {
 var GrammarNamespace = {};
 global.GrammarNamespace = GrammarNamespace;
 function grammarFilePathForLanguage(lang) {
-  return path.resolve(__dirname, "../grammar/" + lang + ".ohm");
+  return path.resolve(__dirname, "grammar/" + lang + ".ohm");
 }
 function grammarForLanguage(lang) {
   var grammarName = lang.substring(0,1).toUpperCase() + lang.substring(1);
@@ -150,7 +150,7 @@ function grammarForLanguage(lang) {
  * Semantics
  */
 function semanticsFilePathForLanguage(lang) {
-  return path.resolve(__dirname, "../semantics/" + lang + ".js");
+  return path.resolve(__dirname, "semantics/" + lang + ".js");
 }
 function getSemanticsDataForLanguage(lang) {
   var semanticsFilePath = semanticsFilePathForLanguage(lang);
