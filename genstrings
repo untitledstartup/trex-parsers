@@ -1,18 +1,29 @@
 #!/usr/bin/env node
 
+var ExtensionLanguageMap = {
+  "m": "objc",
+  "swift": "swift",
+  "html": "html",
+  "htm": "html",
+  "js": "js",
+  "jsp": "jsp",
+  "java": "java"/*,
+  "php": "php"*/
+};
+var DefaultOutputFilename = "genstrings.json";
+
 /**
  * Program options and arguments
  */
 var program = require('commander');
-var colors = require('colors');
-var request = require('request');
+var path = require('path');
 
 program
   .version('0.0.1')
   .option('-i, --list-languages', 'Print out supported input languages')
   .option('-l, --language <lang>', 'Input language')
   .option('-m, --macro <Macro>', 'Override default macro')
-  .option('-o, --output-file <file>', 'Write output to file instead of stdout')
+  .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DefaultOutputFilename+')')
   .option('-a, --access-token <token>', 'Automatically register keys with Trasnaltion Exchange using provided access token')
   .option('--host <host>', 'Manually specify host (default: api.translationexchange.com)')
   .option('-p, --pretty-print', 'Pretty print output')
@@ -26,20 +37,15 @@ program
 
 program.parse(process.argv);
 
+/**
+ * Globals
+ */
 var opts = program.opts();
+var sourceFiles = program.args;
+var cwd = process.cwd();
+var outputFile = opts.outputFile || path.join(cwd, DefaultOutputFilename);
 
 // If asked, print out suppoerted languages and exit
-var ExtensionLanguageMap = {
-  "m": "objc",
-  "swift": "swift",
-  "html": "html",
-  "htm": "html",
-  "js": "js",
-  "jsp": "jsp",
-  "java": "java"/*,
-  "php": "php"*/
-};
-
 if (opts.listLanguages) {
   var map = ExtensionLanguageMap;
   var langs = [];
@@ -51,29 +57,21 @@ if (opts.listLanguages) {
   console.log("Supported languages: " + langs.join(", "));  
   process.exit(-1);
 }
-
-// Sanity checks
-var sourceFiles = program.args;
+// Crap out if we have no source files specified
 if (!sourceFiles || sourceFiles.length == 0) {
   program.outputHelp();
   process.exit(-1);
 }
 
-var uploadFilePath = null;
-if (opts.accessToken) {
-  if (opts.outputFile) {
-    uploadFilePath = opts.outputFile;
-  }
-  else {
-    uploadFilePath = "/tmp/" + Date.now() + ".json";
-  }
-}
-
-
+/**
+ * Imports
+ */ 
+var colors = require('colors');
+var request = require('request');
 var fs = require('fs');
-var path = require('path');
 var ohm = require('ohm-js');
 var utils = require('./lib/genstringUtils.js');
+
 
 /**
  * Logging
@@ -291,7 +289,6 @@ function postTranslationKeysFromFile(keysFile, callback) {
   form.append("realtime", "false");
   form.append("file", fs.createReadStream(keysFile), {filename: path.basename(keysFile)});
 }
-
 function getProgressForFileUpload(fileID, callback) {
   var accessToken = opts.accessToken;
   if (!accessToken) {
@@ -320,13 +317,64 @@ function getProgressForFileUpload(fileID, callback) {
     }
   });
 }
+function onTranslationKeysPosted(error, response, result) {
+  var fileID = (result) ? result.id : undefined;
+  if (!fileID) {
+    logError("Unexpected upload result: " + JSON.stringify(result));
+    return;
+  }
+  
+  var appName = (result && result.application) ? result.application.name : undefined;
+  var fileName = (result) ? result.name : undefined;
+  logInfo("> Processing " + fileName + " for application '" + appName + "'...");
+  
+  monitorImportProgressForFileID(fileID, fileName + " [:bar] :percent :etas");
+}
+function monitorImportProgressForFileID(fileID, progressLabel, callback) {
+  var ProgressBar = require('progress');
+  if (!progressLabel) {
+    progressLabel = "[:bar] :percent :etas";
+  }
+  var progress = new ProgressBar(progressLabel, DefaultProgressOptions);
+  
+  var lastProg = 0;
+  var interval = setInterval(function() {
+    getProgressForFileUpload(fileID, function(error, response, result) {
+      if (result && typeof result.progress != 'undefined') {
+        var prog = parseInt(result.progress, 10);
+        debugger;
+        progress.tick(prog - lastProg);
+        if (prog >= 100) {
+          clearInterval(interval);
+          if (typeof callback == 'function') {
+            callback();
+          }
+        }
+        lastProg = prog;
+      }
+      else {
+        logError("Unexpected upload status: " + JSON.stringify(result));
+        clearInterval(interval);
+      }
+    });
+  }, 1000);
+}
+
+/**
+ * Progress
+ */
+var DefaultProgressOptions = {
+    total: 100, 
+    width: 20, 
+    complete: "=", 
+    incomplete: " "
+};
 
 /**
  * File Searching
  */
 function findFilesInDirectory(dir) {
   var files = fs.readdirSync(dir);
-  debugger;
   if (!files || files.length === 0) {
     return null;
   }
@@ -371,7 +419,6 @@ function main() {
   loadSemanticsData(baseSemantics, getSemanticsDataForLanguage("base"));
   
   var files = [];
-  debugger;
   for (var i=0; i<sourceFiles.length; i++) {
     var sourceFile = sourceFiles[i];
     var stat = fs.statSync(sourceFile);
@@ -411,54 +458,11 @@ function main() {
   
   var prettyPrint = !!opts.prettyPrint;
   var prettyPrintSpaces = (prettyPrint) ? 2 : 0;
-  var outputFile = opts.outputFile || uploadFilePath;
   
-  if (outputFile) {    
-    fs.writeFileSync(outputFile, JSON.stringify(response, null, prettyPrintSpaces));
-    if (opts.accessToken) {
-      logInfo("> Uploading " + outputFile);
-      postTranslationKeysFromFile(outputFile, function(error, response, result) {
-        var fileID = (result) ? result.id : undefined;
-        if (!fileID) {
-          logError("Unexpected upload result: " + JSON.stringify(result));
-          return;
-        }
-        
-        var appName = (result && result.application) ? result.application.name : undefined;
-        var fileName = (result) ? result.name : undefined;
-        var description = "> Processing " + fileName + " for application '" + appName + "'...";
-        logInfo(description);
-        var ProgressBar = require('progress');
-        var progress = new ProgressBar(fileName + " [:bar] :percent :etas", {
-          total: 100, 
-          width: 20, 
-          complete: "=", 
-          incomplete: " "
-        });
-        
-        var lastProg = 0;
-        var interval = setInterval(function() {
-          getProgressForFileUpload(response.id, function(error, response, result) {
-            if (result && typeof result.progress != 'undefined') {
-              var prog = parseInt(result.progress, 10);
-              progress.tick(prog - lastProg);
-              if (prog >= 100) {
-                clearInterval(interval);
-              }
-              lastProg = prog;
-            }
-            else {
-              logError("Unexpected upload status: " + JSON.stringify(result));
-              clearInterval(interval);
-            }
-          });
-        }, 1000);
-        
-      });
-    }
-  }
-  else {
-    process.stdout.write(JSON.stringify(response, null, prettyPrintSpaces));
+  fs.writeFileSync(outputFile, JSON.stringify(response, null, prettyPrintSpaces));
+  if (opts.accessToken) {
+    logInfo("> Uploading " + outputFile);
+    postTranslationKeysFromFile(outputFile, onTranslationKeysPosted);
   }
 }
 
