@@ -44,6 +44,8 @@ var opts = program.opts();
 var sourceFiles = program.args;
 var cwd = process.cwd();
 var outputFile = opts.outputFile || path.join(cwd, DefaultOutputFilename);
+var prettyPrint = !!opts.prettyPrint;
+var prettyPrintSpaces = (prettyPrint) ? 2 : 0;
 
 // If asked, print out suppoerted languages and exit
 if (opts.listLanguages) {
@@ -66,11 +68,13 @@ if (!sourceFiles || sourceFiles.length == 0) {
 /**
  * Imports
  */ 
+var fs = require('fs');
+var util = require('util');
+var ohm = require('ohm-js');
 var colors = require('colors');
 var request = require('request');
-var fs = require('fs');
-var ohm = require('ohm-js');
-var utils = require('./lib/genstringUtils.js');
+var GenstringUtils = require('./lib/genstringUtils.js');
+var ProgressBar = require('progress');
 
 
 /**
@@ -156,7 +160,7 @@ function getSemanticsDataForLanguage(lang) {
   return description;
 }
 function loadSemanticsData(semantics, data) {
-  utils.loadSemanticsData(semantics, data);
+  GenstringUtils.loadSemanticsData(semantics, data);
 }
 
 /**
@@ -207,6 +211,9 @@ function parseFile(file, lang) {
 }
 function genTranslationKeys(files) {
   var result = {};
+  if (!(files instanceof Array)) {
+    files = [files];
+  }
   
   for (var i=0; i<files.length; i++) {
     var file = files[i];
@@ -331,7 +338,6 @@ function onTranslationKeysPosted(error, response, result) {
   monitorImportProgressForFileID(fileID, fileName + " [:bar] :percent :etas");
 }
 function monitorImportProgressForFileID(fileID, progressLabel, callback) {
-  var ProgressBar = require('progress');
   if (!progressLabel) {
     progressLabel = "[:bar] :percent :etas";
   }
@@ -365,7 +371,7 @@ function monitorImportProgressForFileID(fileID, progressLabel, callback) {
  */
 var DefaultProgressOptions = {
     total: 100, 
-    width: 20, 
+    width: 32, 
     complete: "=", 
     incomplete: " "
 };
@@ -409,6 +415,23 @@ function findFilesInDirectory(dir) {
 }
 
 /**
+ * Writing files
+ */
+function writeStringToOutputFile(str) {
+  if (!str || str.length === 0) {
+    return;
+  }
+  if (!outputStream) {
+    outputStream = fs.createWriteStream(outputFile, 'utf-8');
+    outputStream._writableState.highWaterMark = 16;
+  }
+  
+  outputStream.cork();
+  outputStream.write(str);
+  outputStream.uncork();
+}
+
+/**
  * Main
  */
 function main() {
@@ -429,6 +452,9 @@ function main() {
       }
     }
     else if (stat.isFile()) {
+      if (sourceFile[0] != "/") {
+        sourceFile = path.join(cwd, sourceFile);
+      }
       files.push(sourceFile);
     }
   }
@@ -438,32 +464,65 @@ function main() {
     process.exit(0);
   }
   
-  var translationKeys = genTranslationKeys(files);
-  var translationMemory = [];
-  for (var hash in translationKeys) {
-    translationMemory.push({"key": translationKeys[hash]});
-  }
-  
   var sourceLocale = (opts.locale) ? opts.locale : 'en';
   var response = {
     "source_locale": sourceLocale,
-    "translation_memory": translationMemory
+    "translation_memory": []
+  }
+  
+  var leadin = JSON.stringify(response, null, prettyPrintSpaces);
+  var breakIndex = leadin.indexOf("]");
+  var leadout = leadin.substring(breakIndex);
+  leadin = leadin.substring(0, breakIndex);
+  writeStringToOutputFile(leadin);
+  
+  var genProgressOpts = util._extend({}, DefaultProgressOptions);
+  genProgressOpts.total = files.length;
+  var genProgress = new ProgressBar("Scanning [:bar] :percent :etas :fileName", genProgressOpts);
+  
+  var foundHashes = {};
+  var foundCount = 0;
+  for (var i=0; i<files.length; i++) {
+    var file = files[i];
+    var translationKeys = genTranslationKeys(file);
+    var translationMemory = [];
+    for (var hash in translationKeys) {
+      if (foundHashes[hash] !== undefined) {
+        continue;
+      }
+      translationMemory.push({"key": translationKeys[hash]});
+      foundHashes[hash] = null;
+    }
+    
+    if (translationMemory.length > 0) {
+      var str = JSON.stringify(translationMemory, null, prettyPrintSpaces);
+      str = str.substring(1, str.length-2);
+      if (foundCount > 0) {
+        str = ","+str;
+      }
+      writeStringToOutputFile(str);
+    }
+    foundCount += translationMemory.length;
+    genProgress.tick(1, {"fileName": path.basename(file)});
   }
   
   var sourceName = (opts.source);
+  foundHashes = Object.keys(foundHashes);
   if (sourceName) {
-    var sourceStruct = {"name": sourceName, "keys": Object.keys(translationKeys)};
+    var sourceStruct = {"name": sourceName, "keys": foundHashes};
     response["sources"] = [sourceStruct];
+    var sourcesString = JSON.stringify(response, null, prettyPrintSpaces);
+    sourcesString = leadout.substring(0,1) + sourcesString.substring(leadin.length + 1, sourcesString.length - leadout.length);
+    writeStringToOutputFile(sourcesString);
   }
   
-  var prettyPrint = !!opts.prettyPrint;
-  var prettyPrintSpaces = (prettyPrint) ? 2 : 0;
-  
-  fs.writeFileSync(outputFile, JSON.stringify(response, null, prettyPrintSpaces));
-  if (opts.accessToken) {
-    logInfo("> Uploading " + outputFile);
-    postTranslationKeysFromFile(outputFile, onTranslationKeysPosted);
-  }
+  outputStream.end(leadout, 'utf-8', function() {
+    logInfo("> Generated " + foundHashes.length + " unique translation keys in " + outputFile);
+    if (opts.accessToken) {
+      logInfo("> Uploading " + outputFile);
+      postTranslationKeysFromFile(outputFile, onTranslationKeysPosted);
+    }
+  });
 }
 
 if (global && global.v8debug && v8debug.Debug) {    
@@ -471,5 +530,6 @@ if (global && global.v8debug && v8debug.Debug) {
 }
 
 var baseGrammar, baseSemantics;
+var outputStream;
 
 main();
