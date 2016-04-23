@@ -1,29 +1,19 @@
 #!/usr/bin/env node
 
-var ExtensionLanguageMap = {
-  "m": "objc",
-  "swift": "swift",
-  "html": "html",
-  "htm": "html",
-  "js": "js",
-  "jsp": "jsp",
-  "java": "java"/*,
-  "php": "php"*/
-};
-var DefaultOutputFilename = "genstrings.json";
+var DEFAULT_OUTPUT_FILENAME = "genstrings.json";
 
-/**
- * Program options and arguments
- */
-var program = require('commander');
-var path = require('path');
+// Program options and arguments
 
-program
+var Program = require('commander');
+var Path = require('path');
+var Genstrings = require('./lib/genstrings.js');
+
+Program
   .version('0.0.1')
   .option('-i, --list-languages', 'Print out supported input languages')
   .option('-l, --language <lang>', 'Input language')
   .option('-m, --macro <Macro>', 'Override default macro')
-  .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DefaultOutputFilename+')')
+  .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DEFAULT_OUTPUT_FILENAME+')')
   .option('-a, --access-token <token>', 'Automatically register keys with Trasnaltion Exchange using provided access token')
   .option('--host <host>', 'Manually specify host (default: api.translationexchange.com)')
   .option('-p, --pretty-print', 'Pretty print output')
@@ -32,30 +22,23 @@ program
   .option('-L, --locale <locale>', 'Specify source locale (default: en)')
   .option('-v, --verbose', 'Be verbose');
 
-program
+Program
   .arguments("<file|dir> [file|dir...]");
 
-program.parse(process.argv);
+Program.parse(process.argv);
 
-/**
- * Globals
- */
-var opts = program.opts();
-var sourceFiles = program.args;
+// Globals
+
+var opts = Program.opts();
+var sourceFiles = Program.args;
 var cwd = process.cwd();
-var outputFile = opts.outputFile || path.join(cwd, DefaultOutputFilename);
+var outputFile = opts.outputFile || Path.join(cwd, DEFAULT_OUTPUT_FILENAME);
 var prettyPrint = !!opts.prettyPrint;
 var prettyPrintSpaces = (prettyPrint) ? 2 : 0;
 
 // If asked, print out suppoerted languages and exit
 if (opts.listLanguages) {
-  var map = ExtensionLanguageMap;
-  var langs = [];
-  for (var ext in map) {
-    if (langs.indexOf(map[ext]) < 0) {      
-      langs.push(map[ext]);
-    }
-  }
+  var langs = Genstrings.supportedLanguages;
   console.log("Supported languages: " + langs.join(", "));  
   process.exit(-1);
 }
@@ -65,208 +48,24 @@ if (!sourceFiles || sourceFiles.length == 0) {
   process.exit(-1);
 }
 
-/**
- * Imports
- */ 
-var fs = require('fs');
-var util = require('util');
-var ohm = require('ohm-js');
-var colors = require('colors');
-var request = require('request');
-var GenstringUtils = require('./lib/genstringUtils.js');
+
+// Imports
+ 
+var FS = require('fs');
+var Util = require('util');
+var Request = require('request');
 var ProgressBar = require('progress');
-
-
-/**
- * Logging
- */
-function logInfo(msg) {
-  console.warn(msg);
-}
-function logWarn(msg) {
-  console.warn(("! " + msg).yellow);
-}
-function logError(msg) {
-  console.error(("!!! " + msg).red);
-}
-
-/**
- * FS helpers
- */
-function testIfFileExists(filePath) {
-  var exists = false;
-  try {
-      var stat = fs.statSync(filePath);
-      if (stat && stat.isFile()) {
-        exists = true;
-      }
-      
-  }
-  catch (e) {
-  }
-  return exists;
-}
-function testIfDirectoryExists(dir) {
-  var exists = false;
-  try {
-      var stat = fs.statSync(dir);
-      if (stat && stat.isDirectory()) {
-        exists = true;
-      }
-      
-  }
-  catch (e) {
-  }
-  return exists;
-}
-
-/**
- * Language detection
- */
-function languageForFileAtPath(filePath) {
-  var extension = path.extname(filePath).substring(1);
-  return ExtensionLanguageMap[extension];
-}
-
-/**
- * Grammar
- */
-var GrammarNamespace = {};
-global.GrammarNamespace = GrammarNamespace;
-function grammarFilePathForLanguage(lang) {
-  return path.resolve(__dirname, "grammar/" + lang + ".ohm");
-}
-function grammarForLanguage(lang) {
-  var grammarName = lang.substring(0,1).toUpperCase() + lang.substring(1);
-  var grammar = GrammarNamespace[grammarName];
-  if (!grammar) {
-    var grammarFilePath = grammarFilePathForLanguage(lang);
-    var grammarText = fs.readFileSync(grammarFilePath, 'utf8');
-    grammar = ohm.grammar(grammarText, GrammarNamespace);
-    GrammarNamespace[grammarName] = grammar;
-  }
-  return grammar;
-}
-
-/**
- * Semantics
- */
-function semanticsFilePathForLanguage(lang) {
-  return path.resolve(__dirname, "semantics/" + lang + ".js");
-}
-function getSemanticsDataForLanguage(lang) {
-  var semanticsFilePath = semanticsFilePathForLanguage(lang);
-  var description = require(semanticsFilePath);
-  return description;
-}
-function loadSemanticsData(semantics, data) {
-  GenstringUtils.loadSemanticsData(semantics, data);
-}
-
-/**
- * Parsing
- */
-function parseFile(file, lang) {
-  if (opts.verbose) {    
-    logInfo("< ["+lang+"] " + file);
-  }
-  var grammar = grammarForLanguage(lang);
-  if (opts.macro) {
-    var macros = opts.macro.split("|");
-    for (var i=0; i<macros.length; i++) {
-      macros[i] = JSON.stringify(macros[i]);
-    }
-    var runtimeGrammarText = "Runtime <: " + grammar.name + " { macro := "+macros.join("|")+" }";
-    grammar = ohm.grammar(runtimeGrammarText, GrammarNamespace);
-  }
-  var source = fs.readFileSync(file, 'utf8');
-  
-  var startTime = Date.now();
-  if (opts.trace) {
-    logInfo(grammar.trace(source).toString().replace(/\\n/g, "\n"));
-  }
-  var match = grammar.match(source);
-  var endTime = Date.now();
-  
-  if (opts.verbose) {
-    var duration = endTime - startTime;
-    logInfo("> Processed file " + file + " (" + duration + "ms, "+(match.succeeded())+")");
-  }
-  if (!match.succeeded()) {
-    return null;
-  }
-  
-  var semanticData = getSemanticsDataForLanguage(lang);
-  var semantics = grammar.extendSemantics(baseSemantics);
-  loadSemanticsData(semantics, semanticData);
-  var matchSemantics = semantics(match);
-  var translationKeys = matchSemantics.translationKeys;
-  if (translationKeys && translationKeys.results) {
-    translationKeys = translationKeys.results;
-  }
-  else {
-    translationKeys = null;
-  }
-  return translationKeys;
-}
-function genTranslationKeys(files) {
-  var result = {};
-  if (!(files instanceof Array)) {
-    files = [files];
-  }
-  
-  for (var i=0; i<files.length; i++) {
-    var file = files[i];
-    
-    if (!testIfFileExists(file)) {
-      logWarn("Cannot find file: " + file);
-      continue;
-    }
-    
-    var lang = opts.language;
-    if (!lang) {
-      lang = languageForFileAtPath(file);
-    }
-    
-    if (!lang) {
-      logWarn("Could not determine source language");
-      continue;
-    }
-    
-    var translationKeys = parseFile(file, lang);
-    if (!translationKeys || translationKeys.length === 0) {
-      continue;
-    }
-    
-    var str = "";
-    for (var j=0; j<translationKeys.length; j++) {
-      var key = translationKeys[j];
-      var hash = key.id;
-      if (!hash) {
-        logWarn("Unhashed translation key: " + JSON.stringify(key));
-        continue;
-      }
-      result[hash] = key;
-    }
-  }
-  return result;
-}
+var Logger = require(__dirname + '/lib/logger.js').sharedLogger;
 
 /**
  * Posting Translation Keys
  */
-function postData(aUrl, data) {
-  debugger;
-  request.post({url: aUrl, formData: data}, function(err, response, body) {
-    debugger;
-  });
-}
 function postTranslationKeysFromFile(keysFile, callback) {
   var accessToken = opts.accessToken;
   var response = "No Response!";
   if (!accessToken) {
     var error = new Error("No valid access token provided");
-    logError(error.message);
+    Logger.error(error.message);
     if (typeof callback == 'function') {
       callback(error, null, null);
     }
@@ -279,7 +78,7 @@ function postTranslationKeysFromFile(keysFile, callback) {
   }
   var url = host+"/v1/projects/current/import";
   
-  var r = request.post(url, function(error, response, body){
+  var r = Request.post(url, function(error, response, body){
     if (typeof callback == 'function') {
       try {
         response = JSON.parse(body);
@@ -294,7 +93,7 @@ function postTranslationKeysFromFile(keysFile, callback) {
   var form = r.form();
   form.append("access_token", accessToken);
   form.append("realtime", "false");
-  form.append("file", fs.createReadStream(keysFile), {filename: path.basename(keysFile)});
+  form.append("file", FS.createReadStream(keysFile), {filename: Path.basename(keysFile)});
 }
 function getProgressForFileUpload(fileID, callback) {
   var accessToken = opts.accessToken;
@@ -311,7 +110,7 @@ function getProgressForFileUpload(fileID, callback) {
   }
   var url = host + "/v1/files/" + encodeURIComponent(fileID) + "?access_token=" + encodeURIComponent(accessToken);
   
-  request.get(url, function(error, response, body) {
+  Request.get(url, function(error, response, body) {
     if (typeof callback == 'function') {
       var result = null;
       try {
@@ -324,20 +123,28 @@ function getProgressForFileUpload(fileID, callback) {
     }
   });
 }
-function onTranslationKeysPosted(error, response, result) {
+function onTranslationKeysPostProgress(error, response, result) {
   var fileID = (result) ? result.id : undefined;
   if (!fileID) {
-    logError("Unexpected upload result: " + JSON.stringify(result));
+    Logger.error("Unexpected upload result: " + JSON.stringify(result));
     return;
   }
   
   var appName = (result && result.application) ? result.application.name : undefined;
   var fileName = (result) ? result.name : undefined;
-  logInfo("> Processing " + fileName + " for application '" + appName + "'...");
+  Logger.info("> Processing " + fileName + " for application '" + appName + "'...");
   
-  monitorImportProgressForFileID(fileID, fileName + " [:bar] :percent :etas");
+  monitorImportProgressForFileID(fileID, "Importing [:bar] :percent :etas", onTranslationKeysPosted);
 }
-function monitorImportProgressForFileID(fileID, progressLabel, callback) {
+function onTranslationKeysPosted(success) {
+  if (success) {
+    Logger.info("Finished!");
+  }
+  else {
+    Logger.error("Finished with errors!");
+  }
+}
+function monitorImportProgressForFileID(fileID, progressLabel, completionBlock) {
   if (!progressLabel) {
     progressLabel = "[:bar] :percent :etas";
   }
@@ -346,21 +153,32 @@ function monitorImportProgressForFileID(fileID, progressLabel, callback) {
   var lastProg = 0;
   var interval = setInterval(function() {
     getProgressForFileUpload(fileID, function(error, response, result) {
+      if (result && result.state == "failed") {
+        progress.terminate();
+        Logger.error("Failed to import " + result.name);
+        clearInterval(interval);
+        if (typeof completionBlock == 'function') {
+          completionBlock(false);
+        }
+        return;
+      }
       if (result && typeof result.progress != 'undefined') {
         var prog = parseInt(result.progress, 10);
-        debugger;
         progress.tick(prog - lastProg);
         if (prog >= 100) {
           clearInterval(interval);
-          if (typeof callback == 'function') {
-            callback();
+          if (typeof completionBlock == 'function') {
+            completionBlock(true);
           }
         }
         lastProg = prog;
       }
       else {
-        logError("Unexpected upload status: " + JSON.stringify(result));
+        Logger.error("Unexpected upload status: " + JSON.stringify(result));
         clearInterval(interval);
+        if (typeof completionBlock == 'function') {
+          completionBlock(false);
+        }
       }
     });
   }, 1000);
@@ -376,11 +194,8 @@ var DefaultProgressOptions = {
     incomplete: " "
 };
 
-/**
- * File Searching
- */
 function findFilesInDirectory(dir) {
-  var files = fs.readdirSync(dir);
+  var files = FS.readdirSync(dir);
   if (!files || files.length === 0) {
     return null;
   }
@@ -388,7 +203,7 @@ function findFilesInDirectory(dir) {
   var result = [];
   for (var i=0; i<files.length; i++) {
     var file = files[i];
-    var stat = fs.statSync(dir + "/" + file);
+    var stat = FS.statSync(dir + "/" + file);
     if (!stat) {
       continue;
     }
@@ -399,14 +214,14 @@ function findFilesInDirectory(dir) {
       }
     }
     else if (stat.isFile()) {
-      var ext = path.extname(file) + "";
+      var ext = Path.extname(file) + "";
       if (!ext || ext.trim().length === 0) {
         continue;
       }
       // nodejs prepends extensions with dots
       // not sure if deliberate
       ext = ext.substring(new Number(ext[0] == ".")).toLowerCase();
-      if (ExtensionLanguageMap[ext]) {
+      if (Genstrings.ExtensionLanguageMap[ext]) {
         result.push(dir + "/" + file);
       }
     }
@@ -414,37 +229,22 @@ function findFilesInDirectory(dir) {
   return result;
 }
 
-/**
- * Writing files
- */
 function writeStringToOutputFile(str) {
   if (!str || str.length === 0) {
     return;
   }
   if (!outputStream) {
-    outputStream = fs.createWriteStream(outputFile, 'utf-8');
-    outputStream._writableState.highWaterMark = 16;
+    outputStream = FS.createWriteStream(outputFile, 'utf8');
   }
-  
-  outputStream.cork();
+
   outputStream.write(str);
-  outputStream.uncork();
 }
 
-/**
- * Main
- */
 function main() {
-  // pre-load Base grammar
-  // TODO: loading higher grammar should preload supergrammars, then we wouldn't need to do this at all
-  baseGrammar = grammarForLanguage("base");
-  baseSemantics = baseGrammar.semantics();
-  loadSemanticsData(baseSemantics, getSemanticsDataForLanguage("base"));
-  
   var files = [];
   for (var i=0; i<sourceFiles.length; i++) {
     var sourceFile = sourceFiles[i];
-    var stat = fs.statSync(sourceFile);
+    var stat = FS.statSync(sourceFile);
     if (stat.isDirectory()) {
       var found = findFilesInDirectory(sourceFile);
       if (found || found.length > 0) {
@@ -453,14 +253,14 @@ function main() {
     }
     else if (stat.isFile()) {
       if (sourceFile[0] != "/") {
-        sourceFile = path.join(cwd, sourceFile);
+        sourceFile = Path.join(cwd, sourceFile);
       }
       files.push(sourceFile);
     }
   }
   
   if (files.length == 0) {
-    logInfo("No sources found");
+    Logger.info("No sources found");
     process.exit(0);
   }
   
@@ -476,52 +276,61 @@ function main() {
   leadin = leadin.substring(0, breakIndex);
   writeStringToOutputFile(leadin);
   
-  var genProgressOpts = util._extend({}, DefaultProgressOptions);
+  var genProgressOpts = Util._extend({}, DefaultProgressOptions);
   genProgressOpts.total = files.length;
   var genProgress = new ProgressBar("Scanning [:bar] :percent :etas :fileName", genProgressOpts);
   
   var foundHashes = {};
   var foundCount = 0;
-  for (var i=0; i<files.length; i++) {
-    var file = files[i];
-    var translationKeys = genTranslationKeys(file);
+  var parser = new Genstrings();
+  parser.macro = opts.macro;
+  parser.language = opts.language;
+  parser.parseFiles(files, function(progress, file, translationKeys) {
     var translationMemory = [];
-    for (var hash in translationKeys) {
-      if (foundHashes[hash] !== undefined) {
-        continue;
+    if (translationKeys) {
+      for (var i=0; i<translationKeys.length; i++) {
+        var key = translationKeys[i];
+        var hash = key.id;
+        if (foundHashes[hash] !== undefined) {
+          continue;
+        }
+        translationMemory.push({"key": key});
+        foundHashes[hash] = null;
       }
-      translationMemory.push({"key": translationKeys[hash]});
-      foundHashes[hash] = null;
     }
     
     if (translationMemory.length > 0) {
       var str = JSON.stringify(translationMemory, null, prettyPrintSpaces);
-      str = str.substring(1, str.length-2);
+      str = str.substring(1, str.length-1);
       if (foundCount > 0) {
         str = ","+str;
       }
       writeStringToOutputFile(str);
     }
+    
     foundCount += translationMemory.length;
-    genProgress.tick(1, {"fileName": path.basename(file)});
-  }
+    genProgress.tick(1, {"fileName": Path.basename(file)});
+    
+    if (progress >= 1.0) {
+      var sourceName = (opts.source);
+      foundHashes = Object.keys(foundHashes);
+      if (sourceName) {
+        var sourceStruct = {"name": sourceName, "keys": foundHashes};
+        response["sources"] = [sourceStruct];
+        var sourcesString = JSON.stringify(response, null, prettyPrintSpaces);
+        sourcesString = leadout.substring(0,1) + sourcesString.substring(leadin.length + 1, sourcesString.length - leadout.length);
+        writeStringToOutputFile(sourcesString);
+      }
   
-  var sourceName = (opts.source);
-  foundHashes = Object.keys(foundHashes);
-  if (sourceName) {
-    var sourceStruct = {"name": sourceName, "keys": foundHashes};
-    response["sources"] = [sourceStruct];
-    var sourcesString = JSON.stringify(response, null, prettyPrintSpaces);
-    sourcesString = leadout.substring(0,1) + sourcesString.substring(leadin.length + 1, sourcesString.length - leadout.length);
-    writeStringToOutputFile(sourcesString);
-  }
-  
-  outputStream.end(leadout, 'utf-8', function() {
-    logInfo("> Generated " + foundHashes.length + " unique translation keys in " + outputFile);
-    if (opts.accessToken) {
-      logInfo("> Uploading " + outputFile);
-      postTranslationKeysFromFile(outputFile, onTranslationKeysPosted);
+      outputStream.end(leadout, 'utf-8', function() {
+        Logger.info("> Generated " + foundHashes.length + " unique translation keys in " + outputFile);
+        if (opts.accessToken) {
+          Logger.info("> Uploading " + outputFile);
+          postTranslationKeysFromFile(outputFile, onTranslationKeysPostProgress);
+        }
+      });
     }
+    
   });
 }
 
@@ -529,7 +338,6 @@ if (global && global.v8debug && v8debug.Debug) {
   global.v8debug.Debug.setBreakOnException();
 }
 
-var baseGrammar, baseSemantics;
 var outputStream;
 
 main();
