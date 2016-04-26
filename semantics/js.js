@@ -1,6 +1,6 @@
 (function(){
   
-  var utils = require('../lib/GenstringUtils');
+  var GSUtils = require('../lib/utils');
   
   module.exports = {
     "attributes": {
@@ -13,7 +13,7 @@
           }
           result.flatten();
           result.results = null;
-          result = utils.createResult("dict", result);
+          result = GSUtils.createResult("dict", result);
           // debugger;
           return result;
         },
@@ -23,7 +23,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("dictEntry", result);
+          result = GSUtils.createResult("dictEntry", result);
           // debugger;
           return result;
         },
@@ -33,7 +33,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("array", null, result);
+          result = GSUtils.createResult("array", null, result);
           // debugger;
           return result;
         }

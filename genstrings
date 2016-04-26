@@ -2,11 +2,14 @@
 
 var DEFAULT_OUTPUT_FILENAME = "genstrings.json";
 
-// Program options and arguments
-
-var Program = require('commander');
+require('./lib/defines.js');
 var Path = require('path');
 var Genstrings = require('./lib/genstrings.js');
+
+debugger;
+
+// Program options and arguments
+var Program = require('commander');
 
 Program
   .version('0.0.1')
@@ -44,7 +47,7 @@ if (opts.listLanguages) {
 }
 // Crap out if we have no source files specified
 if (!sourceFiles || sourceFiles.length == 0) {
-  program.outputHelp();
+  Program.outputHelp();
   process.exit(-1);
 }
 

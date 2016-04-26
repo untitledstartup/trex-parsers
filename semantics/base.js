@@ -1,6 +1,6 @@
 (function(){
   
-  var utils = require('../lib/GenstringUtils');
+  var GSUtils = require('../lib/utils.js');
   
   module.exports = {
     "attributes": {
@@ -23,7 +23,7 @@
               result.push(childString);
             }
           }
-          result = utils.createResult("ListOf_some", result);
+          result = GSUtils.createResult("ListOf_some", result);
           // debugger;
           return result;
         },
@@ -44,7 +44,7 @@
               result.push(childKey);
             }
           }
-          result = utils.createResult("listOf_some", result);
+          result = GSUtils.createResult("listOf_some", result);
           // debugger;
           return result;
         },
@@ -55,11 +55,11 @@
           if (!result) {
             return null;
           }
-          var keys = utils.collectTranslationKeysFromObjects(result);
+          var keys = GSUtils.collectTranslationKeysFromObjects(result);
           if (!keys) {
             return null;
           }
-          result = utils.createResult("tmlLocalizedStrings", keys);
+          result = GSUtils.createResult("tmlLocalizedStrings", keys);
           // debugger;
           return result;
         },
@@ -70,7 +70,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("tmlLocalizedString", result);
+          result = GSUtils.createResult("tmlLocalizedString", result);
           result.flatten();
           // debugger;
           return result;
@@ -85,7 +85,7 @@
           if (!result) {
             return null;
           }
-          var result = utils.createResult("tmlStatement", result);
+          var result = GSUtils.createResult("tmlStatement", result);
           // debugger;
           return result;
         },
@@ -105,7 +105,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("literal", result);
+          result = GSUtils.createResult("literal", result);
           // debugger;
           return result;
         },
@@ -150,10 +150,10 @@
                 break;
               }
             }
-            var newKey = utils.createTranslationKey(label, desc);
+            var newKey = GSUtils.createTranslationKey(label, desc);
             result.results = [newKey];
           }
-          result = utils.createResult("methodNamed", result);
+          result = GSUtils.createResult("methodNamed", result);
           return result;
         },
       
@@ -167,15 +167,15 @@
           var re = new RegExp("\\\\" + quoteStr, "g");
           // debugger;
           string = string.replace(re, quoteStr);
-          var key = utils.createTranslationKey(string);
-          var result = utils.createResult("quotedStringLiteral", key);
+          var key = GSUtils.createTranslationKey(string);
+          var result = GSUtils.createResult("quotedStringLiteral", key);
           // debugger;
           return result;
         },
         "quotedStringChars": function(chars) {
           var string = chars.interval.contents;
-          var key = utils.createTranslationKey(string);
-          var result = utils.createResult("quotedStringChars", key);
+          var key = GSUtils.createTranslationKey(string);
+          var result = GSUtils.createResult("quotedStringChars", key);
           // debugger;
           return result;
         },
@@ -186,7 +186,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("arg", result);
+          result = GSUtils.createResult("arg", result);
           // debugger;
           return result;
         },
@@ -196,7 +196,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("argExp_parens", result);
+          result = GSUtils.createResult("argExp_parens", result);
           // debugger;
           return result;
         },
@@ -215,7 +215,7 @@
           if (thirdKeys) {
             result.push(thirdKeys);
           }
-          result = utils.createResult("argExp_ternary", result);
+          result = GSUtils.createResult("argExp_ternary", result);
           // debugger;
           return result;
         },
@@ -225,7 +225,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("argExp_binary", result);
+          result = GSUtils.createResult("argExp_binary", result);
           // debugger;
           return result;
         },
@@ -235,7 +235,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("argExp_unaryAfter", result);
+          result = GSUtils.createResult("argExp_unaryAfter", result);
           // debugger;
           return result;
         },
@@ -245,7 +245,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("argExp_unaryAfter", result);
+          result = GSUtils.createResult("argExp_unaryAfter", result);
           // debugger;
           return result;
         },
@@ -257,7 +257,7 @@
           if (!keys) {
             return null;
           }
-          var result = utils.createResult("xmlTag", keys);
+          var result = GSUtils.createResult("xmlTag", keys);
           return result;
         },
         // "<" space* tag (space+ ~(attr | ">") xmlTagAttributeExp)* space+ attr (space+ xmlTagAttributeExp)* space* "/"? space* ">"
@@ -266,7 +266,7 @@
           if (!keys) {
             return null;
           }
-          var result = utils.createResult("xmlTagWithAttribute", keys);
+          var result = GSUtils.createResult("xmlTagWithAttribute", keys);
           return result;
         },
         // xmlTagAttributeName ("=" xmlTagAttributeValue)?
@@ -278,7 +278,7 @@
           if (!result) {
             return null;
           }
-          result = utils.createResult("xmlTagAttributeExp", result);
+          result = GSUtils.createResult("xmlTagAttributeExp", result);
           return result;
         },
         // XMLTag<tag> content XMLCloseTag<tag>
@@ -287,7 +287,7 @@
           if (!keys) {
             return null;
           }
-          var result = utils.createResult("xmlTagWithContent", keys);
+          var result = GSUtils.createResult("xmlTagWithContent", keys);
           return result;
         },
         // XMLTagWithAttribute<tag, attr> content XMLCloseTag<tag>
@@ -296,7 +296,7 @@
           if (!keys) {
             return null;
           }
-          var result = utils.createResult("xmlTagWithAttributeAndContent", keys);
+          var result = GSUtils.createResult("xmlTagWithAttributeAndContent", keys);
           return result;
         }
       }

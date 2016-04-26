@@ -1,5 +1,5 @@
 (function(){
-  var utils = require('../lib/GenstringUtils');
+  var utils = require('../lib/utils');
   
   module.exports = {
     "attributes": {
