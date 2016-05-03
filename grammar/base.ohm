@@ -115,7 +115,10 @@ method
   | methodNamed<argExp>
   
 methodNamed<aMethodName>
-  = aMethodName "(" space* listOf<argExp, argSep > space* ")"
+  = aMethodName "(" space* listOf<methodArgExp, argSep > space* ")"
+  
+methodArgExp
+  = argExp
   
 methodNameExp
   = validMethodChar+

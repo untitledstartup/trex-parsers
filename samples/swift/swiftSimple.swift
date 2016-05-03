@@ -1,1 +1,1 @@
-TMLLocalizedString("Simple String")
+TMLLocalizedString("My Profile", description: "The profile for the user; max-length: 9")

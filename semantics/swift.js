@@ -24,6 +24,15 @@
         "macro": function(e) {
           return null;
         },
+        //methodArgIdentifier space* ":" space* argExp
+        "namedArgExp": function(identifier, _, _, _, arg) {
+          var result = arg.translationKeys;
+          if (!result) {
+            return null;
+          }
+          result = utils.createResult("namedArgExp", result);
+          return result;
+        },
         // "[" space* ":" space* "]"
         // "[" space* listOf<dictEntry, argSep> space* "]"
         "dict": function(open, _, parts, _, close) {

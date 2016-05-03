@@ -18,13 +18,29 @@ arg
   | variable
   | literal 
   
+statementSep
+  += "[" | "]"
+  
 macro
   := "TMLLocalizedString"
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
+  
+methodArgExp
+  := namedArgExp 
+  | argExp 
 
 // END OVERRIDES
+
+namedArgExp
+  = methodArgIdentifier space* ":" space* argExp
+  
+methodArgIdentifier
+  = validMethodArgNameChars+
+  
+validMethodArgNameChars
+  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
 
 // TMLLocalized argument expression
 collectionAccess
@@ -42,7 +58,7 @@ dict
   | "[" space* listOf<dictEntry, argSep> space* "]"
   
 dictEntry
-  = stringLiteral space* ":" space* dictValue
+  = dictValue space* ":" space* dictValue
   
 dictValue
   = argExp
