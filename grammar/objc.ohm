@@ -3,6 +3,12 @@ Objc {
 Exp 
   = ExternalDeclaration+
   
+macro
+  = "TMLLocalizedString"
+  | "TMLLocalizedAttributedString"
+  | "TMLLocalizedDate"
+  | "TMLLocalizedAttributedDate"
+  
 NonEmptyListOf<elem, sep>
   = elem (sep elem)*
 

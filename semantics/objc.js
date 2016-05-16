@@ -480,11 +480,13 @@
           if (subKeys) {
             result.subResults = subKeys;
           }
-          debugger;
+          var grammar = null;
+          debugger;          
           
           if (primaryKeys instanceof Result 
             && primaryKeys.ctorName == "identifier" 
-            && primaryKeys.results[0] == "TMLLocalizedString"
+            && (grammar = this._semantics.grammar) 
+            && grammar.match(primaryKeys.results[0], "macro").succeeded()
             && suffixKeys && suffixKeys.length > 0) {
             
             var suffixes = suffixKeys.flatten();
