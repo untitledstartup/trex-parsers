@@ -1,1 +1,1 @@
-TMLLocalizedString("My Profile", description: "The profile for the user; max-length: 9")
+ [SVProgressHUD showWithStatus:TMLLocalizedString(@"Saving New Address...")];

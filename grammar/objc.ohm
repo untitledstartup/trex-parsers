@@ -1,100 +1,647 @@
-Objc <: Base {
+Objc {
 
-// OVERRIDES
-nullLiteral
-  := "nil"
-  | "NULL"
+Exp 
+  = ExternalDeclaration+
   
-booleanLiteral
-  += "YES" | "NO"
+NonEmptyListOf<elem, sep>
+  = elem (sep elem)*
+
+ExternalDeclaration
+  = comment 
+  | lineComment 
+  | PreprocessorDeclaration
+  | FunctionDefinition
+  | Declaration 
+  | ClassInterface
+  | ClassImplementation
+  | CategoryInterface
+  | CategoryImplementation
+  | ProtocolDeclaration
+  | ProtocolDeclarationList
+  | ClassDeclarationList
+
+PreprocessorDeclaration
+  = Import | Include
+
+ClassInterface
+  = "@interface" className (":" superClassName)?
+	ProtocolReferenceList?
+	InstanceVariables?
+	InterfaceDeclarationList?
+	"@end"
+
+CategoryInterface
+	= "@interface" className "(" categoryName? ")"
+	ProtocolReferenceList?
+	InstanceVariables?
+	InterfaceDeclarationList?
+	"@end"
+
+ClassImplementation
+	= "@implementation" className ( ":" superClassName )?
+	InstanceVariables?
+	ImplementationDefinitionList?
+	"@end"
+
+CategoryImplementation
+	= "@implementation" className "(" categoryName ")" 
+  ImplementationDefinitionList? 
+  "@end"
+
+ProtocolDeclaration
+	= "@protocol" protocolName ProtocolReferenceList?
+	"@required"? InterfaceDeclarationList? 
+  "@optional"? InterfaceDeclarationList?
+	"@end"
+
+ProtocolDeclarationList
+	= "@protocol" ProtocolList ";"
+
+ClassDeclarationList
+	= "@class" ClassList ";"
+
+ClassList
+	= ListOf<className, ",">
+
+ProtocolReferenceList
+	= "<" ProtocolList ">"
+
+ProtocolList
+	= ListOf<protocolName, ",">
+
+PropertyDeclaration
+  = "@property" PropertyAttributesDeclaration? StructDeclaration
+
+PropertyAttributesDeclaration
+  = "(" PropertyAttributesList ")"
+
+PropertyAttributesList
+  = ListOf<PropertyAttribute, ",">
+
+PropertyAttribute
+  = "nonatomic" | "assign" | "weak" | "strong" | "retain" | "readonly" | "readwrite"
+  | GetterPropertyAttribute
+  | SetterPropertyAttribute
+  | identifier
   
-stringLiteral
-  := quotedStringLiteral<"\"", stringNonLiteral>
+GetterPropertyAttribute
+  = "getter" "=" identifier
   
-arg
-  := property
-  | method
-  | collectionAccess
-  | messageSend
-  | object
-  | literal  
-  | variable
+SetterPropertyAttribute
+  = "setter" "=" identifier ":"
+
+className
+	= identifier
+
+superClassName
+	= identifier
+
+categoryName
+  = identifier
+
+protocolName 
+  = identifier
+
+InstanceVariables
+  = "{" visibilitySpecification StructDeclaration+ InstanceVariables "}" --visibilityStructVars
+  | "{" StructDeclaration+ InstanceVariables "}"  --structVars
+  | "{" visibilitySpecification StructDeclaration+ "}" -- visibilityStruct
+  | "{" StructDeclaration* "}"  --struct
+
+visibilitySpecification
+	= "@private"
+	| "@protected"
+	| "@package" 
+	| "@public"
+
+InterfaceDeclarationList
+  = InterfaceDeclaration+
   
-macro
-  := "TMLLocalizedString"
-  | "TMLLocalizedAttributedString"
-  | "TMLLocalizedDate"
-  | "TMLLocalizedAttributedDate"
+InterfaceDeclaration
+  = Declaration 
+  | ClassMethodDeclaration
+  | InstanceMethodDeclaration 
+  | PropertyDeclaration
 
-// END OF OVERRIDES
+ClassMethodDeclaration
+  = "+" MethodDeclaration
 
-collectionAccess
-  = argExp "[" space* argExp space* "]"
+InstanceMethodDeclaration
+  = "-" MethodDeclaration
 
-// Object  
-object
-  = stringObject
-  | numberObject
-  | dict
-  | array
-  | literalWrap
+MethodDeclaration
+	= MethodType? MethodSelector ";"
+
+ImplementationDefinitionList
+  = (FunctionDefinition
+  | Declaration 
+  | ClassMethodDefinition 
+  | InstanceMethodDefinition
+  | PropertyImplementation)+
+
+ClassMethodDefinition
+  = "+" MethodDefinition
+
+InstanceMethodDefinition
+  = "-" MethodDefinition
+	
+MethodDefinition
+	= MethodType? MethodSelector InitDeclaratorList? ";"? CompoundStatement
+
+MethodSelector
+	= KeywordDeclarator+ ParameterList? --withParams
+  | selector
+
+KeywordDeclarator
+	= selector? ":" MethodType* identifier
+
+selector 
+  = identifier
+
+MethodType
+  = "(" TypeName ")"
+
+PropertyImplementation
+  = "@synthesize" PropertySynthesizeList ";"
+  | "@dynamic" PropertySynthesizeList ";"
+
+PropertySynthesizeList
+  = ListOf<PropertySynthesizeItem, ",">
+
+PropertySynthesizeItem
+  = identifier "=" identifier --full
+  | identifier 
+
+BlockType
+  = TypeSpecifier "(" "^" TypeSpecifier? ")" BlockParameters?
+
+GenericsSpecifier
+  = "<" (TypeSpecifier)? ("," TypeSpecifier)* ">"
+
+TypeSpecifier
+	=	EnumSpecifier --enum
+	|	StructOrUnionSpecifier --structOrUnion
+  | typeSpecifierKeyword  --keyword
+	|	"id" ProtocolReferenceList? --generic
+  |	className ( ProtocolReferenceList | GenericsSpecifier )? Pointer? --classed
   
-// Literal Wrap @(WHATEVER)
-literalWrap
-  = "@(" space* argExp space* ")"
+typeSpecifierKeyword
+  = "void" | "char" | "short" | "int" | "long" | "float" | "double" | "signed" | "unsigned" | "instancetype"
+
+typeQualifier
+	= "const" | "volatile" | protocolQualifier
+
+protocolQualifier
+	= "in" | "out" | "inout" | "bycopy" | "byref" | "oneway"
+
+PrimaryExpression
+  = BlockExpression
+  | BoxExpression
+  | ArrayExpression
+  | DictionaryExpression
+	| EncodeExpression
+	| ProtocolExpression
+	| SelectorExpression
+	| MessageExpression
+  | "super"
+	| "self"
+	| "(" Expression ")" --inParens
+	| stringLiteral
+	| constant
+	| identifier
+
+DictionaryPair
+  = PostfixExpression ":" PostfixExpression
+
+DictionaryExpression
+  = "@" "{" DictionaryPair? ("," DictionaryPair)* ","? "}"
+
+ArrayExpression
+  = "@" "[" PostfixExpression? ("," PostfixExpression)* ","? "]"
+
+BoxExpression
+  = "@" "(" ConditionalExpression ")" --conditional
+  | "@" constant --constant
+        
+BlockParameters
+   = "(" (TypeVariableDeclarator | TypeName | "void")? ("," (TypeVariableDeclarator | TypeName))* ")"
+
+BlockExpression
+  = "^" TypeSpecifier? BlockParameters? CompoundStatement
+
+MessageExpression
+	= "[" Receiver MessageSelector "]"
+
+Receiver
+	= Expression
+	| className 
+	| "super"
+
+MessageSelector
+	= KeywordArgument+
+	| selector
+
+KeywordArgument
+	= selector? ":" Expression
+
+SelectorExpression
+	= "@selector" "(" selectorName ")"
+
+selectorName
+	= (selector? ":")+ --withArg
+	| selector
+
+ProtocolExpression
+	= "@protocol" "(" protocolName ")"
+
+EncodeExpression
+	= "@encode" "(" TypeName ")"
+
+TypeVariableDeclarator
+	= DeclarationSpecifiersFor<Declarator> Declarator
+
+TryStatement
+	= "@try" CompoundStatement
+
+CatchStatement
+	= "@catch" "(" TypeVariableDeclarator ")" CompoundStatement
+
+FinallyStatement 
+  = "@finally" CompoundStatement
+
+ThrowStatement 
+  = "@throw" "(" identifier ")"
+
+TryBlock 
+  = TryStatement ( CatchStatement )* ( FinallyStatement )?
+
+SynchronizedStatement 
+  = "@synchronized" "(" PrimaryExpression ")" CompoundStatement
+
+AutoreleaseStatement 
+  = "@autoreleasepool" CompoundStatement
+
+FunctionDefinition 
+  = DeclarationSpecifiers? Declarator CompoundStatement
+
+Declaration 
+  = DeclarationSpecifiersFor<DeclarationExpression> DeclarationExpression
   
-// Number Object
-numberObject
-  = "@" numberLiteral
+DeclarationExpression
+  = InitDeclaratorList? ";"
 
-// String Object
-stringObject
-  = "@" stringLiteral (space* "@"? stringLiteral)*
-
-
-// Dictionary
-dict
-  = "@{" space* listOf<dictEntry, argSep> space* "}"
+DeclarationSpecifiers 
+  = (arcBehaviourSpecifier 
+  | storageClassSpecifier 
+  | TypeSpecifier
+  | typeQualifier)+
   
-dictEntry
-  = stringObject space* ":" space* dictValue
+DeclarationSpecifiersFor<Specified>
+  = (arcBehaviourSpecifier 
+  | storageClassSpecifier 
+  | TypeSpecifier &Specified --type
+  | typeQualifier)+
+
+arcBehaviourSpecifier
+  = "_UnsafeUnretained" | "_Weak"
+
+storageClassSpecifier 
+  = "auto" | "register" | "static" | "extern" | "typedef"
+
+InitDeclaratorList 
+  =	ListOf<InitDeclarator, ",">
+
+InitDeclarator 
+  = Declarator ("=" Initializer)?
+
+StructOrUnionSpecifier 
+  = ("struct" | "union") identifier? "{" StructDeclaration+ "}" --withDeclaration
+  | ("struct" | "union") identifier --simple
+
+StructDeclaration 
+  = SpecifierQualifierList StructDeclaratorList ";"
+
+SpecifierQualifierList 
+  = (arcBehaviourSpecifier | TypeSpecifier | typeQualifier)+
+
+StructDeclaratorList 
+  = ListOf<StructDeclarator, ",">
+
+StructDeclarator 
+  = Declarator? ":" constant --withConstant
+  | Declarator --simple
+
+EnumSpecifier 
+  = "enum" (":" TypeName)? identifier ("{" EnumeratorList "}")? --enumWithIdentifier
+  | "enum" (":" TypeName)? "{" EnumeratorList "}" --enum
+  | ("NS_OPTIONS"|"NS_ENUM") "(" TypeName "," identifier ")" "{" EnumeratorList "}" --ns
+
+EnumeratorList 
+  = ListOf<Enumerator, ","> ","?
+
+Enumerator 
+  = identifier ("=" ConstantExpression)?
+
+Pointer
+  = "*" (DeclarationSpecifiersFor<Pointer>)? Pointer --compound
+  | "*" (DeclarationSpecifiersFor<Declarator>)? --simple
+
+Declarator 
+  = Pointer ? DirectDeclarator
+
+DirectDeclarator 
+  = "(" "^" identifier? ")" BlockParameters --block
+  | "(" Declarator ")" DeclaratorSuffix* --withDeclarator
+  | identifier DeclaratorSuffix* --withIdentifier
+
+
+DeclaratorSuffix 
+  = "[" ConstantExpression? "]"
+  | "(" ParameterList? ")"
+
+ParameterList 
+  = ParameterDeclarationList ( "," "..." )?
+
+ParameterDeclaration 
+  = DeclarationSpecifiersFor<ParameterDeclarationExpression> ParameterDeclarationExpression
   
-dictValue
-  = argExp
+ParameterDeclarationExpression
+  = AbstractDeclarator
+  | Declarator?
 
+Initializer 
+  = "{" ListOf<Initializer, ","> ","? "}" --compound
+  | AssignmentExpression --simple
 
-// Array
-array
-  = "@[" space* listOf<arrayEntry, argSep> space* "]"
+TypeName 
+  = SpecifierQualifierList AbstractDeclarator --declaration
+  | BlockType --block
 
-arrayEntry
-  = argExp
+AbstractDeclarator 
+  = "(" AbstractDeclarator ")" AbstractDeclaratorSuffix+ --compound
+  | ("[" ConstantExpression? "]")+ --constantExpression
+  | Pointer AbstractDeclarator --normal
+  | --empty
 
+AbstractDeclaratorSuffix
+  = "[" ConstantExpression? "]"
+  | "(" ParameterDeclarationList? ")"
 
-// Message Send
-messageSend
-  = noArgumentMessageSend
-  | argumentMessageSend
+ParameterDeclarationList
+  = ListOf<ParameterDeclaration, ",">
+
+StatementList 
+  = Statement+
+
+Statement 
+  = LabeledStatement
+  | Expression ";" --expression
+  | CompoundStatement
+  | SelectionStatement
+  | IterationStatement
+  | JumpStatement
+  | SynchronizedStatement
+  | AutoreleaseStatement
+  | TryBlock
+  | ";"
+
+LabeledStatement
+  = "default" ":" Statement --default
+  | "case" ConstantExpression ":" Statement --case
+  | identifier ":" Statement --identifier
+
+CompoundStatement 
+  = "{" (Declaration | StatementList)* "}"
+
+SelectionStatement
+  = "if" "(" Expression ")" Statement ("else" Statement)? --ifelse
+  | "switch" "(" Expression ")" Statement --switch
+
+ForInStatement 
+  = "for" "(" TypeVariableDeclarator "in" Expression? ")" Statement
+
+ForConditional
+  = DeclarationSpecifiersFor<InitDeclaratorList> InitDeclaratorList --declaration
+  | Expression --expression
+
+ForStatement 
+  = "for" "(" ForConditional? ";" Expression? ";" Expression? ")" Statement
   
-noArgumentMessageSend
-  = "[" space* receiver space+ noArgumentMessage space* "]"
-
-argumentMessageSend
-  = "[" space* receiver (space+ argumentMessage)+ space* "]"
+WhileStatement 
+  = "while" "(" Expression ")" Statement
   
-receiver
-  = messageComponent
-  
-noArgumentMessage
-  = messageComponent
-  
-argumentMessage
-  = messageComponent space* ":" space* listOf<argExp, argSep>
+DoStatement
+  = "do" Statement "while" "(" Expression ")" ";"
 
-messageComponent
-  = messageComponentChar+
+IterationStatement
+  = WhileStatement
+  | DoStatement
+  | ForStatement
+  | ForInStatement
 
-messageComponentChar
-  = ~( "[" | "]" | ":" | space ) any
+JumpStatement
+  = "goto" identifier ";" --goto
+  | "continue" ";" --continue
+  | "break" ";" --break
+  | "return" Expression? ";" --return
+
+Expression 
+  = ListOf<AssignmentExpression, ",">
+
+AssignmentExpression
+  = UnaryExpression assignmentOperator AssignmentExpression --expression
+  | ConditionalExpression --conditional
+
+assignmentOperator
+  = "=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | "&=" | "^=" | "|="
+
+ConditionalExpression 
+  = LogicalOrExpression ("?" ConditionalExpression ":" ConditionalExpression)?
+
+ConstantExpression 
+  = ConditionalExpression
+
+LogicalOrExpression 
+  =	NonEmptyListOf<LogicalAndExpression, "||">
+
+LogicalAndExpression 
+  = NonEmptyListOf<InclusiveOrExpression, "&&">
+
+InclusiveOrExpression 
+  = NonEmptyListOf<ExclusiveOrExpression, "|">
+
+ExclusiveOrExpression 
+  = NonEmptyListOf<AndExpression, "^">
+
+AndExpression 
+  = NonEmptyListOf<EqualityExpression, "&">
+
+EqualityExpression 
+  = NonEmptyListOf<RelationalExpression, EqualityOperator>
+  
+EqualityOperator
+  = "!=" | "=="
+
+RelationalExpression 
+  = NonEmptyListOf<ShiftExpression, RelationalOperator>
+  
+RelationalOperator
+  = "<" | ">" | "<=" | ">="
+
+ShiftExpression 
+  = NonEmptyListOf<AdditiveExpression, ShiftOperator>
+  
+ShiftOperator
+  = "<<" | ">>"
+
+AdditiveExpression 
+  = NonEmptyListOf<MultiplicativeExpression, AdditiveOperator>
+  
+AdditiveOperator
+  = "+" | "-"
+
+MultiplicativeExpression 
+  = NonEmptyListOf<CastExpression, MultiplicationOperator>
+  
+MultiplicationOperator
+  = "*" | "/" | "%"
+
+CastExpression 
+  = "(" TypeName ")" CastExpression --typed
+  | UnaryExpression --unary
+
+UnaryExpression 
+  = PostfixExpression --postfix
+  | ("++"|"--") UnaryExpression --preOpUnary
+  | unaryOperator CastExpression --cast
+  | "sizeof" "(" TypeName ")" --sizeAndType
+  | "sizeof" UnaryExpression --sizeAndExpression
+
+unaryOperator 
+  = "&" | "*" | "-" | "~" | "!"
+
+PostfixExpression 
+  = PrimaryExpression PostfixExpressionSuffix*
+  
+PostfixExpressionSuffix
+  = "[" Expression "]" --expression
+  | "(" ArgumentExpressionList? ")" --argumentExpressionList
+  | "." identifier --dotIdent
+  | "->" identifier --arrowIdent
+  | "++"
+  | "--"
+
+ArgumentExpressionList
+  = ListOf<AssignmentExpression, ",">
+
+constant 
+  = decimalLiteral 
+  | hexLiteral 
+  | octalLiteral 
+  | characterLiteral 
+  | floatingPointLiteral
+
+identifier
+	=	letter (letter | digit)*
+	
+letter
+	+= "$"
+	|	"_"
+  
+characterSequence
+  = escapeSequence --escaped
+  | ~("\"" | "\\") any --notEscaped
+
+characterLiteral
+  = "\"" characterSequence "\""
+
+stringLiteral 
+  = "@" string
+
+string 
+  = "\"" characterSequence* "\""
+
+hexLiteral 
+  = "0" ("x" | "X") hexDigit+ integerTypeSuffix?
+
+decimalLiteral 
+  = "0" integerTypeSuffix? --zero
+  | "1".."9" "0".."9"* integerTypeSuffix? --nonZero
+
+octalLiteral 
+  = "0" ("0".."7")+ integerTypeSuffix?
+
+integerTypeSuffix
+	=	"u" | "U" | "l" | "L"
+
+floatingPointLiteral
+  = digit+ ("." digit*)? exponent? floatTypeSuffix?
+
+exponent 
+  = ("e"|"E") ("+"|"-")? digit+
+
+floatTypeSuffix 
+  = "f" | "F" | "d" | "D"
+
+escapeSequence
+  = "\\" ("b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\") --nonOctal
+  | octalEscape --octal
+
+octalEscape
+  = "\\" "0".."3" "0".."7" "0".."7" --long
+  | "\\" "0".."7" "0".."7" --medium
+  | "\\" "0".."7" --short
+
+unicodeEscape
+  = "\\u" hexDigit hexDigit hexDigit hexDigit
+
+// Import/include
+
+Import 
+  = "#import" (string|angleString) --hashed
+  | "@import" string ";" --modern
+  
+Include 
+  = "#include" (string|angleString)
+  
+angleString 
+  = "<" (~">" any)* ">"
+  
+// Other preprocessor directives
+  
+Pragma 
+  = "#pragma" (~newLine any)*
+
+
+// Comments
+
+comment 
+  = "/*" (~"*/" any)* "*/"
+    
+newLine 
+  = "\r" | "\n"
+
+lineComment 
+  = "//" (~newLine any)*
+  
+space
+  += comment | lineComment
+
+// Pre-processor defines
+
+Hdefine 
+  = "#define" (~newLine any)*
+Hif 
+  = "#if" (~newLine any)*
+Helif 
+  = "#elif" (~newLine any)*
+Helse 
+  = "#else" (~newLine any)*
+Hundef 
+  = "#undef" (~newLine any)*
+Hifndef 
+  = "#ifndef" (~newLine any)*
+Hendif 
+  = "#endif" (~newLine any)*
 
 }

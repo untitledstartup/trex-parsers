@@ -1,1 +1,1 @@
-TMLLocalizedString(@"Simple String");
+[SVProgressHUD showWithStatus:TMLLocalizedString(@"Saving New Address...")];

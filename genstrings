@@ -6,8 +6,6 @@ require('./lib/defines.js');
 var Path = require('path');
 var Genstrings = require('./lib/genstrings.js');
 
-debugger;
-
 // Program options and arguments
 var Program = require('commander');
 
@@ -290,6 +288,7 @@ function main() {
   parser.language = opts.language;
   parser.parseFiles(files, function(progress, file, translationKeys) {
     var translationMemory = [];
+    debugger;
     if (translationKeys) {
       for (var i=0; i<translationKeys.length; i++) {
         var key = translationKeys[i];
