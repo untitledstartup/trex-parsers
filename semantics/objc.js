@@ -1,5 +1,6 @@
 (function(){
   var utils = require('../lib/utils');
+  var Result = require('../lib/result');
   
   Object.defineProperty(Array.prototype, "translationKeys", {
     "get": function() {
