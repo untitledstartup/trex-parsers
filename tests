@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+
+require('./lib/defines.js');
+var Program = require('commander');
+var Path = require('path');
+var GitHubAPI = require('github');
+var Readline = require('readline-sync');
+var Genstrings = require(__dirname + '/lib/genstrings');
+var TestUtils = require(__dirname + '/lib/testUtils');
+var Logger = require(__dirname + '/lib/logger.js').sharedLogger;
+
+var SAMPLES_DIR = Path.join(__dirname, "samples");
+
+Program
+  .version('0.0.1')
+  .option('-l, --language <lang>', 'Use specified language for whatever action')
+  .option('-s, --sampleSize <sampleSize>', 'Limit to <sampleSize> number of sample files (default: 10)')
+  .option('--github-token <token>', 'Personal access token to GitHub. If none provided, script will generate one...');
+
+Program
+  .arguments("<command>");
+  
+Program.on('--help', function() {
+  console.log("  Languages: ");
+  console.log("    " + Genstrings.supportedLanguages.join(", "));
+  console.log();
+  console.log("  Commands:");
+  console.log("    " + supportedCommands.join("\n"));
+  console.log("");
+});
+
+Program.parse(process.argv);
+
+var opts = Program.opts();
+var command = Program.args;
+if (command instanceof Array) {
+  command = command[0];
+}
+
+var Commands = {
+  "generateGitHubAccessToken": function() {
+    var username = Readline.question('GitHub Username: ');
+    var password = Readline.question('GitHub Password: ', {hideEchoBack: true});
+    
+    var github = new GitHubAPI({version: "3.0.0"});
+    github.authenticate({
+      type: "basic",
+      username: username,
+      password: password
+    });
+    github.authorization.create({
+      scopes: ["repo"],
+      note: "trex-genstrings test data sampling"
+    }, function(err, result) {
+      if (err) {
+        Logger.error("Error creating authorization: " + err);
+        process.exit(-1);
+      }
+      else {
+        console.log(JSON.stringify(result, null, 2));
+        console.log("");
+        callback(result);
+      }
+    });
+  },
+  "fetchSamples": function fetchSamples() {
+    var targetLangs = (opts.language) ? [opts.language] : Genstrings.supportedLanguages;
+    var sampleSize = parseInt(opts.sampleSize);
+    if (!sampleSize) {
+      sampleSize = 10;
+    }
+    for (var i=0; i<targetLangs.length; i++) {    
+      var lang = targetLangs[i];
+      var destination = Path.join(SAMPLES_DIR, lang);
+      TestUtils.fetchSamplesForLanguage(lang, sampleSize, destination);
+    }
+  }
+}
+
+function main() {
+  if (!command || !Commands[command]) {
+    Program.outputHelp();
+    process.exit(-1);
+  }
+  
+  if (opts.githubToken) {
+    global['githubToken'] = opts.githubToken;
+  }
+  
+  Logger.info("Running " + command);
+  Commands[command]();
+}
+
+main();
