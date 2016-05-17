@@ -615,7 +615,7 @@ angleString
   
 // Other preprocessor directives
   
-Pragma 
+pragma 
   = "#pragma" (~newLine any)*
 
 
@@ -631,7 +631,7 @@ lineComment
   = "//" (~newLine any)*
   
 space
-  += comment | lineComment
+  += comment | lineComment | pragma
 
 // Pre-processor defines
 
