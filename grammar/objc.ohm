@@ -85,12 +85,12 @@ PropertyAttributesList
   = ListOf<PropertyAttribute, ",">
 
 PropertyAttribute
-  = ConstantPropertyAttribute
+  = constantPropertyAttribute
   | GetterPropertyAttribute
   | SetterPropertyAttribute
   | identifier
 
-ConstantPropertyAttribute
+constantPropertyAttribute
   = "nonatomic" | "assign" | "weak" | "strong" | "retain" | "readonly" | "readwrite"
   
 GetterPropertyAttribute
@@ -192,10 +192,14 @@ TypeSpecifier
 	|	StructOrUnionSpecifier --structOrUnion
   | typeSpecifierKeyword  --keyword
 	|	"id" ProtocolReferenceList? --generic
+  | "typeof" "(" Expression ")" --typeof
   |	className ( ProtocolReferenceList | GenericsSpecifier )? Pointer? --classed
   
+intSpecifier
+  = ("int" | "Int" | "INT") (digit* "_" letter+)?
+  
 typeSpecifierKeyword
-  = "void" | "char" | "short" | "int" | "long" | "float" | "double" | "signed" | "unsigned" | "instancetype"
+  = "void" | "char" | "short" | intSpecifier | "long" | "float" | "double" | "signed" | "unsigned" | "instancetype"
 
 typeQualifier
 	= "const" | "volatile" | protocolQualifier
@@ -301,7 +305,8 @@ DeclarationExpression
   = InitDeclaratorList? ";"
   
 DeclaratorSpecifierFor<Specified>
-	= DeclarationSpecifier ~ReservedKeywords &Specified
+	= DeclarationSpecifier &Specified
+  | DeclarationSpecifier &DeclaratorSpecifierFor<Specified>
 
 DeclarationSpecifier 
   = TypelessDeclarationSpecifier
@@ -313,13 +318,13 @@ TypelessDeclarationSpecifier
   | typeQualifier
 
 arcBehaviourSpecifier
-  = "_UnsafeUnretained" | "_Weak"
+  = "_UnsafeUnretained" | "_Weak" | "__weak" | "__strong"
 
 storageClassSpecifier 
   = "auto" | "register" | "static" | "extern" | "typedef"
 
 InitDeclaratorList 
-  =	ListOf<InitDeclarator, ",">
+  =	NonEmptyListOf<InitDeclarator, ",">
 
 InitDeclarator 
   = Declarator ("=" Initializer)?
@@ -335,7 +340,7 @@ SpecifierQualifierList
   = (arcBehaviourSpecifier | TypeSpecifier | typeQualifier)+
 
 StructDeclaratorList 
-  = ListOf<StructDeclarator, ",">
+  = NonEmptyListOf<StructDeclarator, ",">
 
 StructDeclarator 
   = Declarator? ":" constant --withConstant
@@ -347,7 +352,7 @@ EnumSpecifier
   | ("NS_OPTIONS"|"NS_ENUM") "(" TypeName "," identifier ")" "{" EnumeratorList "}" --nsenum
 
 EnumeratorList 
-  = ListOf<Enumerator, ","> ","?
+  = NonEmptyListOf<Enumerator, ","> ","?
 
 Enumerator 
   = identifier ("=" ConstantExpression)?
@@ -380,7 +385,7 @@ ParameterDeclarationExpression
   | Declarator?
 
 Initializer 
-  = "{" ListOf<Initializer, ","> ","? "}" --compound
+  = "{" NonEmptyListOf<Initializer, ","> ","? "}" --compound
   | AssignmentExpression --simple
 
 TypeName 
@@ -398,7 +403,7 @@ AbstractDeclaratorSuffix
   | "(" ParameterDeclarationList? ")"
 
 ParameterDeclarationList
-  = ListOf<ParameterDeclaration, ",">
+  = NonEmptyListOf<ParameterDeclaration, ",">
 
 StatementList 
   = Statement+
@@ -428,7 +433,10 @@ SelectionStatement
   | "switch" "(" Expression ")" Statement --switch
 
 ForInStatement 
-  = "for" "(" TypeVariableDeclarator "in" Expression? ")" Statement
+  = "for" "(" DeclaratorSpecifierFor<DeclaratorInExpression>+ DeclaratorInExpression ")" Statement
+  
+DeclaratorInExpression
+  = "in" Expression?
 
 ForConditional
   = DeclaratorSpecifierFor<InitDeclaratorList>+ InitDeclaratorList --declaration
@@ -456,7 +464,7 @@ JumpStatement
   | "return" Expression? ";" --return
 
 Expression 
-  = ListOf<AssignmentExpression, ",">
+  = NonEmptyListOf<AssignmentExpression, ",">
 
 AssignmentExpression
   = UnaryExpression assignmentOperator AssignmentExpression --expression
@@ -545,11 +553,11 @@ ArgumentExpressionList
   = ListOf<AssignmentExpression, ",">
 
 constant 
-  = decimalLiteral 
-  | hexLiteral 
-  | octalLiteral 
+  = floatingPointLiteral
   | characterLiteral 
-  | floatingPointLiteral
+  | octalLiteral 
+  | hexLiteral 
+  | decimalLiteral 
 
 identifier
 	=	letter (letter | digit)*
@@ -622,26 +630,6 @@ angleString
 pragma 
   = "#pragma" (~newLine any)*
   
-  
-ReservedKeywords
-  = ConstantPropertyAttribute
-  | "id"
-  | typeSpecifierKeyword
-  | protocolQualifier
-  | "super"
-  | "self"
-  | "for" | "in" | "do" | "while"
-  | "goto" | "continue" | "break"  | "default" | "case" | "switch"  | "void"
-  | arcBehaviourSpecifier
-  | storageClassSpecifier
-  | "struct" | "union"
-  | "enum"
-  | "return"
-  | assignmentOperator
-  | "sizeof"
-  | unaryOperator
-  | "@" identifier --objckeywords
-
 
 // Comments
 
