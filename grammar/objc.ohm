@@ -85,10 +85,13 @@ PropertyAttributesList
   = ListOf<PropertyAttribute, ",">
 
 PropertyAttribute
-  = "nonatomic" | "assign" | "weak" | "strong" | "retain" | "readonly" | "readwrite"
+  = ConstantPropertyAttribute
   | GetterPropertyAttribute
   | SetterPropertyAttribute
   | identifier
+
+ConstantPropertyAttribute
+  = "nonatomic" | "assign" | "weak" | "strong" | "retain" | "readonly" | "readwrite"
   
 GetterPropertyAttribute
   = "getter" "=" identifier
@@ -264,7 +267,7 @@ EncodeExpression
 	= "@encode" "(" TypeName ")"
 
 TypeVariableDeclarator
-	= DeclarationSpecifiersFor<Declarator> Declarator
+	= DeclaratorSpecifierFor<Declarator>+ Declarator
 
 TryStatement
 	= "@try" CompoundStatement
@@ -288,25 +291,26 @@ AutoreleaseStatement
   = "@autoreleasepool" CompoundStatement
 
 FunctionDefinition 
-  = DeclarationSpecifiers? Declarator CompoundStatement
+  = DeclaratorSpecifierFor<Declarator>* Declarator CompoundStatement
 
 Declaration 
-  = DeclarationSpecifiersFor<DeclarationExpression> DeclarationExpression
+  = DeclaratorSpecifierFor<DeclarationExpression>+ DeclarationExpression --normal
+  | DeclaratorSpecifierFor<EnumSpecifier>+ EnumSpecifier DeclarationExpression --enum
   
 DeclarationExpression
   = InitDeclaratorList? ";"
-
-DeclarationSpecifiers 
-  = (arcBehaviourSpecifier 
-  | storageClassSpecifier 
-  | TypeSpecifier
-  | typeQualifier)+
   
-DeclarationSpecifiersFor<Specified>
-  = (arcBehaviourSpecifier 
+DeclaratorSpecifierFor<Specified>
+	= DeclarationSpecifier ~ReservedKeywords &Specified
+
+DeclarationSpecifier 
+  = TypelessDeclarationSpecifier
+  | TypeSpecifier
+  
+TypelessDeclarationSpecifier
+  = arcBehaviourSpecifier 
   | storageClassSpecifier 
-  | TypeSpecifier &Specified --type
-  | typeQualifier)+
+  | typeQualifier
 
 arcBehaviourSpecifier
   = "_UnsafeUnretained" | "_Weak"
@@ -340,7 +344,7 @@ StructDeclarator
 EnumSpecifier 
   = "enum" (":" TypeName)? identifier ("{" EnumeratorList "}")? --enumWithIdentifier
   | "enum" (":" TypeName)? "{" EnumeratorList "}" --enum
-  | ("NS_OPTIONS"|"NS_ENUM") "(" TypeName "," identifier ")" "{" EnumeratorList "}" --ns
+  | ("NS_OPTIONS"|"NS_ENUM") "(" TypeName "," identifier ")" "{" EnumeratorList "}" --nsenum
 
 EnumeratorList 
   = ListOf<Enumerator, ","> ","?
@@ -349,11 +353,11 @@ Enumerator
   = identifier ("=" ConstantExpression)?
 
 Pointer
-  = "*" (DeclarationSpecifiersFor<Pointer>)? Pointer --compound
-  | "*" (DeclarationSpecifiersFor<Declarator>)? --simple
+  = "*" TypelessDeclarationSpecifier* Pointer --compound
+  | "*" TypelessDeclarationSpecifier* --simple
 
 Declarator 
-  = Pointer ? DirectDeclarator
+  = Pointer? DirectDeclarator
 
 DirectDeclarator 
   = "(" "^" identifier? ")" BlockParameters --block
@@ -369,7 +373,7 @@ ParameterList
   = ParameterDeclarationList ( "," "..." )?
 
 ParameterDeclaration 
-  = DeclarationSpecifiersFor<ParameterDeclarationExpression> ParameterDeclarationExpression
+  = DeclaratorSpecifierFor<ParameterDeclarationExpression>+ ParameterDeclarationExpression
   
 ParameterDeclarationExpression
   = AbstractDeclarator
@@ -427,7 +431,7 @@ ForInStatement
   = "for" "(" TypeVariableDeclarator "in" Expression? ")" Statement
 
 ForConditional
-  = DeclarationSpecifiersFor<InitDeclaratorList> InitDeclaratorList --declaration
+  = DeclaratorSpecifierFor<InitDeclaratorList>+ InitDeclaratorList --declaration
   | Expression --expression
 
 ForStatement 
@@ -617,6 +621,26 @@ angleString
   
 pragma 
   = "#pragma" (~newLine any)*
+  
+  
+ReservedKeywords
+  = ConstantPropertyAttribute
+  | "id"
+  | typeSpecifierKeyword
+  | protocolQualifier
+  | "super"
+  | "self"
+  | "for" | "in" | "do" | "while"
+  | "goto" | "continue" | "break"  | "default" | "case" | "switch"  | "void"
+  | arcBehaviourSpecifier
+  | storageClassSpecifier
+  | "struct" | "union"
+  | "enum"
+  | "return"
+  | assignmentOperator
+  | "sizeof"
+  | unaryOperator
+  | "@" identifier --objckeywords
 
 
 // Comments

@@ -294,7 +294,10 @@
         },
         
         
-        "Declaration": function(type, exp) {
+        "Declaration_normal": function(type, exp) {
+          return exp.translationKeys;
+        },
+        "Declaration_enum": function(type, enumSpec, exp) {
           return exp.translationKeys;
         },
         "DeclarationExpression": function(declaratorList, _) {
@@ -340,7 +343,7 @@
         "EnumSpecifier_enum": function (keyword, _, type, _, list, _) {
           return null;
         },
-        "EnumSpecifier_ns": function (keyword, _, type, _, ident, _, _, list, _) {
+        "EnumSpecifier_nsenum": function (keyword, _, type, _, ident, _, _, list, _) {
           return null;
         },
         "Enumerator": function (ident, _, constantExp) {
@@ -499,6 +502,9 @@
             var description = null;
             for (var i=0; i<suffixes.length; i++) {
               var suffix = suffixes[i];
+              if (!suffix || !suffix.results) {
+                continue;
+              }
               if (suffix.ctorName == "stringLiteral") {
                 if (!label) {
                   label = suffix.results[0];
