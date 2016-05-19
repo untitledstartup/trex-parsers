@@ -394,8 +394,8 @@ Initializer
   | AssignmentExpression --simple
 
 TypeName 
-  = SpecfierQualifierFor<AbstractDeclarator> AbstractDeclarator --declaration
-  | BlockType --block
+  = BlockType --block
+  | SpecfierQualifierFor<AbstractDeclarator> AbstractDeclarator --declaration
 
 AbstractDeclarator 
   = "(" AbstractDeclarator ")" AbstractDeclaratorSuffix+ --compound
