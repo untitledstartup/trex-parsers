@@ -389,6 +389,10 @@
         "AbstractDeclaratorSuffix": function (_, exp, _) {
           return exp.translationKeys;
         },
+        "AbstractDeclarator_empty": function () {
+          return null;
+        },
+        
         
         
         "Statement_expression": function(stmt, _) {
