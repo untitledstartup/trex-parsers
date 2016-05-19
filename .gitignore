@@ -5,3 +5,4 @@ numberLines.awk
 Localizable.strings
 genstrings.json
 *.swp
+.DS_Store
