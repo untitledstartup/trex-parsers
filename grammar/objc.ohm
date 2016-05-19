@@ -562,7 +562,8 @@ constant
   | characterLiteral 
   | octalLiteral 
   | hexLiteral 
-  | decimalLiteral 
+  | decimalLiteral
+  | boolLiteral 
 
 identifier
 	=	letter (letter | digit)*
@@ -583,6 +584,9 @@ stringLiteral
 
 string 
   = "\"" characterSequence* "\""
+  
+boolLiteral
+  = "YES" | "NO"
 
 hexLiteral 
   = "0" ("x" | "X") hexDigit+ integerTypeSuffix?
