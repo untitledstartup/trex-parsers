@@ -335,9 +335,6 @@ StructOrUnionSpecifier
 
 StructDeclaration 
   = SpecfierQualifierFor<StructDeclaratorList>+ StructDeclaratorList ";"
-
-SpecifierQualifierList 
-  = (arcBehaviourSpecifier | TypeSpecifier | typeQualifier)+
   
 SpecifierQualifier
   = arcBehaviourSpecifier 
@@ -397,7 +394,7 @@ Initializer
   | AssignmentExpression --simple
 
 TypeName 
-  = SpecifierQualifierList AbstractDeclarator --declaration
+  = SpecfierQualifierFor<AbstractDeclarator> AbstractDeclarator --declaration
   | BlockType --block
 
 AbstractDeclarator 
