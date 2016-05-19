@@ -648,23 +648,28 @@ lineComment
   = "//" (~newLine any)*
   
 space
-  += comment | lineComment | pragma
+  += comment | lineComment | pragma | preprocessorDirective
 
 // Pre-processor defines
 
-Hdefine 
+preprocessorDirective
+  = hdefine | hifd | hif | helif | helse | hundef | hifndef | hendif 
+
+hdefine 
   = "#define" (~newLine any)*
-Hif 
+hif 
   = "#if" (~newLine any)*
-Helif 
+hifd 
+  = "#ifdef" (~newLine any)*
+helif 
   = "#elif" (~newLine any)*
-Helse 
+helse 
   = "#else" (~newLine any)*
-Hundef 
+hundef 
   = "#undef" (~newLine any)*
-Hifndef 
+hifndef 
   = "#ifndef" (~newLine any)*
-Hendif 
+hendif 
   = "#endif" (~newLine any)*
 
 }
