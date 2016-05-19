@@ -224,7 +224,7 @@ PrimaryExpression
 	| identifier
 
 DictionaryPair
-  = PostfixExpression ":" PostfixExpression
+  = PostfixExpression ":" (ConditionalExpression | PostfixExpression)
 
 DictionaryExpression
   = "@" "{" DictionaryPair? ("," DictionaryPair)* ","? "}"
