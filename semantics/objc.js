@@ -89,11 +89,16 @@
         },
         
         
-        
+        "Include": function (keyword, path) {
+          return null;
+        },
         "Import_hashed": function(keyword, path) {
           return null;
         },
         "Import_modern": function(keyword, name, _) {
+          return null;
+        },
+        "pragma": function (keyword, chars) {
           return null;
         },
         
