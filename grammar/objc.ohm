@@ -509,7 +509,7 @@ RelationalExpression
   = NonEmptyListOf<ShiftExpression, RelationalOperator>
   
 RelationalOperator
-  = "<" | ">" | "<=" | ">="
+  = "<=" | ">=" | "<" | ">"
 
 ShiftExpression 
   = NonEmptyListOf<AdditiveExpression, ShiftOperator>
