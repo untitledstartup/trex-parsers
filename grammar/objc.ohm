@@ -82,7 +82,7 @@ PropertyAttributesDeclaration
   = "(" PropertyAttributesList ")"
 
 PropertyAttributesList
-  = ListOf<PropertyAttribute, ",">
+  = NonEmptyListOf<PropertyAttribute, ",">
 
 PropertyAttribute
   = constantPropertyAttribute
@@ -334,10 +334,18 @@ StructOrUnionSpecifier
   | ("struct" | "union") identifier --simple
 
 StructDeclaration 
-  = SpecifierQualifierList StructDeclaratorList ";"
+  = SpecfierQualifierFor<StructDeclaratorList>+ StructDeclaratorList ";"
 
 SpecifierQualifierList 
   = (arcBehaviourSpecifier | TypeSpecifier | typeQualifier)+
+  
+SpecifierQualifier
+  = arcBehaviourSpecifier 
+  | TypeSpecifier 
+  | typeQualifier
+  
+SpecfierQualifierFor<Specifier>
+  = SpecifierQualifier &Specifier
 
 StructDeclaratorList 
   = NonEmptyListOf<StructDeclarator, ",">

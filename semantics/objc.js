@@ -419,8 +419,11 @@
         "SelectionStatement_switch": function (_switch, _, exp, _, stmt) {
           return stmt.translationKeys;
         },
-        "ForInStatement": function (_for, _, typeDecl, _in, exp, _, stmt) {
+        "ForInStatement": function (_for, _, spec, exp, _, stmt) {
           return [exp, stmt].translationKeys;
+        },
+        "DeclaratorInExpression": function (_in, exp) {
+          return exp.translationKeys;
         },
         "ForStatement": function (_for, _, forConditional, _, exp, _, additional, _, stmt) {
           return [forConditional, exp, additional, stmt].translationKeys;
@@ -485,7 +488,13 @@
             result.subResults = subKeys;
           }
           var grammar = null;
-          debugger;          
+          
+          if (primaryKeys instanceof Result 
+            && primaryKeys.ctorName == "identifier" 
+            && (grammar = this._semantics.grammar) 
+            && grammar.match(primaryKeys.results[0], "macro").succeeded()) {              
+            debugger;
+          }
           
           if (primaryKeys instanceof Result 
             && primaryKeys.ctorName == "identifier" 
@@ -543,7 +552,11 @@
         },
         "decimalLiteral_zero": function(_, _) {
           return null;
-        }
+        },
+        "floatingPointLiteral": function (decimals, _, fraction, exponent, suffix) {
+          return null;
+        },
+        
         
       }
     }
