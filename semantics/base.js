@@ -6,6 +6,10 @@
     "attributes": {
       "tokens": {
         
+        "macro": function (n) {
+          return utils.createResult(this, n);
+        },
+        
         "nil": function (n) {
           return utils.createResult(this, n);
         },
