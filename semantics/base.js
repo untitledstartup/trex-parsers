@@ -28,6 +28,10 @@
         "decimal": function (nodes) {
           return null;
         },
+        "decimal_float": function (a, _, b) {
+          return null;
+        },
+        
         
         "string": function (node) {
           var result = node.tokens;
