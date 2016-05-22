@@ -3,34 +3,8 @@ Java <: Base {
 // OVERRIDES
 macro
   := "Tml.translate"
-  
-arg
-  := tmlLocalizedString 
-  | property
-  | method
-  | collectionAccess
-  | newObject
-  | variable
-  | literal
-  
-stringLiteral
-  := quotedStringLiteral<"\"", stringNonLiteral> (space* "+" space* stringLiteral)*
-  
-variable
-  := validFirstVarChar validVarChar* space* generics?
-  
-propertySeparator
-  := "." | "::"
-  
-// END OVERRIDES
-
-generics
-  = "<" space* listOf<(property | variable), argSep> space* ">"
-
-newObject
-  = "new" space+ methodNameExp space* generics? space* "(" space* listOf<argExp, argSep> space* ")"
-
-collectionAccess
-  = argExp "[" space* argExp space* "]"
+    
+string
+  := quotedString<"\""> 
 
 }
