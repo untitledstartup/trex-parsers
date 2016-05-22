@@ -7,7 +7,7 @@ macro (defines macro)
   = "tr"
   
 token
-  = literal | openExpressionOperator | closeExpressionOperator | operator | namedToken
+  = macro | literal | openExpressionOperator | closeExpressionOperator | operator | namedToken
   
 literal
   = string | number | bool | nil
