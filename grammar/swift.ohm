@@ -1,74 +1,15 @@
 Swift <: Base {
 
-// OVERRIDES
-// Null Expression
-nullLiteral
-  := "nil"
-  | "NSNull()"
-  
-stringLiteral
-  := (quotedStringLiteral<"\"", stringNonLiteral> space*)+
-  
-arg
-  := tmlLocalizedString
-  | property 
-  | collectionAccess 
-  | object 
-  | method 
-  | variable
-  | literal 
-  
-statementSep
-  += "[" | "]"
-  
 macro
   := "TMLLocalizedString"
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
-  
-methodArgExp
-  := namedArgExp 
-  | argExp 
 
-// END OVERRIDES
-
-namedArgExp
-  = methodArgIdentifier space* ":" space* argExp
-  
-methodArgIdentifier
-  = validMethodArgNameChars+
-  
-validMethodArgNameChars
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
-
-// TMLLocalized argument expression
-collectionAccess
-  = argExp "[" space* argExp space* "]"
-
-// Objects
-object
-  = dict
-  | array
-  
-
-// Dictionary
-dict
-  = "[" space* ":" space* "]"
-  | "[" space* listOf<dictEntry, argSep> space* "]"
-  
-dictEntry
-  = dictValue space* ":" space* dictValue
-  
-dictValue
-  = argExp
-
-
-// Array
-array
-  = "[" space* listOf<arrayEntry, argSep> space* "]"
-
-arrayEntry
-  = argExp
+string
+  := quotedString<"\""> 
+    
+nil
+  := "nil"
 
 }
