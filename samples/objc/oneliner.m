@@ -1,0 +1,1 @@
+TMLLocalizedString(@"Localized Label", "cstring", @{@"dict": @"non-localized", @"dict2": TMLLocalizedString(@"Inner localized Label")}, @"Localized Comment");
