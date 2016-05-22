@@ -1,187 +1,80 @@
 Base {
 
-// Invocation expression
-exp
-  = tmlLocalizedStrings
+Tokens (default rule - we extract tokens)
+  = token+
   
-// Defaults
-macro
-  = "trl" | "tr"
- 
-// Comments
-comment
-  = "//" (~"\n" any)* --single
-  | "/*" (~"*/" any)* "*/" --multiple
+macro (defines macro)
+  = "tr"
   
-// Treat comments as space
-space
-  += comment
-
-// All localized strings, consuming entire input
-
-statementSep
-  = ";" | "=" | space | "{" | "}" | ")" | "(" | ":"
-
-tmlStatement
-  = tmlLocalizedString
-
-nonTMLStatement
-  = ~tmlLocalizedString (~statementSep any)+
-
-tmlLocalizedStrings
-  = space* listOf<(tmlStatement|nonTMLStatement), statementSep+> (statementSep|space)*
+token
+  = literal | openExpressionOperator | closeExpressionOperator | operator | namedToken
   
-// Localized string (default treats any string as localized, sub-grammars must override)
-tmlLocalizedString
-  = methodNamed<macro>
-  
-  
-// Literals
 literal
-  = numberLiteral
-  | stringLiteral
-  | booleanLiteral
-  | nullLiteral
+  = string | number | bool | nil
   
-nullLiteral
+nil
   = "null"
   
-booleanLiteral
-  = "true"
-  | "false"
-
-numberLiteral
-  = digit+ ("." digit+)?
+bool
+  = "true" | "false"
   
-stringNonLiteral
-(~"" nothing)
+string
+  = quotedString<"\""> 
+  | quotedString<"'"> 
+  
+stringNonLiteral (~"" nothing)
   = ~""
   
-stringLiteral
-  = quotedStringLiteral<"\"", stringNonLiteral>
-  | quotedStringLiteral<"'", stringNonLiteral>
-  
-quotedStringLiteral<quot, special>
-  = quot quotedStringChars<(quot | special)> quot
-  
-quotedStringChars<special>
-  = quotedChar<special>+
+quotedString<quot>
+  = quot quotedChar<quot>* quot
   
 quotedChar<special>
   = "\\" special --escaped
   | ~special any
   
+number
+  = hexNumber | octalNumber | expNumber | decimal
   
-// Variables
-variable
-  = #(validFirstVarChar validVarChar*)
-
-validFirstVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | digit | space) any
+hexNumber
+  = "-"? "0x" hexDigit+
   
-validVarChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
+octalNumber
+  = "-"? "0" digit+
   
-// Operators
+expNumber
+  = decimal ("e"|"E") "-"? digit+
+  
+decimal
+  = (digit | ".")+
+  
+  
 operator
-  = unaryOperator
-  | binaryOperator
-  | ternaryOperator
-
-unaryOperator
-  = ("!" | "+" | "-" | "*" | "&" | "~")+
+  = runinOperator+ 
+  | "." | "," | ":" | ";" | "{" | "}" | "(" | ")" | "[" | "]" | "<" | ">" | "=" | "?" | "-" | "+" | "/" | "*" | "~" | "%" | "@"
   
-binaryOperator
-  = ("&" | "|" | "^" | "<" | ">" | "+" | "-" | "/" | "%" | "*" | "=")+
-  | "and" | "or" | "xor"
+runinOperator
+  = "." | "<" | ">" | "=" | "-" | "+" | "/" | "*"
   
-ternaryOperator
-  = "?" | ":"
+openExpressionOperator
+  = "{" | "(" | "["
   
+closeExpressionOperator
+  = "}" | ")" | "]"
   
-// Arguments
-arg
-  = tmlLocalizedString 
-  | property 
-  | method 
-  | variable 
-  | literal
+space
+  += comment
   
-argSep
-  = space* "," space*
+comment
+  = trailingComment
+  | multilineComment
   
-method
-  = methodNamed<methodNameExp>
-  | methodNamed<argExp>
+namedToken
+  = (~(string | operator | space) any)+
   
-methodNamed<aMethodName>
-  = aMethodName "(" space* listOf<methodArgExp, argSep > space* ")"
+trailingComment
+  = "//" (~"\n" any)*
   
-methodArgExp
-  = argExp
-  
-methodNameExp
-  = validMethodChar+
-  
-validMethodChar
-  = ~( "[" | "]" | ":" | "," | "." | ")" | "(" | "}" | "{" | "\"" | "'" | space) any
-  
-propertySeparator
-  = "."
-  
-property
-  = argExp (propertySeparator argExp)+
-  
-argExp
-  = "(" space* argExp space* ")" --parens
-  | argExp space* ternaryOperator space* argExp space* ternaryOperator space* argExp --ternary
-  | argExp space* binaryOperator space* argExp --binary
-  | unaryOperator space* argExp --unary
-  | argExp space* unaryOperator --unaryAfter
-  | arg
-  
-  
-// XML
-xmlAnyTag
-  = "<" space* xmlTagNameExp space+ listOf<xmlTagAttributeExp, space+> space* "/"? space* ">" --withAttrs
-  | "<" space* xmlTagNameExp space* "/" space* ">" --noAttrs
-  
-xmlCloseAnyTag
-  = "<" space* "/" space* xmlTagNameExp space* ">"
-  
-xmlTag<tag>
-  = "<" space* tag space* listOf<xmlTagAttributeExp, space+> space* "/"? space* ">"
-  
-xmlCloseTag<tag>
-  = "<" space* "/" space* tag space* ">"
-  
-xmlTagWithAttribute<tag, attr>
-  = "<" space* tag (space+ ~(attr | ">") xmlTagAttributeExp)* space+ attr (space+ xmlTagAttributeExp)* space* "/"? space* ">"
-  
-xmlTagAttributeExp
-  = xmlTagAttributeName ("=" xmlTagAttributeValue)?
-  
-xmlTagWithContent<tag, content>
-  = xmlTag<tag> content xmlCloseTag<tag>
-  
-xmlTagWithAttributeAndContent<tag, attr, content>
-  = xmlTagWithAttribute<tag, attr> content xmlCloseTag<tag>
-  
-xmlTagChar
-  = alnum
-  | ":" 
-  | "-"
-  
-xmlTagNameExp
-  = xmlTagChar+
-  
-xmlTagAttributeName
-  = xmlAttributeChar+
-  
-xmlTagAttributeValue
-  = stringLiteral
-  
-xmlAttributeChar
-  = ~( space | "\"" | "'" | ">" | "/" | "=" ) any
+multilineComment
+  = "/*" (~"*/" any) "*/"
   
 }
