@@ -45,7 +45,8 @@ expNumber
   = decimal ("e"|"E") "-"? digit+
   
 decimal
-  = (digit | ".")+
+  = digit* "." digit+ --float
+  | digit+
   
   
 operator
