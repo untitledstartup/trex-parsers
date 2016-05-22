@@ -1,27 +1,3 @@
 Js <: Base {
-
-// OVERRIDES  
-arg
-  := tmlLocalizedString 
-  | property 
-  | method 
-  | object 
-  | variable 
-  | literal
-  
-// END OVERRIDES
-  
-object
-  = dict
-  | array
-  
-dict
- = "{" space* listOf<dictEntry, argSep> space* "}"
-  
-dictEntry
-  = (stringLiteral | variable) space* ":" space* argExp
-  
-array
-  = "[" space* listOf<argExp, argSep> space* "]"
   
 }
