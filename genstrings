@@ -283,6 +283,7 @@ function main() {
   
   var foundHashes = {};
   var foundCount = 0;
+  var totalCount = 0;
   var parser = new Genstrings();
   parser.macro = opts.macro;
   parser.language = opts.language;
@@ -311,6 +312,7 @@ function main() {
     }
     
     foundCount += translationMemory.length;
+    totalCount += translationKeys.length;
     genProgress.tick(1, {"fileName": Path.basename(file)});
     
     if (progress >= 1.0) {
@@ -325,7 +327,7 @@ function main() {
       }
   
       outputStream.end(leadout, 'utf-8', function() {
-        Logger.info("> Generated " + foundHashes.length + " unique translation keys in " + outputFile);
+        Logger.info("> Found " + totalCount + " total, generated "+ foundHashes.length + " unique, translation keys in " + outputFile);
         if (opts.accessToken) {
           Logger.info("> Uploading " + outputFile);
           postTranslationKeysFromFile(outputFile, onTranslationKeysPostProgress);
