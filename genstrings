@@ -77,8 +77,7 @@ function postTranslationKeysFromFile(keysFile, callback) {
   if (host.indexOf("http") !== 0) {
     host = "https://" + host;
   }
-  var url = host+"/v1/projects/current/import";
-  
+  var url = host+"/v1/projects/current/files";
   var r = Request.post(url, function(error, response, body){
     if (typeof callback == 'function') {
       try {
