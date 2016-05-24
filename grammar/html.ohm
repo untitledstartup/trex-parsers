@@ -1,6 +1,14 @@
 Html <: Base {
-
-// OVERRIDES
+  
+macro
+  := "tml-tr"
+  
+string
+  := quotedString<"\"">
+  
+operator
+  := "=" | ">" | "<"  
+  
 comment
   := startComment (~endComment any)* endComment
   
@@ -10,80 +18,17 @@ startComment
 endComment
   = "--" space* ">"
   
-arg
-  := tmlLocalizedString 
-  | property 
-  | method 
-  | object 
-  | variable 
-  | literal
+token
+  := macro | tagText | openTag | closeTag | literal | operator | namedToken
   
-stringNonLiteral
-  := "{{" | "}}"
+openTag
+  = "<"
   
-macro
-  := "tml-tr"
-  
-tmlLocalizedString
-  := xmlTagWithContent<macro, tmlLocalizedTagContent> --tmlTag
-  | xmlTagWithAttribute<xmlTagNameExp, trlAttributeExp> --trlInAttr
-  | xmlTagWithAttribute<xmlTagNameExp, tmlAttributeExp> --tmlInAttr
-  | xmlTagWithAttributeAndContent<xmlTagNameExp, macro, tmlLocalizedTagContent> --markedTag
-  | xmlTagWithContent<xmlTagNameExp, trlExp> --trlInTag
+closeTag
+  = ">"
 
-// END OF OVERRIDES
+tagText
+  = closeTag (~openTag any)*
 
-tmlLocalizedTagContent
-  = space* trlExp space* --trl
-  | (tagStringChar | nonTMLTag)+
-  
-trlAttributeExp
-  = xmlTagAttributeName "=" quotedTRLExp
-  
-tmlAttributeExp
-  = macro "=" (quotedTRLExp | stringLiteral)
-  
-nonTMLAttribute
-  = ~macro xmlTagAttributeExp
-
-nonTMLTag
-  = "<" space* xmlTagNameExp (space+ nonTMLAttribute)* space* ">" tmlLocalizedTagContent xmlCloseAnyTag
-  
-tagStringChar
-  = ~("<" | codeMarkup) any
-  
-// Special Markup
-codeMarkup
-  = "{{" (~"}}" any)* "}}"
-
-// TRL
-quotedTRLExp
-  = "\"" trlExp "\""
-  | "'" trlExp "'"
-
-trlExp
-  = "{{" space* (trlMethod | trlFilter) space* "}}"
-  
-trlMethod
-  = "trl" "(" space* stringLiteral space* ")"
-  
-trlFilter
-  = stringLiteral space* "|" space* "trl" (space* ":" space* argExp)? (space* "|" space* filterName)*
- 
-filterName
-  = variable
-  
-object
-  = dict
-  | array
-  
-dict
- = "{" space* listOf<dictEntry, argSep> space* "}"
-  
-dictEntry
-  = (stringLiteral | variable) space* ":" space* argExp
-  
-array
-  = "[" space* listOf<argExp, argSep> space* "]"
 
 }
