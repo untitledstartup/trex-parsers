@@ -60,7 +60,57 @@
         "namedToken": function (chars) {
           var result = utils.createResult(this, chars);
           return result;
-        }
+        },
+        
+        
+        // TRL
+        "quotedTRLExp": function (quot, exp, quot) {
+          return exp.tokens;
+        },
+        "trlExp": function (_, _, exp, _, _) {
+          var result = exp.tokens;
+          if (result) {
+            result = utils.createResult("trlString", result.value);
+          }
+          return result;
+        },
+        "trlMethod": function (_, _, _, str, _, _) {
+          return str.tokens;
+          // var result = str.tokens;
+          // result = utils.createResult(this, result.value);
+          // return result;
+        },
+        "trlFilter": function (str, _, _, _, _) {
+          return str.tokens;
+          // var result = str.tokens;
+          // result = utils.createResult(this, result.value);
+          // return result;
+        },
+        "trlString": function (str) {
+          return str.tokens;
+        },
+        
+        
+        
+        // XML
+        "xmlOpenTag": function (n) {
+          return utils.createResult(this, n);
+        },
+        "xmlCloseTag": function (n) {
+          return utils.createResult(this, n);
+        },
+        "xmlTagText": function (close, text) {
+          var a = close.tokens;
+          var b = utils.createResult("string", text);
+          return [a, b];
+        },
+        "xmlTagTRLText": function (close, _, exp, _) {
+          return [close.tokens, exp.tokens];
+        },
+        "xmlTagContent": function (content) {
+          return content.tokens;
+        },
+        
       
       }
     }

@@ -3,56 +3,21 @@ Html <: Base {
 macro
   := "tml-tr"
   
-string
-  := quotedString<"\"">
-  | quotedString<"'">
-  
 operator
-  := "=" | ">" | "<"  
+  := xmlOperator
   
 comment
-  := startComment (~endComment any)* endComment
-  
-startComment
-  = "<" space* "!" space* "--" space*
-
-endComment
-  = "--" space* ">"
-  
+  := xmlComment
+    
 token
-  := macro | tagText | openTag | closeTag | literal | operator | namedToken
+  := macro | xmlToken | literal | operator | namedToken
   
 literal
   := quotedTRLExp
   | string
   
-openTag
-  = "<"
-  
-closeTag
-  = ">"
-
-tagText
-  = closeTag space* trlExp space* --trl
-  | closeTag (~openTag any)* --normal
-  
-  
-quotedTRLExp
-  = "\"" trlExp "\""
-  | "'" trlExp "'"
-
-trlExp
-  = "{{" space* (trlMethod | trlFilter) space* "}}"
-  
-trlMethod
-  = "trl" "(" space* string space* ")"
-  
-trlFilter
-  = string (space* "|" space* filterName)*
- 
-filterName
-  = namedToken (":" namedToken)*
-
-
+xmlTagContent
+  := xmlTagTRLText
+  | xmlTagText
 
 }

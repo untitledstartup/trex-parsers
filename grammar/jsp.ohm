@@ -1,38 +1,18 @@
 Jsp <: Base {
 
-// OVERRIDES
 macro
   := "tml:tr"
   
+operator
+  := xmlOperator
+  
 comment
-  := startComment (~endComment any)* endComment
+  := xmlComment
+    
+token
+  := macro | xmlToken | literal | operator | namedToken
   
-startComment
-  = "<" space * "!" space* "--" space*
-
-endComment
-  = "--" space* ">"
+literal
+  := string
   
-stringNonLiteral
-  := "${"
-  
-tmlLocalizedString
-  := xmlTagWithAttribute<macro, tmlAttributeExp> --tmlInAttribute 
-  | xmlTagWithContent<macro, tmlLocalizedTagContent> --tmlInTag
-
-// END OVERRIDES
-  
-tmlAttributeExp
-  = "label" "=" stringLiteral
-  
-tmlLocalizedTagContent
-  = tagStringChar+
-  
-tagStringChar
-  = ~("<" | codeMarkup) any
-  
-// Special Markup
-codeMarkup
-  = "${" (~"}" any)* "}"
-
 }

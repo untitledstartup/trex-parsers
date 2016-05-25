@@ -1,10 +1,12 @@
 <tml-tr>1. Welcome {user}</tml-tr>
 <h3 tml-tr>2. Welcome {user}</h3>  
-<h3 tml-tr>3. Welcome {user}</h3>  
+<h3 tml-tr>3. Welcome &lt;user&gt;</h3>  
 <h3 num='stats.visit_times' tml-tr>4. Welcome {user}, this is your {num} visit</h3>
 <h3 tml-tr values="{ user: userParams.name, age: userParams.age }">
             5. Hello {user}, you're {age} years old!
 </h3>
 
-<input type="text" placeholder="{{ trl('Your username') }}" />  
-<h3> {{ "Hello {user}" | trl:this | toUpper }} </h3>  
+<input type="text" placeholder="{{ trl('6. Your &lt;username&gt;') }}" />  
+<input type="text" placeholder="{{ trl(&quot;7. Your &lt;username&gt;&quot;) }}" />  
+<h3> {{ "8. Hello {user}" | trl:this | toUpper }} </h3>  
+<h3> {{ &quot;9. He&#768;llo &lt;user&gt;&copy;&quot; | trl:this | toUpper }} </h3>  
