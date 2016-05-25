@@ -5,6 +5,7 @@ macro
   
 string
   := quotedString<"\"">
+  | quotedString<"'">
   
 operator
   := "=" | ">" | "<"  
@@ -21,6 +22,10 @@ endComment
 token
   := macro | tagText | openTag | closeTag | literal | operator | namedToken
   
+literal
+  := quotedTRLExp
+  | string
+  
 openTag
   = "<"
   
@@ -28,7 +33,26 @@ closeTag
   = ">"
 
 tagText
-  = closeTag (~openTag any)*
+  = closeTag space* trlExp space* --trl
+  | closeTag (~openTag any)* --normal
+  
+  
+quotedTRLExp
+  = "\"" trlExp "\""
+  | "'" trlExp "'"
+
+trlExp
+  = "{{" space* (trlMethod | trlFilter) space* "}}"
+  
+trlMethod
+  = "trl" "(" space* string space* ")"
+  
+trlFilter
+  = string (space* "|" space* filterName)*
+ 
+filterName
+  = namedToken (":" namedToken)*
+
 
 
 }
