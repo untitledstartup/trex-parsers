@@ -10,7 +10,7 @@ token
   = macro | literal | openExpressionOperator | closeExpressionOperator | operator | namedToken
   
 literal
-  = string | number | bool | nil
+  = interpolatedString | string | number | bool | nil
   
 nil
   = "null"
@@ -18,12 +18,28 @@ nil
 bool
   = "true" | "false"
   
-string
-  = quotedString<"\""> 
-  | quotedString<"'"> 
+stringQuote
+  = "\"" | "'"
   
-stringNonLiteral (~"" nothing)
-  = ~""
+string
+  = quotedString<stringQuote> 
+  
+stringInterpolationStart
+  = end any // no default value
+  
+stringInterpolationEnd
+  = end any // no default value
+  
+stringInterpolation
+  = stringInterpolationStart (stringInterpolationToken ~stringInterpolationEnd)* (stringInterpolationToken &stringInterpolationEnd)* stringInterpolationEnd
+  
+stringInterpolationToken
+  = "(" stringInterpolationToken ")" --exp
+  | token
+  | space
+  
+interpolatedString
+  = stringQuote ((~stringInterpolationStart quotedChar<stringQuote>)* stringInterpolation)+ quotedChar<stringQuote>* stringQuote
   
 quotedString<quot>
   = quot quotedChar<quot>* quot

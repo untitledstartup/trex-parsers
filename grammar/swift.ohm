@@ -11,5 +11,11 @@ string
     
 nil
   := "nil"
+  
+stringInterpolationStart
+  := "\\("
+  
+stringInterpolationEnd
+  := ")"
 
 }

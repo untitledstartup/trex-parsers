@@ -37,6 +37,26 @@
         },
         
         
+        "stringInterpolation": function (_, _, _, _, _) {
+          return null;
+        },
+        "stringInterpolationToken": function (n) {
+          return null;
+        },
+        "stringInterpolationToken_exp": function (_, n, _) {
+          return null;
+        },
+        "interpolatedString": function (openQuote, prefixes, interpolation, suffix, closeQuote) {
+          var str = this.interval.contents;
+          var openQuoteLen = openQuote.interval.contents.length;
+          var closeQuoteLen = closeQuote.interval.contents.length;
+          str = str.substring(openQuoteLen, str.length - closeQuoteLen);
+          return utils.createResult(this, str);
+        },
+        
+        
+        
+        
         "string": function (node) {
           var result = node.tokens;
           result = utils.createResult(this, result.value);
