@@ -11,17 +11,16 @@ var Program = require('commander');
 
 Program
   .version('0.0.1')
+  .option('-a, --access-token <token>', 'Automatically register keys with Trasnaltion Exchange using provided access token')
+  .option('--host <host>', 'Manually specify host (default: api.translationexchange.com)')
   .option('-i, --list-languages', 'Print out supported input languages')
   .option('-l, --language <lang>', 'Input language')
   .option('-m, --macro <Macro>', 'Override default macro')
   .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DEFAULT_OUTPUT_FILENAME+')')
-  .option('-a, --access-token <token>', 'Automatically register keys with Trasnaltion Exchange using provided access token')
-  .option('--host <host>', 'Manually specify host (default: api.translationexchange.com)')
   .option('-p, --pretty-print', 'Pretty print output')
-  .option('-t, --trace', "Print out trace of a mis-/match (very verbose, best to use on single file)")
+  .option('-q, --quiet', 'Supress warnings and any verbose output')
   .option('-S, --source <source>', 'Specify TML Source name (default: none)')
-  .option('-L, --locale <locale>', 'Specify source locale (default: en)')
-  .option('-v, --verbose', 'Be verbose');
+  .option('-L, --locale <locale>', 'Specify source locale (default: en)');
 
 Program
   .arguments("<file|dir> [file|dir...]");
@@ -286,7 +285,24 @@ function main() {
   var parser = new Genstrings();
   parser.macro = opts.macro;
   parser.language = opts.language;
-  parser.parseFiles(files, function(progress, file, translationKeys) {
+  parser.on("warning", function(message, info) {
+    if (opts.quiet) {
+      return;
+    }
+    console.log("");
+    var file = (info) ? info.file : "";
+    var line = (info) ? info.line : "";
+    var col = (info) ? info.column : "";
+    var displayString = (info) ? info.displayString : "";
+    var msg = displayString + "\n  " + message;
+    if (file) {      
+      Logger.warn(file + ":" + line + ":" + col + "\n  " + msg);
+    }
+    else {      
+      Logger.warn(msg);
+    }
+  });
+  parser.on("progress", function(progress, file, translationKeys) {
     var translationMemory = [];
     debugger;
     if (translationKeys) {
@@ -335,6 +351,7 @@ function main() {
     }
     
   });
+  parser.parseFiles(files);
 }
 
 if (global && global.v8debug && v8debug.Debug) {    
