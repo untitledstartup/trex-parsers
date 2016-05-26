@@ -48,9 +48,6 @@
         },
         "interpolatedString": function (openQuote, prefixes, interpolation, suffix, closeQuote) {
           var str = this.interval.contents;
-          var openQuoteLen = openQuote.interval.contents.length;
-          var closeQuoteLen = closeQuote.interval.contents.length;
-          str = str.substring(openQuoteLen, str.length - closeQuoteLen);
           return utils.createResult(this, str);
         },
         
