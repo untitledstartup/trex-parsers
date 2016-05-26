@@ -1,12 +1,3 @@
 Js <: Base { 
 
-literal
-  := interpolatedString | string | number | bool | nil
-
-interpolationChar
-  = "{"
-  
-interpolatedString
-  = quotedStringWithInterpolation<stringQuote, interpolationChar>
-
 }
