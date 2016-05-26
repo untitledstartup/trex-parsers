@@ -86,7 +86,7 @@ comment
   | multilineComment
   
 namedToken
-  = (~(string | operator | space) any)+
+  = (~(string | operator | space | stringInterpolationStart | stringInterpolationEnd) any)+
   
 trailingComment
   = "//" (~"\n" any)*
