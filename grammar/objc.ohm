@@ -7,7 +7,7 @@ macro
   | "TMLLocalizedAttributedDate"
 
 string
-  := boxedString | cstring
+  := ((boxedString | cstring) space*)+
   
 boxedString
   = "@" quotedString<"\"">
