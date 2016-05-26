@@ -7,7 +7,7 @@ macro
   | "TMLLocalizedAttributedDate"
 
 string
-  := quotedString<"\""> 
+  := (quotedString<"\""> space*)+
     
 nil
   := "nil"
