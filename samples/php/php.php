@@ -82,9 +82,11 @@ tre("32 This is {user::pos} photo", array("user" => $male))
 // String Interpolation
 tre("33 this is $variable and $another->one")
 tre("34 This is {$another->variable} and ${$yet.another} and $last_one")
+  
+tr("35 Concatenating" . " strings", "35 Concatenated " . "comment")
 
 tr(<<<EOD
-35. Example of string
+36 Example of string
 spanning multiple lines
 using heredoc syntax.
 EOD;

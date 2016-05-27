@@ -31,6 +31,7 @@ heredoc
   = heredocStart (~heredocEnd any)* heredocEnd
   
 string
-  += heredoc
+  += string (space* "." space* string)+ --concat
+  | heredoc --heredoc
 
 }
