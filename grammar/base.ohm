@@ -120,37 +120,4 @@ filterName
   = namedToken (":" namedToken)*
   
   
-
-// Basic XML Support
-
-xmlComment
-  = xmlStartComment (~xmlEndComment any)* xmlEndComment
-
-xmlStartComment
-  = "<" space* "!" space* "--" space*
-
-xmlEndComment
-  = "--" space* ">"
- 
-xmlToken
-  = xmlTagContent | xmlOpenTag | xmlCloseTag
-  
-xmlOpenTag
-  = "<"
-  
-xmlCloseTag
-  = ">"
-  
-xmlTagContent
-  = xmlTagText
-  
-xmlTagTRLText
-  = xmlCloseTag space* trlExp space*
-  
-xmlTagText
-  = xmlCloseTag (~xmlOpenTag any)+
-  
-xmlOperator
-  = "=" | ">" | "<"
-  
 }

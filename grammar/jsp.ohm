@@ -1,16 +1,7 @@
-Jsp <: Base {
+Jsp <: Xml {
 
 macro
   := "tml:tr"
-  
-operator
-  := xmlOperator
-  
-comment
-  := xmlComment
-    
-token
-  := macro | xmlToken | literal | operator | namedToken
   
 literal
   := interpolatedString | string

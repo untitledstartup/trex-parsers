@@ -1,0 +1,45 @@
+Xml <: Base {
+
+operator
+  := xmlOperator
+    
+token
+  := macro | xmlToken | literal | operator | namedToken
+  
+literal
+  := string
+  
+comment
+  := xmlComment
+  
+xmlComment
+  = xmlStartComment (~xmlEndComment any)* xmlEndComment
+
+xmlStartComment
+  = "<" space* "!" space* "--" space*
+
+xmlEndComment
+  = "--" space* ">"
+ 
+xmlToken
+  = xmlTagContent | xmlOpenTag | xmlCloseTag
+  
+xmlOpenTag
+  = "<"
+  
+xmlCloseTag
+  = ">"
+  
+xmlTagContent
+  = xmlTagText
+  
+xmlTagTRLText
+  = xmlCloseTag space* trlExp space*
+  
+xmlTagText
+  = xmlCloseTag (~xmlOpenTag any)+
+  
+xmlOperator
+  = "=" | ">" | "<"
+
+}
