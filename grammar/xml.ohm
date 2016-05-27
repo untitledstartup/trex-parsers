@@ -40,6 +40,6 @@ xmlTagText
   = xmlCloseTag (~xmlOpenTag any)+
   
 xmlOperator
-  = "=" | ">" | "<"
+  = "=" | xmlOpenTag | xmlCloseTag
 
 }
