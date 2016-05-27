@@ -3,8 +3,8 @@ Java <: Base {
 // OVERRIDES
 macro
   := "Tml.translate"
-    
-string
-  := quotedString<"\""> 
+  
+stringQuote
+  := "\""
 
 }

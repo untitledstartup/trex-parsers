@@ -5,12 +5,12 @@ macro
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
+  
+stringQuote
+  := "\""
 
 string
-  := (quotedString<"\""> space*)+
-    
-nil
-  := "nil"
+  := (quotedString<stringQuote> space*)+
   
 stringInterpolationStart
   := "\\("

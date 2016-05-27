@@ -7,16 +7,10 @@ macro (defines macro)
   = "tr"
   
 token
-  = macro | literal | openExpressionOperator | closeExpressionOperator | operator | namedToken
+  = macro | literal | openExpressionOperator | closeExpressionOperator | namedToken | operator 
   
 literal
-  = interpolatedString | string | number | bool | nil
-  
-nil
-  = "null"
-  
-bool
-  = "true" | "false"
+  = interpolatedString | string | number
   
 stringQuote
   = "\"" | "'"

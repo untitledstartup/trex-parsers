@@ -10,13 +10,6 @@
           return utils.createResult(this, n);
         },
         
-        "nil": function (n) {
-          return utils.createResult(this, n);
-        },
-        "bool": function (n) {
-          return utils.createResult(this, n);
-        },
-        
         "number": function (n) {
           return utils.createResult(this, n);
         },

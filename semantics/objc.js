@@ -6,7 +6,6 @@
     "attributes": {
       "tokens": {
         "string": function (strs, _) {
-          debugger;
           var tokens = strs.tokens;
           var result = null;
           if (tokens.length > 0 && tokens[0].type == "boxedString") {
@@ -32,17 +31,22 @@
           result = utils.createResult(this, result.value);
           return result;
         },
-        "boxedString": function(_, quotedStr) {
-          var result = quotedStr.tokens;
+        "boxedString": function(_, str) {
+          var result = str.tokens;
           result = utils.createResult(this, result.value);
           return result;
         },
-        "number_boxed": function (_, num) {
-          var result = num.tokens;
-          debugger;
+        "boxedNumber": function (_, n) {
+          var result = n.tokens;
           result = utils.createResult(this, result.value);
           return result;
-        }
+        },
+        "boxedNamedToken": function (_, n) {
+          var result = n.tokens;
+          result = utils.createResult(this, result.value);
+          return result;
+        },
+        
         
       }
     }

@@ -5,6 +5,9 @@ macro
   | "TMLLocalizedAttributedString"
   | "TMLLocalizedDate"
   | "TMLLocalizedAttributedDate"
+  
+stringQuote
+  := "\""
 
 string
   := ((boxedString | cstring) space*)+
@@ -15,16 +18,17 @@ boxedString
 cstring
   = quotedString<"\""> 
   
-nil
-  := "nil"
+boxedNamedToken
+  = "@" namedToken
   
-bool
-  += "YES" 
-  | "NO" 
-  | "@" bool --boxed
+namedToken
+  += boxedNamedToken
+  
+boxedNumber
+  = "@" number
   
 number
-  += "@" number --boxed
+  += boxedNumber
   
 runinOperator
   += "@" ("{" | "[") --boxed
