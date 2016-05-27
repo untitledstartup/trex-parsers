@@ -16,7 +16,8 @@ stringQuote
   = "\"" | "'"
   
 string
-  = quotedString<stringQuote> 
+  = quotedString<"\""> 
+  | quotedString<"'"> 
   
 stringInterpolationStart
   = end any // no default value
