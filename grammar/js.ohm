@@ -1,0 +1,6 @@
+Js <: Base {
+
+string
+  += string (space* "+" space* string)+ --concat
+
+}

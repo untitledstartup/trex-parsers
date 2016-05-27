@@ -8,5 +8,6 @@ function() {
   var withTMLToken = tr("6. String with {token}", "a description", {"token": tr("7. my localized token")});
   var tert = tr((really ? "8.1. One of two" : "8.2. Second of two"), "Description");
   var tert2 = tr((really ? "9.1. One of two" : tr("9.2. Second of two")), "Description");
-  var concat = tr("10. Appending " + myString, "10. Description");
+  var concatVar = tr("10. Appending " + myString, "10. Description");
+  var concatStr = tr("11. Concatenating" + " strings", "11. Concatenated " + "comment");
 }
