@@ -26,7 +26,7 @@ stringInterpolationEnd
   = end any // no default value
   
 stringInterpolation
-  = stringInterpolationStart (stringInterpolationToken ~stringInterpolationEnd)* (stringInterpolationToken &stringInterpolationEnd)* stringInterpolationEnd
+  = stringInterpolationStart (stringInterpolationToken ~stringInterpolationEnd)* (stringInterpolationToken &stringInterpolationEnd)* stringInterpolationEnd --default
   
 stringInterpolationToken
   = "(" stringInterpolationToken ")" --exp

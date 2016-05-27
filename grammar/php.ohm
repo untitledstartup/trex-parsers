@@ -1,62 +1,21 @@
 Php <: Base {
-// OVERRIDES
 
 macro
   := "tre" | "trh" | "tr"
   
-Arg
-  := lambda 
-  | property 
-  | method 
-  | object 
-  | variable 
-  | literal
+simpleStringInterpolation
+  = "$" namedToken ("->" namedToken)* 
   
-stringNonLiteral
-  := "{"? "$"
+stringInterpolation
+  += simpleStringInterpolation --simple
   
-// END OVERRIDES
-
-statementSep
-  = space* ";" space*
-
-lambda
-  = "function" "(" space* listOf<argExp, argSep>? space* ")" space* "{" space* listOf<statement, statementSep> space* "}"
-
-// Conditionals  
-conditional
-  = ifConditional
-  | switchConditional
+interpolatedString 
+  += stringQuote ((~simpleStringInterpolation quotedChar<stringQuote>)* stringInterpolation_simple)+ quotedChar<stringQuote>* stringQuote
   
-ifConditional
-  = "if" space* "(" space* condition space* ")" space* "{ " space* listOf<statement, statementSep> space* "}" (space* "elseif" space* "(" space* condition space* ")" space* "{" space* listOf<statement, statementSep> space* "}")* (space* "else" space* "{" space* listOf<statement, statementSep> space* "}" )?
+stringInterpolationStart
+  := "{" &"$"
   
-switchConditional
-  = "switch" space* "(" space* argExp space* ")" space* "{" space* switchCase* space* "}"
-  
-switchCase
-  = "case" switch (quotedStringLiteral | number) space* ":" space* listOf<statement, statementSep>
-  | "default" space* ":" space* listOf<statement, statementSep>
-  
-// Loops
-loop
-  = whileLoop
-  | forLoop
-  
-whileLoop
-  = 
-  
-object
-  = dict
-  | array
-  
-dict
- = "array" "(" space* listOf<dictEntry, argSep> space* ")"
-  
-dictEntry
-  = (stringLiteral | variable) space* "=>" space* argExp
-  
-array
-  = "array" "(" space* listOf<argExp, argSep> space* ")"
+stringInterpolationEnd
+  := "}"
 
 }

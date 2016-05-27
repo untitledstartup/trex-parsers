@@ -77,3 +77,7 @@ tre("31 {actor} tagged {target} in a photo {target|he, she} just uploaded.", arr
 
 // Language Cases
 tre("32 This is {user::pos} photo", array("user" => $male))
+
+// String Interpolation
+tre("33 this is $variable and $another->one")
+tre("34 This is {$another->variable} and ${$yet.another} and $last_one")

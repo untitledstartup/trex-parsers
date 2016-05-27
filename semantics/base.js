@@ -30,7 +30,7 @@
         },
         
         
-        "stringInterpolation": function (_, _, _, _, _) {
+        "stringInterpolation_default": function (_, _, _, _, _) {
           return null;
         },
         "stringInterpolationToken": function (n) {
