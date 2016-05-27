@@ -1,0 +1,8 @@
+tr("1. Hello World")
+tr("2. You have {count || message}", count: 5)
+tr("3. {user} sent {target} [bold: {count || gift}]", user: current_user, target: target_user, count: 5)
+tr("4. {user} uploaded [bold: {count || photo}] to {actor | his, her} album.", user: current_user, count: 1)
+tr("5. You have #{count}", "5. Comment")
+tr("6. Hello World", "6. Comment")
+tr("7. You have {count || message}", count: 5, "7. Comment")
+tr("8. {user} sent {target} [bold: {count || gift}]", user: current_user, target: target_user, count: 5, "8. Comment")
