@@ -1,3 +1,4 @@
+<?php
 // Basics
 tre("1 Hello World")
 
@@ -81,3 +82,11 @@ tre("32 This is {user::pos} photo", array("user" => $male))
 // String Interpolation
 tre("33 this is $variable and $another->one")
 tre("34 This is {$another->variable} and ${$yet.another} and $last_one")
+
+tr(<<<EOD
+35. Example of string
+spanning multiple lines
+using heredoc syntax.
+EOD;
+)
+?>

@@ -20,5 +20,17 @@ stringInterpolationStart
   
 stringInterpolationEnd
   := "}"
+  
+heredocStart
+  = "<<<" namedToken "\n"
+  
+heredocEnd  
+  = "\n" namedToken ";" "\n"
+  
+heredoc
+  = heredocStart (~heredocEnd any)* heredocEnd
+  
+string
+  += heredoc
 
 }
