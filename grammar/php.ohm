@@ -1,7 +1,10 @@
 Php <: Base {
 
 macro
-  := "tre" | "trh" | "tr"
+  := "tre" | "tr"
+  
+dynamicMacro
+  := "trh"
   
 simpleStringInterpolation
   = "$" namedToken ("->" namedToken)* 

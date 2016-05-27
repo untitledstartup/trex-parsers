@@ -9,6 +9,10 @@
         "macro": function (n) {
           return utils.createResult(this, n);
         },
+        "dynamicMacro": function (n, _) {
+          return utils.createResult(this, n);
+        },
+        
         
         "number": function (n) {
           return utils.createResult(this, n);

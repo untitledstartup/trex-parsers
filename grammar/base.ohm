@@ -6,8 +6,11 @@ Tokens (default rule - we extract tokens)
 macro (defines macro)
   = "tr"
   
+dynamicMacro (dynamic macros are to be ignored, only certain languages have those, like php)
+  = end any
+  
 token
-  = macro | literal | openExpressionOperator | closeExpressionOperator | namedToken | operator 
+  = dynamicMacro | macro | literal | openExpressionOperator | closeExpressionOperator | namedToken | operator 
   
 literal
   = interpolatedString | string | number
