@@ -1,0 +1,18 @@
+Markup <: Xml {
+
+stringInterpolationStart
+  := "<%=" | "<%"
+  
+stringInterpolationEnd
+  := "%>"
+  
+literal
+  := interpolatedString | string
+  
+xmlTagText
+  += xmlCloseTag xmlTagInnerInterpolatedString --interp
+  
+xmlTagInnerInterpolatedString
+  = ((~xmlOpenTag any)* stringInterpolation)+ (~xmlOpenTag any)*
+
+}

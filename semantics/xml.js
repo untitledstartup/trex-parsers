@@ -6,13 +6,13 @@
     "attributes": {
       "tokens": {
         
-        "xmlOpenTag": function (n) {
-          return utils.createResult(this, n);
+        "xmlOpenTag": function (n, _) {
+          return utils.createResult(this, n.interval.contents + _.interval.contents);
         },
-        "xmlCloseTag": function (n) {
-          return utils.createResult(this, n);
+        "xmlCloseTag": function (_, n) {
+          return utils.createResult(this, _.interval.contents + n.interval.contents);
         },
-        "xmlTagText": function (close, text) {
+        "xmlTagText_default": function (close, text) {
           var a = close.tokens;
           var b = utils.createResult("string", text);
           return [a, b];
