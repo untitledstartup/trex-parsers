@@ -39,7 +39,7 @@ var prettyPrintSpaces = (prettyPrint) ? 2 : 0;
 // If asked, print out suppoerted languages and exit
 if (opts.listLanguages) {
   var langs = Genstrings.supportedLanguages;
-  console.log("Supported languages: " + langs.join(", "));  
+  console.log("Supported languages: \n  " + langs.join(", "));  
   process.exit(-1);
 }
 // Crap out if we have no source files specified
