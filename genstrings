@@ -308,6 +308,9 @@ function main() {
     if (translationKeys) {
       for (var i=0; i<translationKeys.length; i++) {
         var key = translationKeys[i];
+        if (!key) {
+          continue;
+        }
         var hash = key.id;
         if (foundHashes[hash] !== undefined) {
           continue;
