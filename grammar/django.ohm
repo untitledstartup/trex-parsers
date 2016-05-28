@@ -1,0 +1,21 @@
+Django <: Xml {
+
+macro
+  := "trs" | "tr"
+
+xmlOpenTag
+  := "{%"
+  
+xmlCloseTag
+  := "%}"
+  
+stringInterpolationStart
+  := "{{"
+  
+stringInterpolationEnd
+  := "}}"
+  
+literal
+  := interpolatedString | string
+
+}
