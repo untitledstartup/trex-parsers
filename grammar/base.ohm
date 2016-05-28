@@ -18,8 +18,12 @@ literal
 stringQuote
   = "\"" | "'"
   
+stringConcatOperator
+  = end any // no default value
+  
 string
-  = quotedString<"\""> 
+  = string (space* stringConcatOperator space* string)+ --concat
+  | quotedString<"\""> 
   | quotedString<"'"> 
   
 stringInterpolationStart

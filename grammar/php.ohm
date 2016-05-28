@@ -21,6 +21,9 @@ stringInterpolationStart
 stringInterpolationEnd
   := "}"
   
+stringConcatOperator
+  := "."
+  
 heredocStart
   = "<<<" namedToken "\n"
   
@@ -31,7 +34,6 @@ heredoc
   = heredocStart (~heredocEnd any)* heredocEnd
   
 string
-  += string (space* "." space* string)+ --concat
-  | heredoc --heredoc
+  += heredoc --heredoc
 
 }

@@ -9,8 +9,8 @@ macro
 stringQuote
   := "\""
 
-string
-  := (quotedString<stringQuote> space*)+
+stringConcatOperator
+  := ""
   
 stringInterpolationStart
   := "\\("
