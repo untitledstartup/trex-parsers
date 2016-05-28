@@ -1,0 +1,12 @@
+Python <: Base {
+
+stringInterpolationStart
+  := "%("
+  
+stringInterpolationEnd
+  := ")"
+  
+string
+  += string (space* "+" space* string)+ --concat
+
+}
