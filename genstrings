@@ -4,13 +4,14 @@ var DEFAULT_OUTPUT_FILENAME = "genstrings.json";
 
 require('./lib/defines.js');
 var Path = require('path');
-var Genstrings = require('./lib/genstrings.js');
+var Genstrings = require(Path.join(__dirname, 'lib', 'genstrings.js'));
+var Logger = require(Path.join(__dirname, 'lib', 'logger.js'));
 
 // Program options and arguments
 var Program = require('commander');
 
 Program
-  .version('0.0.1')
+  .version('0.1')
   .option('-a, --access-token <token>', 'Automatically register keys with Trasnaltion Exchange using provided access token')
   .option('--host <host>', 'Manually specify host (default: api.translationexchange.com)')
   .option('-i, --list-languages', 'Print out supported input languages')
@@ -19,6 +20,9 @@ Program
   .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DEFAULT_OUTPUT_FILENAME+')')
   .option('-p, --pretty-print', 'Pretty print output')
   .option('-q, --quiet', 'Supress warnings and any verbose output')
+  .option('-x, --xml', 'Treat input as XML with language-specific statements within special markup')
+  .option('--xml-open-markup <expression>', 'Default: "<%="|"<%-"|"<%"')
+  .option('--xml-close-markup <expression>', 'Default: "%>"')
   .option('-S, --source <source>', 'Specify TML Source name (default: none)')
   .option('-L, --locale <locale>', 'Specify source locale (default: en)');
 
@@ -42,6 +46,7 @@ if (opts.listLanguages) {
   console.log("Supported languages: \n  " + langs.join(", "));  
   process.exit(-1);
 }
+
 // Crap out if we have no source files specified
 if (!sourceFiles || sourceFiles.length == 0) {
   Program.outputHelp();
@@ -282,7 +287,27 @@ function main() {
   var foundHashes = {};
   var foundCount = 0;
   var totalCount = 0;
-  var parser = new Genstrings();
+  var preferredTokenParser = null;
+  if (opts.xml && opts.language) {
+    var MarkupTokenParser = require(Path.join(__dirname, 'lib', 'tokenParsers', 'markupTokenParser.js'));
+    var TokenParser = require(Path.join(__dirname, 'lib', 'tokenParsers', 'tokenParser.js'));
+    var tokenParser = null;
+    if (opts.language) {      
+      tokenParser = TokenParser.parserForLanguage(opts.language);
+    }
+    else {
+      tokenParser = new TokenParser();
+    }
+    preferredTokenParser = new MarkupTokenParser(tokenParser);
+    if (opts.xmlOpenMarkup) {      
+      preferredTokenParser.openMarkup = opts.xmlOpenMarkup;
+    }
+    if (opts.xmlCloseMarkup) {
+      preferredTokenParser.closeMarkup = opts.xmlCloseMarkup;
+    }
+  }
+  debugger;
+  var parser = new Genstrings(preferredTokenParser);
   parser.macro = opts.macro;
   parser.language = opts.language;
   parser.on("warning", function(message, info) {
