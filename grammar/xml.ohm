@@ -25,10 +25,12 @@ xmlToken
   = xmlTagContent | xmlOpenTag | xmlCloseTag
   
 xmlOpenTag
-  = "<" "/"?
+  = "<" space* "/" --closing
+  | "<"
   
 xmlCloseTag
-  = "/"? ">"
+  = "/" space* ">" --closing
+  | ">"
   
 xmlTagContent
   = xmlTagText

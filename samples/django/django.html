@@ -1,0 +1,6 @@
+{­% load tml tml_inline %­}
+{­% load tml_inline_header %­}
+{% tml_language_selector type="default" %}
+{% trs "Hello World" %}
+
+{% tr with count=5 %} You have {count || message} {% endtr %}

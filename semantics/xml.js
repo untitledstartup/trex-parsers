@@ -6,11 +6,17 @@
     "attributes": {
       "tokens": {
         
-        "xmlOpenTag": function (n, _) {
-          return utils.createResult(this, n.interval.contents + _.interval.contents);
+        "xmlOpenTag": function (n) {
+          return utils.createResult(this, n.interval.contents);
         },
-        "xmlCloseTag": function (_, n) {
-          return utils.createResult(this, _.interval.contents + n.interval.contents);
+        "xmlOpenTag_closing": function (n, _space, _slash) {
+          return utils.createResult(this, n.interval.contents + _space.interval.contents + _slash.interval.contents);
+        },
+        "xmlCloseTag": function (n) {
+          return utils.createResult(this, n.interval.contents);
+        },
+        "xmlCloseTag_closing": function (_slash, _space, n) {
+          return utils.createResult(this, _slash.interval.contents + _space.interval.contents + n.interval.contents);
         },
         "xmlTagText_default": function (close, text) {
           var a = close.tokens;
