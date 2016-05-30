@@ -15,6 +15,11 @@
           var b = utils.createResult("stringInterpolation", interpString);
           return [a, b];
         },
+        
+        "stringInterpolation": function (n) {
+          return utils.createResult(this, n);
+        },
+        
       
       }
     }
