@@ -1,13 +1,16 @@
 Markup <: Xml {
 
+token
+  += stringInterpolation
+
 stringInterpolationStart
-  := "<%=" | "<%"
+  := "<%=" | "<%-" | "<%"
   
 stringInterpolationEnd
   := "%>"
   
 literal
-  := interpolatedString | string
+  += interpolatedString
   
 xmlTagText
   += xmlCloseTag xmlTagInnerInterpolatedString --interp

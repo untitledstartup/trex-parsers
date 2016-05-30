@@ -1,0 +1,8 @@
+<%- tr("1. Hello World") %>
+<input placeholder="<%- tr('2. Hello World') %>">
+
+<%- tr("3. You have {count || message}", {count: 5}) %>  
+
+<%- tr("4. {actor} sent {target} [bold: {count || gift}]", {actor: "John", target: "Jane", count: 5}) %>  
+
+<%- tr("5. {actor} uploaded [bold: {count || photo}] to {actor | his, her} photo album.", {actor: current_user, count: 1}) %>  
