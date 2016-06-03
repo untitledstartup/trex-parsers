@@ -85,6 +85,10 @@
         "closeExpressionOperator": function (op) {
           return utils.createResult(this, op);
         },
+        "argumentSeparatingOperator": function (op) {
+          return utils.createResult(this, op);
+        },
+        
         
         "namedToken": function (chars) {
           var result = utils.createResult(this, chars);

@@ -10,7 +10,7 @@ dynamicMacro (dynamic macros are to be ignored, only certain languages have thos
   = end any
   
 token
-  = dynamicMacro | macro | literal | openExpressionOperator | closeExpressionOperator | namedToken | operator 
+  = dynamicMacro | macro | literal | openExpressionOperator | closeExpressionOperator | argumentSeparatingOperator | namedToken | operator 
   
 literal
   = interpolatedString | string | number
@@ -79,6 +79,9 @@ openExpressionOperator
   
 closeExpressionOperator
   = "}" | ")" | "]"
+  
+argumentSeparatingOperator
+  = ","
   
 space
   += comment
