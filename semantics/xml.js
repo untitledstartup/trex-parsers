@@ -7,9 +7,12 @@
       "tokens": {
         
         "xmlOpenTag": function (n) {
+          if (n._node.ctorName == "xmlOpenClosingTag") {
+            return n.tokens;
+          }
           return utils.createResult(this, n.interval.contents);
         },
-        "xmlOpenTag_closing": function (n, _space, _slash) {
+        "xmlOpenClosingTag": function (n, _space, _slash) {
           return utils.createResult(this, n.interval.contents + _space.interval.contents + _slash.interval.contents);
         },
         "xmlCloseTag": function (n) {
