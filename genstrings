@@ -20,6 +20,7 @@ Program
   .option('-o, --output-file <file>', 'Write output to file instead of stdout (default: '+DEFAULT_OUTPUT_FILENAME+')')
   .option('-p, --pretty-print', 'Pretty print output')
   .option('-q, --quiet', 'Supress warnings and any verbose output')
+  .option('-u, --upload', 'Do not extract strings, instead, upload already extracted strings from specified json file')
   .option('-x, --xml', 'Treat input as XML with language-specific statements within special markup')
   .option('--xml-open-markup <expression>', 'Default: "<%="|"<%-"|"<%"')
   .option('--xml-close-markup <expression>', 'Default: "%>"')
@@ -244,30 +245,15 @@ function writeStringToOutputFile(str) {
   outputStream.write(str);
 }
 
-function main() {
-  var files = [];
-  for (var i=0; i<sourceFiles.length; i++) {
-    var sourceFile = sourceFiles[i];
-    var stat = FS.statSync(sourceFile);
-    if (stat.isDirectory()) {
-      var found = findFilesInDirectory(sourceFile);
-      if (found || found.length > 0) {
-        files = files.concat(found);
-      }
-    }
-    else if (stat.isFile()) {
-      if (sourceFile[0] != "/") {
-        sourceFile = Path.join(cwd, sourceFile);
-      }
-      files.push(sourceFile);
-    }
+function uploadFiles(files) {
+  for (var i=0; i<files.length; i++) {
+    var file = files[i];
+    Logger.info("> Uploading " + file);
+    postTranslationKeysFromFile(file, onTranslationKeysPostProgress);
   }
-  
-  if (files.length == 0) {
-    Logger.info("No sources found");
-    process.exit(0);
-  }
-  
+}
+
+function processFiles(files) {
   var sourceLocale = (opts.locale) ? opts.locale : 'en';
   var response = {
     "source_locale": sourceLocale,
@@ -380,6 +366,44 @@ function main() {
     
   });
   parser.parseFiles(files);
+}
+
+function main() {
+  var files = [];
+  for (var i=0; i<sourceFiles.length; i++) {
+    var sourceFile = sourceFiles[i];
+    var stat = FS.statSync(sourceFile);
+    if (stat.isDirectory()) {
+      var found = findFilesInDirectory(sourceFile);
+      if (found || found.length > 0) {
+        files = files.concat(found);
+      }
+    }
+    else if (stat.isFile()) {
+      if (sourceFile[0] != "/") {
+        sourceFile = Path.join(cwd, sourceFile);
+      }
+      files.push(sourceFile);
+    }
+  }
+  
+  if (files.length == 0) {
+    Logger.info("No sources found");
+    process.exit(0);
+  }
+  
+  if (opts.upload) {
+    if (opts.accessToken) {
+      uploadFiles(files);
+    }
+    else {
+      Logger.error("> You must specify access token");
+      process.exit(-1);
+    }
+  }
+  else {
+    processFiles(files);
+  }
 }
 
 if (global && global.v8debug && v8debug.Debug) {    
