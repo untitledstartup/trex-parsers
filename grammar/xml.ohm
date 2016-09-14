@@ -4,13 +4,16 @@ operator
   := xmlOperator
     
 token
-  := macro | xmlToken | literal | operator | namedToken
+  := macro | descriptionAttribute | xmlToken | literal | operator | namedToken
   
 literal
   := string
   
 comment
   := xmlComment
+  
+descriptionAttribute
+  = "tml-description"
   
 xmlComment
   = xmlStartComment (~xmlEndComment any)* xmlEndComment

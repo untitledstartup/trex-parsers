@@ -6,6 +6,10 @@
     "attributes": {
       "tokens": {
         
+        "descriptionAttribute": function(n) {
+          return utils.createResult(this, n.interval.contents);
+        },
+        
         "xmlOpenTag": function (n) {
           if (n._node.ctorName == "xmlOpenClosingTag") {
             return n.tokens;
