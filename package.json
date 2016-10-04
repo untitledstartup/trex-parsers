@@ -40,7 +40,7 @@
     "trex-genstrings": "./lib/genstrings.js"
   },
   "dependencies": {
-    "ohm-js": ">=0.9",
+    "ohm-js": "0.9",
     "commander": "~2.9.0",
     "html-entities":  "~1.2.0",
     "colors": "~1.1.2",
