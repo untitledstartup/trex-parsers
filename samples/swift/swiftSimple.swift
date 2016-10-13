@@ -1,2 +1,2 @@
-TMLLocalizedString("6 TMLLocalizedString \"single\" 'argument',"
-  "with multiple lines, using ")
+TMLLocalizedString("6 TMLLocalizedString \"single\"\n 'argument',"
+  "with multiple \\\"lines\"\\, using ")
