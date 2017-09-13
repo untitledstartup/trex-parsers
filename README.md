@@ -9,6 +9,12 @@ Translation Exchange Code Parsers
 
 TML extractors for Translation Exchange platform.
 
+Running Self-Contained runthis.js
+==================
+1. Clone the repo to a folder outside your project
+2. Run `npm install`
+3. Update config variables in `runthis.js`
+4. Run `node runthis.js`
 
 Notes
 ==================

@@ -50,7 +50,8 @@
     "github": "~0.2.4",
     "queue": "~4.0.0",
     "inherits": "~2.0.1",
-    "mkdirp": "~0.5.1"
+    "mkdirp": "~0.5.1",
+    "file-system": "^2.2.2"
   },
   "devDependencies": {
   }
