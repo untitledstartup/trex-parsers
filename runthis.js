@@ -10,7 +10,6 @@ var filePathFilter = ['**/*.swift']; // File path filters, is passed into `fs.re
 
 
 // Script Variables. Do NOT Touch!
-console.log(Genstrings);
 var genstrings = new Genstrings();
 genstrings.macro = genstringsMacro;
 genstrings.language = genstringsLanguage;
