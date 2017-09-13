@@ -7,3 +7,4 @@ genstrings.json
 *.swp
 .DS_Store
 parse_results.json
+parse_warnings.json
