@@ -4,6 +4,7 @@ var moment = require('moment');
 var underscorejs = require('underscore');
 var Genstrings = require('./lib/genstrings.js');
 
+var startTime = moment(); // To know how long it took and nice output in progress log
 console.log('Starting Trex Parsers Srcipt!!!');
 console.log(startTime.format(startEndTimeOutputFormat));
 console.log('');
@@ -45,7 +46,6 @@ var warningsArray = []; // [{message: '', info: {}}] For output at the end
 var translationKeysArray = []; // Where all the translation keys from progress are kept, so we can output at the end
 var startEndTimeOutputFormat = 'MMM Do YYYY H:mm:ss ZZ';
 var progressTimeOutputFormat = 'H:mm:ss ZZ';
-var startTime = moment(); // To know how long it took and nice output in progress log
 
 
 ////// Warning and Progess Callbacks
