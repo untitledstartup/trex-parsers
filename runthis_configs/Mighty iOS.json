@@ -1,0 +1,8 @@
+{
+  "genstringsMacro": "NSLocalizedString",
+  "genstringsLanguage": "swift",
+  "folderPath": "../../TestProjects/FirstTranslation/FirstTranslation",
+  "filePathFilter": ["**/*.swift"],
+  "outputFilePath": "./parse_results.json",
+  "warningsOutputFilePath": "./parse_warnings.json"
+}
