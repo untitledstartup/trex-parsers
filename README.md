@@ -12,6 +12,8 @@ TML extractors for Translation Exchange platform.
 
 Notes
 ==================
+### To use the new self-contained `runthis.js` checkout branch `brick/self-contained`
+
 __genstrings__, the command-line utilty, is primary concerned with handling CLI interface. Most of the functionality lies in _lib/genstrintg.js_. From here on, Genstrings is used to refer to either the CLI or the supporting library...
 
 Genstrings works by tokenizing input into various types of tokens. In its most basic form - tokens can be: literals (strings, numbers), operators, or named tokens. For example, the following snippet:
