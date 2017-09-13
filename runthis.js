@@ -4,10 +4,22 @@ var moment = require('moment');
 var underscorejs = require('underscore');
 var Genstrings = require('./lib/genstrings.js');
 
+console.log('Starting Trex Parsers Srcipt!!!');
+console.log(startTime.format(startEndTimeOutputFormat));
+console.log('');
+console.log('');
 
 ////// Config Variables. Edit These!!!!
-var customConfigFilePath = './runthis_configs/Mighty iOS.json'; // See `defaultOptions` below for what can be set
+var customConfigFilePath = './runthis_configs/banana.json'; // See `defaultOptions` below for what can be set
+process.argv.forEach(function (val, index, array) {
+  // The thrid argument is always the custom config path
+  if (index === 2) {
+    customConfigFilePath = val;
+  }
+});
 
+console.log('Using custom config at :: ' + customConfigFilePath + ' ::');
+console.log('');
 
 ////// Script Variables. Do NOT Touch!
 var defaultOptions = {
@@ -21,6 +33,9 @@ var defaultOptions = {
 // Read in custom config and override the default options
 var customConfigContent = fs.readFileSync(customConfigFilePath, 'utf8');
 var options = underscorejs.extend({}, defaultOptions, JSON.parse(customConfigContent));
+console.log('Using options:');
+console.log(options);
+console.log('');
 
 var genstrings = new Genstrings();
 genstrings.macro = options.genstringsMacro;
@@ -67,11 +82,6 @@ genstrings.on("progress", function(progress, file, translationKeys) {
   }
 });
 
-
-console.log('Starting Trex Parsers Srcipt!!!');
-console.log(startTime.format(startEndTimeOutputFormat));
-console.log('');
-console.log('');
 
 ////// Get all the paths to the files we need to parse
 var filesToParse = [];

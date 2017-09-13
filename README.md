@@ -13,8 +13,8 @@ Running Self-Contained runthis.js
 ==================
 1. Clone the repo to a folder outside your project
 2. Run `npm install`
-3. Update config variables in `runthis.js`
-4. Run `node runthis.js`
+3. Create a new custom config json in `runthis_configs/`
+4. Run `node runthis.js "runthis_configs/my_custom_config.json`
 
 Notes
 ==================
