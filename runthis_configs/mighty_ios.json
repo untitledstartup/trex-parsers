@@ -1,6 +1,6 @@
 {
   "genstringsMacro": "NSLocalizedString",
   "genstringsLanguage": "swift",
-  "folderPath": "../../TestProjects/FirstTranslation/FirstTranslation",
+  "folderPath": "../../ios-app/Mightybell App",
   "filePathFilter": ["**/*.swift"]
 }
