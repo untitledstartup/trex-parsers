@@ -8,7 +8,6 @@ var startTime = moment(); // To know how long it took and nice output in progres
 console.log('Starting Trex Parsers Srcipt!!!');
 console.log(startTime.format(startEndTimeOutputFormat));
 console.log('');
-console.log('');
 
 ////// Config Variables. Edit These!!!!
 var customConfigFilePath = './runthis_configs/banana.json'; // See `defaultOptions` below for what can be set
@@ -92,4 +91,5 @@ fs.recurseSync(options.folderPath, options.filePathFilter, function(filepath, re
 })
 
 ////// Do the parsing!!!!
+console.log(''); // Add an empty line before we start parsing, for space
 genstrings.parseFiles(filesToParse);
