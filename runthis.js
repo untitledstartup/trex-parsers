@@ -75,7 +75,7 @@ genstrings.on("progress", function(progress, file, translationKeys) {
     // Output script is done!
     var endTime = moment();
     console.log(endTime.format(startEndTimeOutputFormat));
-    console.log('Parse complete! Took ' + startTime.diff(endTime, 'minutes') + ' minutes!');
+    console.log('Parse complete! Took ' + endTime.diff(startTime, 'minutes') + ' minutes!');
     console.log('Output written to ' + options.outputFilePath);
     console.log('Warnings written to ' + options.warningsOutputFilePath);
   }
