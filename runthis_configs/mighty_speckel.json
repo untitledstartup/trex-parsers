@@ -1,5 +1,5 @@
 {
-  "genstringsMacro": "tr",
+  "genstringsMacro": "tr|trl|Tml.translate",
   "genstringsLanguage": "ruby",
   "folderPath": "../speckel/app",
   "filePathFilter": ["**/*.haml", "**/*.hamlbars", "**/*.rb", "**/*.js.*", "**/*.rb.*"]
