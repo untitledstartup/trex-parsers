@@ -26,6 +26,7 @@ var defaultOptions = {
   genstringsMacro: "localizationFunctionName",
   genstringsLanguage: "code language",
   folderPath: '../MyProject/theFiles', // The relative folder path which contains the files you want to parse
+  folderPaths: null, // If you want to specify multiple folder paths to process
   filePathFilter: ['**/*.extension'], // File path filters, is passed into `fs.recurseSync` see https://www.npmjs.com/package/file-system#recursesyncdirpath-filter-callback
   outputFilePath: './parse_results.json',
   warningsOutputFilePath: './parse_warnings.json',
@@ -33,6 +34,9 @@ var defaultOptions = {
 // Read in custom config and override the default options
 var customConfigContent = fs.readFileSync(customConfigFilePath, 'utf8');
 var options = underscorejs.extend({}, defaultOptions, JSON.parse(customConfigContent));
+if (!options.folderPaths) {
+  options.folderPaths = [options.folderPath]
+}
 console.log('Using options:');
 console.log(options);
 console.log('');
@@ -84,11 +88,13 @@ genstrings.on("progress", function(progress, file, translationKeys) {
 
 ////// Get all the paths to the files we need to parse
 var filesToParse = [];
-fs.recurseSync(options.folderPath, options.filePathFilter, function(filepath, relative, filename) {
-  if (filename) {
-    filesToParse.push(filepath);
-  }
-})
+options.folderPaths.forEach(function(folderPath) {
+  fs.recurseSync(folderPath, options.filePathFilter, function(filepath, relative, filename) {
+    if (filename) {
+      filesToParse.push(filepath);
+    }
+  })
+});
 
 ////// Do the parsing!!!!
 console.log(''); // Add an empty line before we start parsing, for space

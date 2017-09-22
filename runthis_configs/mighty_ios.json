@@ -1,6 +1,9 @@
 {
-  "genstringsMacro": "NSLocalizedString",
+  "genstringsMacro": "TMLLocalizedString",
   "genstringsLanguage": "swift",
-  "folderPath": "../../ios-app/Mightybell App",
+  "folderPaths": [
+    "../../ios-app/Mightybell App",
+    "../../ios-app/Frameworks/ios-app-models/Mightybell Core"
+  ],
   "filePathFilter": ["**/*.swift"]
 }
