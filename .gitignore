@@ -8,3 +8,5 @@ genstrings.json
 .DS_Store
 parse_results.json
 parse_warnings.json
+speckel_strings_javascript.json
+speckel_strings_ruby.json
