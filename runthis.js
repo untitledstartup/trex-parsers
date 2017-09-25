@@ -63,25 +63,24 @@ genstrings.on("warning", function(message, info) {
 });
 genstrings.on("progress", function(progress, file, translationKeys) {
   console.log('[' + moment().format(progressTimeOutputFormat) + '] progress :: ' + progress + ' :: ' + file + ' ::');
+  console.log('  extracted ' + translationKeys.length + ' strings...');
   translationKeysArray = translationKeysArray.concat(translationKeys); // Store for output at the end
 
   // If we have finished parsing the files, write files
   if (progress >= 1)  {
-    console.log('');
-    console.log('');
-
-    console.log('Writing parse output file...');
-    fs.writeFileSync(options.outputFilePath, JSON.stringify(translationKeysArray));
-    console.log('Writing warnings output file...');
-    fs.writeFileSync(options.warningsOutputFilePath, JSON.stringify(warningsArray));
-    console.log('');
+    console.log('\n');
 
     // Output script is done!
     var endTime = moment();
     console.log(endTime.format(startEndTimeOutputFormat));
     console.log('Parse complete! Took ' + endTime.diff(startTime, 'minutes') + ' minutes!');
-    console.log('Output written to ' + options.outputFilePath);
-    console.log('Warnings written to ' + options.warningsOutputFilePath);
+    console.log('Extracted ' + translationKeysArray.length + ' strings!');
+
+    console.log('Writing parse output to ' + options.outputFilePath + '...');
+    fs.writeFileSync(options.outputFilePath, JSON.stringify(translationKeysArray));
+    console.log('Writing warnings output to ' + options.warningsOutputFilePath + '...');
+    fs.writeFileSync(options.warningsOutputFilePath, JSON.stringify(warningsArray));
+    console.log('');
   }
 });
 
