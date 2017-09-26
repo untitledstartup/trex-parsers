@@ -62,8 +62,7 @@ genstrings.on("warning", function(message, info) {
   warningsArray.push({message: message, info: info});
 });
 genstrings.on("progress", function(progress, file, translationKeys) {
-  console.log('[' + moment().format(progressTimeOutputFormat) + '] progress :: ' + progress + ' :: ' + file + ' ::');
-  console.log('  extracted ' + translationKeys.length + ' strings...');
+  console.log('[' + moment().format(progressTimeOutputFormat) + '] progress :: ' + progress + ' :: ' + file + ' ::' + translationKeys.length + ' strings...');
   translationKeysArray = translationKeysArray.concat(translationKeys); // Store for output at the end
 
   // If we have finished parsing the files, write files
