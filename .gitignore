@@ -10,3 +10,4 @@ parse_results.json
 parse_warnings.json
 speckel_strings_javascript.json
 speckel_strings_ruby.json
+speckel_strings_hamlbars.json
