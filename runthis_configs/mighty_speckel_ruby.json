@@ -1,7 +1,7 @@
 {
-  "genstringsMacro": "tr|trl|Tml.translate",
+  "genstringsMacro": "Tml.translate|trl|tr",
   "genstringsLanguage": "ruby",
-  "folderPath": "../speckel_2017-07-03/app",
+  "folderPath": "../speckel/app",
   "filePathFilter": ["**/*.haml", "**/*.rb", "**/*.rb.*"],
   "outputFilePath": "./speckel_strings_ruby.json"
 }
