@@ -6,4 +6,10 @@ stringInterpolationStart
 stringInterpolationEnd
   := "}"
 
+trailingComment
+  := "#" (~"\n" any)*
+
+multilineComment
+  := "=begin" (~"=end" any) "=end"  
+
 }
