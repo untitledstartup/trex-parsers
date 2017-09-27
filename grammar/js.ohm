@@ -3,4 +3,14 @@ Js <: Base {
 stringConcatOperator
   := "+"
 
+trailingComment
+  := "#" (~"\n" any)*
+  | "//" (~"\n" any)*
+
+openExpressionOperator
+  := "{" | "(" | "[" | " "
+
+closeExpressionOperator
+  := "}" | ")" | "]" | " "
+
 }
