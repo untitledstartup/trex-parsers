@@ -1,5 +1,5 @@
 {
-  "genstringsMacro": "translate_label|trl|tr",
+  "genstringsMacro": "translate_label|translate|trl|tr",
   "genstringsLanguage": "js",
   "folderPath": "../speckel/app",
   "filePathFilter": ["**/*.haml", "**/*.hamlbars", "**/*.js.*", "**/*.coffee"],
